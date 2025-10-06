@@ -85,6 +85,7 @@ def concatenate_files(personaje, coleccion_path):
         "capitulo-01.md", "capitulo-02.md", "capitulo-03.md", "capitulo-04.md", "capitulo-05.md",
         "capitulo-06.md", "capitulo-07.md", "capitulo-08.md", "capitulo-09.md", "capitulo-10.md",
         "capitulo-11.md", "capitulo-12.md", "capitulo-13.md", "capitulo-14.md", "capitulo-15.md",
+        "capitulo-16.md", "capitulo-17.md", "capitulo-18.md", "capitulo-19.md", "capitulo-20.md",
         "epilogo.md",
         "glosario.md",
         "dramatis-personae.md",
