@@ -61,6 +61,98 @@ Pipeline completo para generar biografías KDP desde la selección del personaje
 - **Conversión Word**: Archivo `docx/x/La biografía de X.docx` con formato aplicado.
 - **Personaje marcado**: ✅ aparece junto al nombre en archivo de colección.
 
+## Validaciones automatizables
+
+### Checklist de verificación completa
+
+Un agente debe verificar cada fase del workflow:
+
+**Fase 1: Selección y preparación**
+- [ ] Verificar que el archivo de colección en `colecciones/` exista
+- [ ] Verificar que haya al menos un personaje sin ✅
+- [ ] Verificar normalización del nombre del personaje (minúsculas, guiones bajos)
+
+**Fase 2: Investigación de fuentes**
+- [ ] Verificar que `esquemas/X - fuentes.md` exista y contenga mínimo 40-60 fuentes
+- [ ] Verificar que todas las URLs devuelvan código HTTP 200
+- [ ] Verificar que las fuentes usen formato académico consistente (APA o Chicago)
+- [ ] Verificar clasificación de fuentes (primarias, secundarias, terciarias)
+
+**Fase 3: Planificación**
+- [ ] Verificar que `esquemas/X - plan de trabajo.md` exista
+- [ ] Verificar que el plan contenga exactamente 20 capítulos
+- [ ] Verificar que cada capítulo tenga título, descripción y meta de palabras
+- [ ] Verificar que `bios/x/control/longitudes.csv` exista con metas por sección
+- [ ] Verificar que la suma de metas alcance mínimo 51,000 palabras
+
+**Fase 4: Redacción**
+- [ ] Verificar que el directorio `bios/x/` exista
+- [ ] Verificar que se generen los 25 archivos `.md` requeridos
+- [ ] Verificar que cada capítulo inicie con `# Capítulo N: [título]`
+
+**Fase 5: Validación de longitudes**
+- [ ] Ejecutar `python check_lengths.py <personaje>` después de cada batch
+- [ ] Verificar que todas las secciones alcancen ≥100% de cumplimiento
+- [ ] Verificar que el total supere 51,000 palabras
+- [ ] Registrar resultado en log
+
+**Fase 6: Concatenación**
+- [ ] Ejecutar `python concat.py -personaje "<personaje>"`
+- [ ] Verificar que se genere `bios/x/La biografía de X.md`
+- [ ] Verificar que no haya errores ni warnings de archivos faltantes
+
+**Fase 7: Conversión a Word**
+- [ ] Verificar que `wordTemplate/reference.docx` exista
+- [ ] Ejecutar comando Pandoc
+- [ ] Verificar que se genere `docx/x/La biografía de X.docx`
+- [ ] Verificar que el archivo Word sea accesible y tenga formato correcto
+
+**Fase 8: Cierre**
+- [ ] Marcar personaje con ✅ en archivo de colección
+- [ ] Verificar que todos los logs se hayan guardado
+- [ ] Registrar fecha y hora de finalización
+
+### Evidencia a conservar
+
+Para cada fase del workflow, adjuntar:
+
+- **Fase 1**: Nombre del personaje seleccionado y ruta normalizada
+- **Fase 2**: `esquemas/X - fuentes.md` y log de verificación HTTP
+- **Fase 3**: `esquemas/X - plan de trabajo.md` y `bios/x/control/longitudes.csv`
+- **Fase 4**: Lista de archivos generados en `bios/x/`
+- **Fase 5**: CSV final y logs de todas las iteraciones de `check_lengths.py`
+- **Fase 6**: `bios/x/La biografía de X.md` y log de concat.py
+- **Fase 7**: `docx/x/La biografía de X.docx` y log de Pandoc
+- **Fase 8**: Captura del archivo de colección con ✅ marcado
+
+### Scripts a ejecutar
+
+1. **Verificación de fuentes**:
+   ```bash
+   grep -Eo "https?://[^\s]+" "esquemas/X - fuentes.md" | \
+     while read url; do \
+       echo "$url: $(curl -s -o /dev/null -w '%{http_code}' "$url")"; \
+     done > esquemas/logs/workflow-sources-<personaje>-<fecha>.log
+   ```
+
+2. **Validación de longitudes**:
+   ```bash
+   python check_lengths.py <personaje> 2>&1 | tee bios/x/logs/workflow-lengths-<fecha>.log
+   ```
+
+3. **Concatenación**:
+   ```bash
+   python concat.py -personaje "<personaje>" 2>&1 | tee bios/x/logs/workflow-concat-<fecha>.log
+   ```
+
+4. **Conversión a Word**:
+   ```bash
+   pandoc "bios/x/La biografía de X.md" \
+     -o "docx/x/La biografía de X.docx" \
+     --reference-doc="wordTemplate/reference.docx" \
+     2>&1 | tee bios/x/logs/workflow-pandoc-<fecha>.log
+   ```
+
 ## Fallbacks/Escalada
 - Si faltan fuentes: no iniciar redacción hasta completar investigación mínima.
 - Si un capítulo no alcanza meta: expandir con contexto, detalles, descripciones sensoriales (ver literaryStyle.md).

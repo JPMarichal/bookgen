@@ -40,6 +40,50 @@ Establecer metodología rigurosa de investigación y documentación de fuentes b
 - Si una URL no es accesible: reemplazar con fuente alternativa verificable o usar fuente física con referencia completa.
 - Si las fuentes son insuficientes para cubrir un periodo: documentarlo en el plan y ajustar expectativas de profundidad para ese capítulo.
 
+## Validaciones automatizables
+
+### Checklist de verificación
+
+Antes de iniciar la redacción, un agente debe verificar:
+
+- [ ] Verificar que existe `esquemas/X - fuentes.md`
+- [ ] Verificar cantidad mínima de fuentes (40-60 para 20 capítulos)
+- [ ] Verificar que cada fuente use formato académico consistente (APA o Chicago)
+- [ ] Verificar que todas las URLs devuelvan código HTTP 200
+- [ ] Verificar que el contenido de cada URL sea relevante al tema indicado
+- [ ] Verificar que las URLs no redirijan a páginas genéricas
+- [ ] Verificar clasificación de fuentes (primarias, secundarias, terciarias)
+- [ ] Verificar que haya al menos 2-3 fuentes por capítulo planificado
+
+### Evidencia a conservar
+
+Para cada verificación completada, adjuntar:
+
+- **Archivo de fuentes**: Copia de `esquemas/X - fuentes.md`
+- **Log de verificación HTTP**: Resultados de verificación de todas las URLs con códigos de respuesta
+- **Clasificación de fuentes**: Documento con conteo de fuentes primarias, secundarias y terciarias
+- **Distribución por capítulo**: Tabla mostrando cuántas fuentes respaldan cada capítulo planificado
+
+### Scripts a ejecutar
+
+1. **Verificación de URLs** (ejemplo de script a crear):
+   ```bash
+   # Script para verificar que todas las URLs devuelvan HTTP 200
+   # Guardar en: esquemas/logs/verify-sources-<personaje>-<fecha>.log
+   ```
+
+2. **Conteo de fuentes**:
+   ```bash
+   grep -E "^(https?://|[A-Z])" esquemas/X\ -\ fuentes.md | wc -l
+   ```
+   Guardar salida en: `esquemas/logs/source-count-<personaje>-<fecha>.log`
+
+3. **Validación de formato**:
+   ```bash
+   # Verificar que las fuentes sigan formato académico
+   # Guardar inconsistencias en: esquemas/logs/format-check-<personaje>-<fecha>.log
+   ```
+
 ## Relacionados
 - [fuentes-rules.md](fuentes-rules.md) - Reglas específicas de verificación de fuentes
 - [workflow.md](workflow.md) - Integración de fuentes en el flujo de trabajo

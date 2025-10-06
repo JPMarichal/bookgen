@@ -49,6 +49,62 @@ Definir estructura uniforme y obligatoria para todos los manuscritos biográfico
 - Si no hay suficiente documentación para un periodo: ajustar meta de ese capítulo en el plan y compensar en capítulos con más fuentes.
 - Si el total no alcanza 51,000 palabras: identificar capítulos prioritarios para expansión según riqueza de fuentes disponibles.
 
+## Validaciones automatizables
+
+### Checklist de verificación
+
+Al validar la estructura editorial, un agente debe verificar:
+
+- [ ] Verificar que el directorio `bios/x/` exista
+- [ ] Verificar que existan exactamente 25 archivos `.md` (prólogo + introducción + cronología + 20 capítulos + epílogo + glosario + dramatis personae + fuentes)
+- [ ] Verificar el orden obligatorio de secciones:
+  - [ ] 1. prologo.md
+  - [ ] 2. introduccion.md
+  - [ ] 3. cronologia.md
+  - [ ] 4. capitulo-01.md hasta capitulo-20.md
+  - [ ] 5. epilogo.md
+  - [ ] 6. glosario.md
+  - [ ] 7. dramatis-personae.md
+  - [ ] 8. fuentes.md
+- [ ] Verificar que cada capítulo comience con `# Capítulo N: [título]`
+- [ ] Verificar que los subtítulos usen `##` y `###` (máximo 3 niveles)
+- [ ] Verificar meta de extensión global: mínimo 51,000 palabras
+- [ ] Verificar que cada capítulo tenga aproximadamente 2,550 palabras (±5%)
+
+### Evidencia a conservar
+
+Para cada verificación completada, adjuntar:
+
+- **Lista de archivos**: Salida de `ls -1 bios/x/*.md` mostrando los 25 archivos
+- **Estructura de encabezados**: Todos los encabezados `#` extraídos de cada archivo
+- **Reporte de longitudes**: CSV completo de `bios/x/control/longitudes.csv`
+- **Conteo total de palabras**: Suma de palabras de todas las secciones
+
+### Scripts a ejecutar
+
+1. **Verificación de archivos obligatorios**:
+   ```bash
+   # Debe listar exactamente 25 archivos
+   ls -1 bios/x/*.md | wc -l
+   ls -1 bios/x/*.md > bios/x/logs/structure-files-<fecha>.log
+   ```
+
+2. **Verificación de encabezados**:
+   ```bash
+   # Extraer todos los encabezados de nivel 1
+   grep -h "^# " bios/x/*.md > bios/x/logs/structure-headers-<fecha>.log
+   ```
+
+3. **Verificación de longitudes**:
+   ```bash
+   python check_lengths.py <personaje> 2>&1 | tee bios/x/logs/structure-lengths-<fecha>.log
+   ```
+
+4. **Conteo total de palabras**:
+   ```bash
+   wc -w bios/x/*.md | tail -1 > bios/x/logs/structure-wordcount-<fecha>.log
+   ```
+
 ## Relacionados
 - [quality.md](quality.md) - Control de longitud y calidad
 - [lenght.md](lenght.md) - Validación de longitudes por sección
