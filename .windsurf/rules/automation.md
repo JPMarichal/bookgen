@@ -38,6 +38,7 @@ Automatizar la concatenación de archivos Markdown en el orden correcto y la con
 ## Validaciones/Logs
 - **Concatenación**: Script imprime `✅ Concatenación completa para: {personaje}` y ruta del archivo final.
 - **Archivos faltantes**: Script imprime `⚠️ Archivo faltante: {archivo}` por cada archivo que no existe.
+- **Lomo**: El ancho del lomo debe calcularse y documentarse usando `python spine_width.py <total_paginas>`. El valor y la fecha/hora deben registrarse en `bios/x/kdp/metadata.md`.
 - **Directorio inexistente**: Script termina con `⚠️ Directorio no encontrado: {directorio}` si `bios/x/` no existe.
 - **Salida esperada**: Archivo Markdown en `bios/x/La biografía de X.md` con todas las secciones concatenadas.
 - **Salida final**: Archivo Word en `docx/x/La biografía de X.docx` con formato aplicado.

@@ -12,7 +12,45 @@ Descripción de venta para Amazon KDP: Esta descripción se dirige directamente 
 
 Palabras clave: 15 palabras clave seo, dirigidas a facilitar el hallazgo del libro en la plataforma de Amazon.
 
-Ancho del lomo: Con base en el número de páginas proporcionado por el usuario, calcula el ancho del lomo en centímetros, para papel blanco. Util para el diseño de la portada de pasta blanda y dura.
+
+
+Ancho del lomo: El cálculo debe realizarse exclusivamente ejecutando el script:
+
+```bash
+python spine_width.py <total_paginas>
+```
+
+Donde `<total_paginas>` es el número total de páginas del libro, determinado manualmente por el usuario tras revisar el archivo `.docx` final generado. Este dato es único para cada libro y no debe almacenarse en `.env` ni en variables globales.
+
+Si no se cuenta con el total de páginas al inicio del proceso, debe preguntarse explícitamente al usuario y no avanzar hasta obtenerlo. El proceso de metadatos y cálculo de lomo debe detenerse hasta contar con ese dato.
+
+Opcionalmente, si el material de impresión es diferente (por ejemplo, papel color o gramaje especial), puedes usar:
+
+```bash
+python spine_width.py <total_paginas> --page-thickness 0.0033 --precision 3
+```
+
+Consulta la documentación de `spine_width.py` para más detalles sobre los parámetros `--page-thickness` y `--precision`.
+
+El resultado debe copiarse manualmente en el archivo `bios/x/kdp/metadata.md` bajo el campo "Ancho del lomo", junto con la fecha y hora del cálculo, y la fuente del número de páginas utilizada (por ejemplo: "contado manualmente en docx").
+
+**Checklist para metadatos KDP**
+
+- [ ] Subtítulo breve y atractivo
+- [ ] 10 categorías relevantes (Amazon.mx)
+- [ ] 15 palabras clave SEO
+- [ ] Ancho del lomo calculado con `spine_width.py` y copiado a `metadata.md`
+- [ ] Fecha y hora del cálculo del lomo registrada en `metadata.md`
+- [ ] Fuente del número de páginas (ej: "contado manualmente en docx") indicada en `metadata.md`
+- [ ] Validar que el total de páginas coincide con `TOTAL_WORDS` y `WORDS_PER_CHAPTER` (si aplica)
+
+**Ejemplo de registro en metadata.md:**
+
+```markdown
+- **Ancho del lomo (135 páginas, papel blanco, calculado el 2025-10-06 14:30, fuente: contado manualmente en docx)**: 0.94 cm
+```
+
+No se permite el cálculo manual ni aproximaciones. Siempre usar el script para asegurar consistencia.
 
 Previamente, el libro se ha creado y la versión docx está lista, por lo que no es necesario en este punto volver a esas tareas. Se debe solicitar al usuario el número de páginas si no lo proporciona en la solicitud.
 
@@ -23,6 +61,7 @@ Con los datos anteriores, crearás los siguientes archivos cuando el usuario sol
 
 El archivo descripcion.md contendrá la descripción de venta para Amazon KDP únicamente. Deberás revisar todo el libro antes de generar la descripción. La descripción debe ser larga y colmada de términos seo de cola larga. 
 
-El archivo metadata.md contendrá el subtítulo, las categorías propuestas, palabras clave, el ancho del lomo.
+
+El archivo metadata.md contendrá el subtítulo, las categorías propuestas, palabras clave, el ancho del lomo (calculado y documentado como se indica arriba).
 
 El nombre del autor es Juan Pablo Marichal Catalán.
