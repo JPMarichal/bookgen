@@ -44,6 +44,57 @@ Establecer estándares técnicos y formales de escritura para el manuscrito: est
 - Si los datos son demasiado secos: integrar contexto narrativo, explicaciones de causa-efecto, o descripciones ambientales.
 - Si hay errores de sintaxis Markdown: revisar tablas, listas y encabezados antes de concatenar.
 
+## Validaciones automatizables
+
+### Checklist de verificación
+
+Al validar el estilo narrativo, un agente debe verificar:
+
+- [ ] Verificar que cada capítulo inicie con `# Capítulo N: [nombre]`
+- [ ] Verificar que los subtítulos usen `##` para temas principales
+- [ ] Verificar que las subdivisiones usen `###` cuando sea necesario
+- [ ] Verificar jerarquía máxima de 3 niveles de encabezados
+- [ ] Verificar que los párrafos tengan entre 4-7 líneas en promedio
+- [ ] Verificar que las tablas usen sintaxis Markdown correcta (`| col1 | col2 |`)
+- [ ] Verificar que las listas usen sintaxis consistente (`-` o `*`)
+- [ ] Verificar ausencia de citas directas (sin comillas)
+- [ ] Verificar que no haya listas de datos secos sin contexto
+
+### Evidencia a conservar
+
+Para cada verificación completada, adjuntar:
+
+- **Análisis de encabezados**: Extracto de todos los encabezados con sus niveles
+- **Análisis de párrafos**: Muestra de longitudes de párrafos por capítulo
+- **Validación de tablas**: Lista de todas las tablas encontradas con verificación de sintaxis
+- **Validación de listas**: Lista de todas las listas encontradas con verificación de sintaxis
+
+### Scripts a ejecutar
+
+1. **Verificación de estructura de encabezados**:
+   ```bash
+   # Extraer todos los encabezados y contar niveles
+   grep -E "^#{1,3} " bios/x/*.md > bios/x/logs/style-headers-<fecha>.log
+   ```
+
+2. **Análisis de longitud de párrafos**:
+   ```bash
+   # Contar líneas por párrafo (manual o con script personalizado)
+   # Guardar en: bios/x/logs/style-paragraphs-<fecha>.log
+   ```
+
+3. **Verificación de sintaxis Markdown**:
+   ```bash
+   # Buscar tablas mal formadas
+   grep -E "^\|" bios/x/*.md > bios/x/logs/style-tables-<fecha>.log
+   ```
+
+4. **Búsqueda de citas directas**:
+   ```bash
+   # Buscar comillas (indicador de citas)
+   grep -n '"' bios/x/*.md > bios/x/logs/style-quotes-<fecha>.log
+   ```
+
 ## Relacionados
 - [literaryStyle.md](literaryStyle.md) - Estilo emocional y literario (complementario)
 - [structure.md](structure.md) - Estructura general del manuscrito

@@ -38,6 +38,52 @@ Definir el tono emocional, literario y sensorial de la narrativa para lograr que
 - Si falta inmersión: añadir detalles de época, descripciones de lugares, texturas del entorno.
 - Si el lector no conecta emocionalmente: profundizar en motivaciones internas del personaje, mostrar dilemas humanos universales.
 
+## Validaciones automatizables
+
+### Checklist de verificación
+
+Al validar el estilo literario y emocional, un agente debe verificar:
+
+- [ ] Verificar presencia de descripciones sensoriales en secciones narrativas clave
+- [ ] Verificar uso de adjetivos precisos y variados (no repetitivos)
+- [ ] Verificar presencia de conectores literarios que den fluidez
+- [ ] Verificar que se incluyan reflexiones ocasionales sobre dilemas del personaje
+- [ ] Verificar contextualización de acciones (antecedentes y repercusiones)
+- [ ] Verificar equilibrio entre rigor académico y tono envolvente
+- [ ] Verificar ausencia de dramatismo excesivo o apasionamiento
+- [ ] Verificar que la narrativa sea inmersiva (no solo descriptiva)
+
+### Evidencia a conservar
+
+Para cada verificación completada, adjuntar:
+
+- **Muestra de descripciones sensoriales**: Extractos representativos por capítulo
+- **Análisis de vocabulario**: Lista de adjetivos y conectores utilizados
+- **Muestra de reflexiones**: Extractos donde se muestran dilemas o motivaciones
+- **Evaluación de tono**: Análisis cualitativo del equilibrio emocional
+
+### Scripts a ejecutar
+
+1. **Búsqueda de elementos sensoriales** (manual con keywords):
+   ```bash
+   # Buscar términos sensoriales (olor, sonido, textura, etc.)
+   grep -i -E "(olor|aroma|sonido|textura|sabor|visión|contemplar)" bios/x/*.md \
+     > bios/x/logs/literary-sensorial-<fecha>.log
+   ```
+
+2. **Análisis de adjetivos** (requiere procesamiento manual o NLP):
+   ```bash
+   # Extraer adjetivos comunes y verificar variedad
+   # Guardar en: bios/x/logs/literary-adjectives-<fecha>.log
+   ```
+
+3. **Búsqueda de reflexiones**:
+   ```bash
+   # Buscar construcciones reflexivas
+   grep -i -E "(pensaba|sentía|comprendía|cuestionaba|dilema|motivación)" bios/x/*.md \
+     > bios/x/logs/literary-reflections-<fecha>.log
+   ```
+
 ## Relacionados
 - [style.md](style.md) - Lineamientos técnicos y formales (complementario)
 - [quality.md](quality.md) - Validación de coherencia narrativa

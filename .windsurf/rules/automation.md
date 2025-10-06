@@ -43,6 +43,59 @@ Automatizar la concatenación de archivos Markdown en el orden correcto y la con
 - **Salida esperada**: Archivo Markdown en `bios/x/La biografía de X.md` con todas las secciones concatenadas.
 - **Salida final**: Archivo Word en `docx/x/La biografía de X.docx` con formato aplicado.
 
+## Validaciones automatizables
+
+### Checklist de verificación
+
+Antes de ejecutar scripts de automatización, un agente debe verificar:
+
+- [ ] Verificar que el directorio `bios/x/` exista
+- [ ] Verificar que todos los archivos de sección estén presentes (prologo.md hasta fuentes.md)
+- [ ] Ejecutar `python concat.py <personaje>` y verificar salida sin errores
+- [ ] Verificar que el archivo concatenado `bios/x/La biografía de X.md` se haya generado
+- [ ] Verificar que la plantilla Word `wordTemplate/reference.docx` exista
+- [ ] Ejecutar conversión Pandoc y verificar salida sin errores
+- [ ] Verificar que el archivo Word `docx/x/La biografía de X.docx` se haya generado
+- [ ] Verificar que el personaje esté marcado con ✅ en `colecciones/`
+- [ ] Verificar que no haya warnings de archivos faltantes en la salida
+
+### Evidencia a conservar
+
+Para cada verificación completada, adjuntar:
+
+- **Log de concatenación**: Salida completa de `python concat.py <personaje>`
+- **Archivo concatenado**: `bios/x/La biografía de X.md` generado
+- **Log de conversión Pandoc**: Salida del comando Pandoc con timestamp
+- **Archivo Word final**: `docx/x/La biografía de X.docx`
+- **Lista de archivos procesados**: Todos los `.md` incluidos en la concatenación
+- **Estado en colección**: Captura mostrando ✅ junto al personaje
+
+### Scripts a ejecutar
+
+1. **Concatenación de secciones**:
+   ```bash
+   python concat.py <personaje> 2>&1 | tee bios/x/logs/concat-<fecha>.log
+   ```
+
+2. **Conversión a Word**:
+   ```bash
+   pandoc "bios/x/La biografía de X.md" \
+     -o "docx/x/La biografía de X.docx" \
+     --reference-doc=wordTemplate/reference.docx \
+     2>&1 | tee bios/x/logs/pandoc-<fecha>.log
+   ```
+
+3. **Verificación de archivos completos**:
+   ```bash
+   # Listar todos los .md en bios/x/
+   ls -1 bios/x/*.md > bios/x/logs/files-list-<fecha>.log
+   ```
+
+4. **Cálculo del ancho del lomo** (post-generación):
+   ```bash
+   python spine_width.py <total_paginas> 2>&1 | tee bios/x/kdp/logs/spine-<fecha>.log
+   ```
+
 ## Fallbacks/Escalada
 - Si falta algún archivo de sección, el script continúa pero reporta advertencia. Revisar manualmente qué archivos faltan.
 - Si el directorio `bios/x/` no existe, detener proceso y verificar que se haya completado la fase de redacción.
