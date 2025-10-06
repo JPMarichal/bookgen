@@ -1,8 +1,25 @@
 ---
+description: Pipeline para generar biografías KDP en batch: planificación, redacción, concatenación y exportación a Word.
 trigger: manual
+auto_execution_mode: 3
 ---
 
 # Flujo de trabajo completo para biografías KDP
+
+## Cuándo ejecutar este workflow
+
+Este workflow tiene `trigger: manual`, lo que significa que **debe iniciarse explícitamente** cuando:
+- Se inicia un nuevo personaje de la colección (primera vez que se trabaja en esa biografía)
+- Se requiere generar una biografía completa desde cero
+- El usuario solicita explícitamente procesar un personaje específico
+
+**Prerequisitos para ejecutar:**
+- Archivo de colección disponible en `colecciones/` con lista de personajes
+- Herramientas instaladas: Python 3, Pandoc
+- Plantilla de Word en `wordTemplate/reference.docx`
+- Acceso a fuentes bibliográficas verificables online
+
+**Diferencia con reglas `always_on`**: Las reglas con `trigger: always_on` (como `automation.md`) están activas en todo momento y proporcionan guías técnicas que aplican durante cualquier tarea. Este workflow manual requiere activación intencional para procesar biografías completas.
 
 ## Objetivo
 Establecer el flujo de trabajo completo desde selección del personaje hasta publicación, definiendo todas las fases: selección, investigación, planificación, redacción, concatenación, conversión a Word y cierre. Garantizar que cada biografía cumpla con los estándares editoriales y técnicos para KDP.
@@ -16,14 +33,15 @@ Establecer el flujo de trabajo completo desde selección del personaje hasta pub
 
 ### 1. Selección del personaje
 1.1. Tomar nombre desde archivo de colección en `colecciones/`.
-1.2. Una vez completado el libro, marcar nombre con ✅ en el archivo de colección.
+1.2. Normalizar nombre a formato estándar (minúsculas, guiones bajos).
 
 ### 2. Investigación y fuentes
 2.1. Crear `esquemas/X - fuentes.md` con bibliografía verificable en formato académico (APA o Chicago).
 2.2. Incluir al menos dominio o URL completa para fuentes online.
-2.3. Compilar mínimo 2-3 fuentes por capítulo (40-60 fuentes total).
-2.4. Clasificar fuentes en primarias, secundarias y terciarias.
-2.5. Las fuentes deben estar completas antes de iniciar redacción.
+2.3. Todas las fuentes deben ser online, existir y devolver 200 (no 404, 403, 500 u otros códigos de error).
+2.4. Compilar mínimo 2-3 fuentes por capítulo (40-60 fuentes total).
+2.5. Clasificar fuentes en primarias, secundarias y terciarias.
+2.6. Las fuentes deben estar completas antes de iniciar redacción.
 
 ### 3. Planificación
 3.1. Crear `esquemas/X - plan de trabajo.md` con:
@@ -46,19 +64,29 @@ Establecer el flujo de trabajo completo desde selección del personaje hasta pub
 - dramatis-personae.md
 - fuentes.md
 
-4.3. Redactar en batches todos los archivos hasta el final, sin pausas ni resúmenes intermedios.
-4.4. Cada capítulo debe alcanzar la meta definida en el plan (~2,550 palabras promedio).
-4.5. Aplicar estilo narrativo-literario, académico cuando corresponda, siempre envolvente.
-4.6. No usar citas directas. Narración corrida en voz propia.
-4.7. Recursos permitidos: tablas en Markdown, listas con `-` o `*`, mapas como descripciones en prosa.
+4.3. Generar todos los archivos en orden, de un tirón (sin pausas, sin reportes, sin interacción del usuario).
+4.4. Organizar la ejecución en batches mediante lista de tareas, para ejecución ininterrumpida.
+4.5. Cada capítulo debe alcanzar la meta definida en el plan (~2,550 palabras promedio).
+4.6. Aplicar estilo narrativo-literario, académico cuando corresponda, siempre envolvente.
+4.7. No usar citas directas. Narración corrida en voz propia.
+4.8. Recursos permitidos: tablas en Markdown, listas con `-` o `*`, mapas como descripciones en prosa.
 
 ### 5. Validación de longitudes
-5.1. Al terminar cada capítulo, ejecutar:
+5.1. Al completar la redacción inicial, ejecutar:
 ```
 python check_lengths.py x
 ```
-5.2. Revisar `bios/x/control/longitudes.csv` para verificar cumplimiento de metas (±5%).
-5.3. Ajustar capítulos que no cumplan meta antes de continuar.
+(ejemplo: `python check_lengths.py joseph_stalin`)
+
+5.2. El script actualiza `bios/x/control/longitudes.csv` con longitud real y % cumplimiento.
+5.3. Revisar el CSV para identificar secciones que no alcancen el 100% de cumplimiento.
+5.4. Loop de ajustes autónomo:
+- Ejecutar `python check_lengths.py x` al principio de cada iteración.
+- Organizar lista de tareas desde la primera iteración para ejecución sin interrupciones.
+- Si alguna sección < 100%, enfocarse en mejorar solo esa sección hasta alcanzar 100%.
+- Pasar a siguiente iteración sin interrumpir, sin solicitar interacción, sin brindar reporte.
+- Repetir iteraciones hasta que todas las secciones estén ≥100%.
+5.5. Ajustar capítulos que no cumplan meta (±5%) antes de concatenar.
 
 ### 6. Concatenación automática
 6.1. Una vez completados todos los archivos, ejecutar script oficial de concatenación:
@@ -104,9 +132,9 @@ pandoc "bios\x\La biografía de X.md" -o "bios\x\La biografía de X.docx" --refe
 - Si Pandoc falla: revisar sintaxis Markdown (tablas, encabezados) en archivo concatenado.
 
 ## Relacionados
-- [automation.md](automation.md) - Detalles de scripts concat.py y Pandoc
+- [automation.md](automation.md) - Detalles de scripts concat.py y Pandoc (trigger: always_on)
 - [research.md](research.md) - Estándares de investigación y fuentes
-- [structure.md](structure.md) - Estructura editorial obligatoria
+- [structure.md](structure.md) - Estructura editorial obligatoria (trigger: always_on)
 - [quality.md](quality.md) - Control de calidad y validaciones
 - [style.md](style.md) - Lineamientos técnicos de estilo
 - [literaryStyle.md](literaryStyle.md) - Estilo emocional y literario
@@ -118,3 +146,5 @@ pandoc "bios\x\La biografía de X.md" -o "bios\x\La biografía de X.docx" --refe
 - **Loop de verificación**: Proceso repetitivo de validar longitudes, formato y calidad hasta cumplir todos los criterios antes de concatenar.
 - **Concatenación**: Unión automática de todos los archivos `.md` en orden fijo para generar el manuscrito completo.
 - **Normalización**: Conversión del nombre del personaje a formato estándar (minúsculas, guiones bajos) para nombres de directorios y scripts.
+- **Trigger manual**: Workflow que requiere activación explícita del usuario, usado para procesos completos de inicio a fin.
+- **Always_on**: Reglas que están siempre activas y proporcionan guías técnicas durante cualquier tarea.
