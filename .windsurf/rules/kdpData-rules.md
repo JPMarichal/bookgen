@@ -2,39 +2,74 @@
 trigger: manual
 ---
 
-Ninguno de los items siguientes se refiere en forma alguna a los archivos de sistema o metodología de redacción. Se concentran en el contenido del libro mismo, en una orientación a la publicación y venta.
+# Metadatos y optimización KDP
 
-Subtítulo: una sentencia muy breve descriptiva e interesante.
+## Objetivo
+Generar metadatos comerciales completos para publicación en Amazon KDP, incluyendo subtítulo, categorías, palabras clave SEO, descripción de venta y cálculo preciso del ancho del lomo usando `spine_width.py`.
 
-Categorías propuestas: las 10 categorías en español más apropiadas para el libro según el esquema de Amazon.mx
+## Entradas requeridas
+- Archivo Word final generado: `docx/x/La biografía de X.docx`
+- Número total de páginas del libro (contado manualmente desde el .docx)
+- Manuscrito completo para revisar contenido y generar descripción de venta
+- Conocimiento del personaje y temas principales para palabras clave SEO
+- Variables de configuración desde `.env`:
+  - `TOTAL_WORDS`: Meta global de palabras (para validación)
+  - `WORDS_PER_CHAPTER`: Meta de palabras por capítulo (para validación)
 
-Descripción de venta para Amazon KDP: Esta descripción se dirige directamente al lector (segunda persona del singular). Usa keywords de seo. Incluye la guía de contenido de las secciones y capítulos, uno por uno, semejante a un índice. Promueve en la descripción todos los puntos fuertes que hacen único a este ejemplar. 
+## Pasos automáticos
 
-Palabras clave: 15 palabras clave seo, dirigidas a facilitar el hallazgo del libro en la plataforma de Amazon.
+### 1. Preparación
+- Verificar que el archivo `.docx` final esté generado en `docx/x/`
+- Solicitar al usuario el número total de páginas del documento Word
+- Crear directorio `bios/x/kdp/` si no existe
+- Crear directorio `bios/x/kdp/logs/` para registros
 
-
-
-Ancho del lomo: El cálculo debe realizarse exclusivamente ejecutando el script:
-
+### 2. Cálculo del ancho del lomo
+Ejecutar el script obligatoriamente:
 ```bash
 python spine_width.py <total_paginas>
 ```
 
-Donde `<total_paginas>` es el número total de páginas del libro, determinado manualmente por el usuario tras revisar el archivo `.docx` final generado. Este dato es único para cada libro y no debe almacenarse en `.env` ni en variables globales.
-
-Si no se cuenta con el total de páginas al inicio del proceso, debe preguntarse explícitamente al usuario y no avanzar hasta obtenerlo. El proceso de metadatos y cálculo de lomo debe detenerse hasta contar con ese dato.
-
-Opcionalmente, si el material de impresión es diferente (por ejemplo, papel color o gramaje especial), puedes usar:
-
+Para papel color u opciones especiales:
 ```bash
 python spine_width.py <total_paginas> --page-thickness 0.0033 --precision 3
 ```
 
-Consulta la documentación de `spine_width.py` para más detalles sobre los parámetros `--page-thickness` y `--precision`.
+### 3. Generación de metadatos
+- **Subtítulo**: Crear una sentencia breve, descriptiva e interesante (máximo 10-12 palabras)
+- **Categorías**: Proponer 10 categorías relevantes según esquema de Amazon.mx
+- **Palabras clave**: Identificar 15 palabras clave SEO para facilitar descubrimiento
+- **Descripción de venta**: Redactar descripción dirigida al lector (segunda persona singular), con:
+  - Keywords SEO integrados naturalmente
+  - Guía de contenido de secciones y capítulos (como índice)
+  - Puntos fuertes que hacen único al libro
 
-El resultado debe copiarse manualmente en el archivo `bios/x/kdp/metadata.md` bajo el campo "Ancho del lomo", junto con la fecha y hora del cálculo, y la fuente del número de páginas utilizada (por ejemplo: "contado manualmente en docx").
+### 4. Documentación
+Crear dos archivos en `bios/x/kdp/`:
 
-**Checklist para metadatos KDP**
+**metadata.md** contendrá:
+- Subtítulo
+- 10 categorías propuestas
+- 15 palabras clave SEO
+- Ancho del lomo con formato completo (ver ejemplo abajo)
+
+**descripcion.md** contendrá:
+- Descripción de venta para Amazon KDP (larga, con términos SEO de cola larga)
+
+## Validaciones/Logs
+- **Archivo Word final**: Debe existir `docx/x/La biografía de X.docx` antes de generar metadatos
+- **Número de páginas**: Usuario debe proporcionar el conteo exacto del documento Word
+- **Ancho del lomo**: Calculado con `spine_width.py`, formato completo registrado en `metadata.md`
+- **Subtítulo**: Máximo 10-12 palabras, descriptivo y atractivo
+- **Categorías**: Exactamente 10 categorías relevantes para Amazon.mx
+- **Palabras clave**: Exactamente 15 palabras clave SEO
+- **Descripción de venta**: Segunda persona singular, keywords integrados, índice de contenido incluido
+- **Archivos generados**:
+  - `bios/x/kdp/metadata.md` con todos los metadatos
+  - `bios/x/kdp/descripcion.md` con descripción de venta
+  - `bios/x/kdp/logs/spine-calculation-<fecha>.log` con resultado del cálculo
+
+**Checklist para metadatos KDP:**
 
 - [ ] Subtítulo breve y atractivo
 - [ ] 10 categorías relevantes (Amazon.mx)
@@ -50,7 +85,14 @@ El resultado debe copiarse manualmente en el archivo `bios/x/kdp/metadata.md` ba
 - **Ancho del lomo (135 páginas, papel blanco, calculado el 2025-10-06 14:30, fuente: contado manualmente en docx)**: 0.94 cm
 ```
 
-No se permite el cálculo manual ni aproximaciones. Siempre usar el script para asegurar consistencia.
+## Fallbacks/Escalada
+- Si no se proporciona el número de páginas: detener proceso y solicitar explícitamente al usuario
+- Si `spine_width.py` falla: verificar que el script esté disponible y que el número de páginas sea válido (>0)
+- Si faltan palabras clave relevantes: revisar el manuscrito completo para identificar temas principales
+- Si la descripción es muy breve: expandir con detalles de capítulos y puntos fuertes del libro
+- Si las categorías no son relevantes: investigar categorías similares en Amazon.mx para biografías del periodo/tema
+
+**Nota importante**: No se permite el cálculo manual ni aproximaciones del ancho del lomo. Siempre usar el script `spine_width.py` para asegurar consistencia.
 
 ### Cálculo del ancho del lomo
 
@@ -89,17 +131,7 @@ python spine_width.py 150
 - El total de páginas debe obtenerse de la **revisión manual** del archivo `.docx` generado.
 - Opcionalmente, puede contrastarse con el total de palabras esperadas en `.env` o con los resultados más recientes de `check_lengths.py` (sumando todas las secciones del archivo `bios/x/control/longitudes.csv`), pero el número definitivo **siempre** proviene del documento Word final.
 
-Previamente, el libro se ha creado y la versión docx está lista, por lo que no es necesario en este punto volver a esas tareas.
-
-Con los datos anteriores, crearás los siguientes archivos cuando el usuario solicite la creación de datos de kdp o metadata para un personaje específico:
-
-- bios/x/kdp/metadata.md
-- bios/x/kdp/descripcion.md
-
-El archivo descripcion.md contendrá la descripción de venta para Amazon KDP únicamente. Deberás revisar todo el libro antes de generar la descripción. La descripción debe ser larga y colmada de términos seo de cola larga. 
-
-
-El archivo metadata.md contendrá el subtítulo, las categorías propuestas, palabras clave, el ancho del lomo (calculado y documentado como se indica arriba).
+**Nota importante**: El libro debe estar completamente creado y la versión `.docx` lista antes de este paso. No es necesario volver a tareas de redacción o concatenación.
 
 ## Validaciones automatizables
 
@@ -169,8 +201,9 @@ Ejemplo concreto:
 ```
 
 ## Relacionados
-
 - [kdp.md](kdp.md) - Optimización general para KDP y ventas
 - [automation.md](automation.md) - Scripts de automatización
 - [workflow.md](workflow.md) - Flujo completo de trabajo
 - [quality.md](quality.md) - Control de calidad editorial
+- [GLOSARIO.md](../GLOSARIO.md) - Glosario unificado de términos del proyecto
+

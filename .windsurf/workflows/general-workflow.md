@@ -1,16 +1,24 @@
+---
+description: Pipeline para generar biografías KDP en batch: planificación, redacción, concatenación y exportación a Word.
 trigger: manual
 auto_execution_mode: 3
 ---
 
 # Workflow unificado para biografías KDP
 
-## Objetivo
+**Nota:** Este archivo es una copia de `workflow.md` ubicado en `rules/`. Ambos archivos contienen el mismo workflow. Se mantiene aquí por compatibilidad con estructuras previas del proyecto.
+
+## Cuándo ejecutar este workflow
 Pipeline completo para generar biografías KDP desde la selección del personaje hasta la exportación final a Word, asegurando cumplimiento de estándares editoriales y técnicos.
 
 ## Entradas requeridas
 - Archivo de colección en `colecciones/` con lista de personajes.
 - Acceso a fuentes bibliográficas verificables.
 - Herramientas instaladas: Python 3, Pandoc, plantilla Word en `wordTemplate/reference.docx`.
+- Variables de configuración desde `.env`:
+  - `CHAPTERS_NUMBER`: Número de capítulos (por defecto: 20)
+  - `TOTAL_WORDS`: Meta global de palabras (por defecto: 51000)
+  - `WORDS_PER_CHAPTER`: Meta de palabras por capítulo (por defecto: 2550)
 
 ## Pasos (orden estricto)
 1. **Selección**: Tomar el primer personaje sin ✅ en `colecciones/`, normalizar nombre para rutas.
@@ -51,13 +59,13 @@ Pipeline completo para generar biografías KDP desde la selección del personaje
 - Si Pandoc falla: revisar sintaxis Markdown (tablas, encabezados) en archivo concatenado.
 
 ## Relacionados
-- [automation.md](automation.md) - Detalles de scripts concat.py y Pandoc
-- [research.md](research.md) - Estándares de investigación y fuentes
-- [structure.md](structure.md) - Estructura editorial obligatoria
-- [quality.md](quality.md) - Control de calidad y validaciones
-- [style.md](style.md) - Lineamientos técnicos de estilo
-- [literaryStyle.md](literaryStyle.md) - Estilo emocional y literario
-- [lenght.md](lenght.md) - Validación de longitudes con check_lengths.py
+- [automation.md](../rules/automation.md) - Detalles de scripts concat.py y Pandoc
+- [research.md](../rules/research.md) - Estándares de investigación y fuentes
+- [structure.md](../rules/structure.md) - Estructura editorial obligatoria
+- [quality.md](../rules/quality.md) - Control de calidad y validaciones
+- [style.md](../rules/style.md) - Lineamientos técnicos de estilo
+- [literaryStyle.md](../rules/literaryStyle.md) - Estilo emocional y literario
+- [length.md](../rules/length.md) - Validación de longitudes con check_lengths.py
 
 ## Glosario de términos
 - **Batch**: Conjunto de capítulos o secciones redactadas de forma continua sin pausas, para mantener coherencia narrativa y tono.

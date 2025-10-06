@@ -12,6 +12,33 @@ Automatizar la concatenación de archivos Markdown en el orden correcto y la con
 - Nombre del personaje (normalizado o como argumento `-personaje`).
 - Archivo de colección en `colecciones/` con lista de personajes.
 - Plantilla de Word en `wordTemplate/reference.docx` para conversión con Pandoc.
+- Variables de configuración desde `.env`:
+  - `CHAPTERS_NUMBER`: Número de capítulos (por defecto: 20)
+  - `TOTAL_WORDS`: Meta global de palabras (por defecto: 51000)
+  - `WORDS_PER_CHAPTER`: Meta de palabras por capítulo (por defecto: 2550)
+
+### Leer variables desde .env
+
+**En Python:**
+```python
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
+chapters = int(os.getenv('CHAPTERS_NUMBER', '20'))
+total_words = int(os.getenv('TOTAL_WORDS', '51000'))
+words_per_chapter = int(os.getenv('WORDS_PER_CHAPTER', '2550'))
+```
+
+**En PowerShell:**
+```powershell
+Get-Content .env | ForEach-Object {
+    if ($_ -match '^([^=]+)=(.*)$') {
+        Set-Variable -Name $matches[1] -Value $matches[2]
+    }
+}
+# Usar: $CHAPTERS_NUMBER, $TOTAL_WORDS, $WORDS_PER_CHAPTER
+```
 
 ## Pasos automáticos
 1. Ejecutar script de concatenación:
@@ -106,6 +133,7 @@ Para cada verificación completada, adjuntar:
 - [structure.md](structure.md) - Orden de secciones y archivos
 - [quality.md](quality.md) - Validaciones antes de concatenar
 - [workflow.md](workflow.md) - Flujo completo de trabajo
+- [GLOSARIO.md](../GLOSARIO.md) - Glosario unificado de términos del proyecto
 
 ## Directorios
 - `colecciones/` → lista de personajes por colección

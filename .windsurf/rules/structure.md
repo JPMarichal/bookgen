@@ -11,6 +11,10 @@ Definir estructura uniforme y obligatoria para todos los manuscritos biográfico
 - Plan de trabajo en `esquemas/X - plan de trabajo.md` con distribución de capítulos.
 - Meta global de 51,000 palabras mínimo (~120 páginas).
 - Conocimiento del personaje y disponibilidad de documentación por periodo de vida.
+- Variables de configuración desde `.env`:
+  - `CHAPTERS_NUMBER`: Número de capítulos (por defecto: 20)
+  - `TOTAL_WORDS`: Meta global de palabras (por defecto: 51000)
+  - `WORDS_PER_CHAPTER`: Meta de palabras por capítulo (por defecto: 2550)
 
 ## Pasos automáticos
 1. Crear estructura de directorios `bios/x/` para el personaje.
@@ -107,6 +111,6 @@ Para cada verificación completada, adjuntar:
 
 ## Relacionados
 - [quality.md](quality.md) - Control de longitud y calidad
-- [lenght.md](lenght.md) - Validación de longitudes por sección
+- [length.md](length.md) - Validación de longitudes por sección
 - [automation.md](automation.md) - Concatenación automática
 - [workflow.md](workflow.md) - Integración en flujo completo

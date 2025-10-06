@@ -11,6 +11,10 @@ Garantizar que cada capítulo y el manuscrito completo cumplan con los estándar
 - Archivos `.md` de cada capítulo y sección en `bios/x/`.
 - Plan de trabajo en `esquemas/X - plan de trabajo.md` con metas de palabras por capítulo.
 - Archivo `bios/x/control/longitudes.csv` generado durante la planificación.
+- Variables de configuración desde `.env`:
+  - `CHAPTERS_NUMBER`: Número de capítulos (por defecto: 20)
+  - `TOTAL_WORDS`: Meta global de palabras (por defecto: 51000)
+  - `WORDS_PER_CHAPTER`: Meta de palabras por capítulo (por defecto: 2550)
 
 ## Pasos automáticos
 1. Al terminar cada capítulo, ejecutar validación de longitud:
@@ -93,7 +97,7 @@ Para cada verificación completada, adjuntar:
    ```
 
 ## Relacionados
-- [lenght.md](lenght.md) - Validación de longitudes con check_lengths.py
+- [length.md](length.md) - Validación de longitudes con check_lengths.py
 - [structure.md](structure.md) - Estructura y orden de secciones
 - [style.md](style.md) - Lineamientos de estilo narrativo
 - [literaryStyle.md](literaryStyle.md) - Estilo literario y emocional

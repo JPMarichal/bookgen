@@ -11,6 +11,10 @@ Ejecutar el loop de verificación de longitudes de manera completamente autónom
 - Archivo CSV de control: `bios/x/control/longitudes.csv`
 - Archivos de sección en `bios/x/*.md`
 - Nombre normalizado del personaje (minúsculas, guiones bajos)
+- Variables de configuración desde `.env`:
+  - `CHAPTERS_NUMBER`: Número de capítulos (por defecto: 20)
+  - `TOTAL_WORDS`: Meta global de palabras (por defecto: 51000)
+  - `WORDS_PER_CHAPTER`: Meta de palabras por capítulo (por defecto: 2550)
 
 ## Ejecución del script check_lengths.py
 
@@ -319,3 +323,4 @@ if __name__ == "__main__":
 - [structure.md](structure.md) - Estructura de secciones
 - [workflow.md](workflow.md) - Flujo completo de biografías
 - [automation.md](automation.md) - Scripts de automatización
+- [GLOSARIO.md](../GLOSARIO.md) - Glosario unificado de términos del proyecto
