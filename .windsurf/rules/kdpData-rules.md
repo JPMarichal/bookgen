@@ -101,20 +101,9 @@ El archivo descripcion.md contendrá la descripción de venta para Amazon KDP ú
 
 El archivo metadata.md contendrá el subtítulo, las categorías propuestas, palabras clave, el ancho del lomo (calculado y documentado como se indica arriba).
 
-- [ ] Subtítulo creado: breve, descriptivo e interesante
-- [ ] 10 categorías propuestas para Amazon.mx
-- [ ] 15 palabras clave SEO incluidas
-- [ ] Ancho del lomo calculado con `python spine_width.py <pages>`
-- [ ] Número de páginas registrado en metadata.md
-- [ ] Tipo de papel especificado (blanco/color)
-- [ ] Valor del ancho del lomo copiado a metadata.md
-- [ ] Fecha y hora del cálculo registrada
-- [ ] Validación: el número de páginas coincide con el archivo .docx final
-- [ ] Descripción de venta (descripcion.md) generada y revisada
-
 ## Validaciones automatizables
 
-### Checklist de verificación
+### Checklist de verificación completa
 
 Al crear metadatos KDP, un agente debe verificar:
 
@@ -132,6 +121,9 @@ Al crear metadatos KDP, un agente debe verificar:
 - [ ] Verificar que la descripción incluya keywords SEO relevantes
 - [ ] Verificar que la descripción mencione todas las secciones del libro
 - [ ] Verificar que ambos archivos (`metadata.md` y `descripcion.md`) existan en `bios/x/kdp/`
+- [ ] Verificar que el número de páginas registrado coincida con el archivo .docx final
+- [ ] Verificar que el tipo de papel esté especificado (blanco/color)
+- [ ] Verificar que la descripción de venta (descripcion.md) esté generada y revisada
 
 ### Evidencia a conservar
 
