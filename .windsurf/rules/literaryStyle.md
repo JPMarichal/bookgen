@@ -1,0 +1,5 @@
+---
+trigger: always_on
+---
+
+Sin perder la profundidad académica, el estilo debe ser narrativo, con un claro toque literario, emotivo y poético, con el objetivo de involucrar y envolver aún al lector más común y hacerle vivir y participar de la narración, aún como si la estuviera viviendo. Para ello, debes lograr la emoción y el uso de los sentidos, describir texturas, olores, sensaciones, etc. Debes usar adjetivos y todo tipo de conectores, usar de vez en cuando planteamientos reflexivos, etc. El lector debe tener la sensación de estar allí, de comprender los razonamientos y sentimientos detrás de las conductas y acciones, las repercusiones, los antecedentes. El resultado debe ser comprender y recordar la historia de forma natural porque la vivió. El sentimiento general del lector deberá ser no el de haber leído historia, sino una apasionante novela.
