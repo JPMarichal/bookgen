@@ -58,16 +58,16 @@ No uses citas directas. Narración corrida.
 
 Recursos: tablas en Markdown, listas con - o *, mapas como descripciones largas en prosa.
 
-Concatenación automática (script ps1)
+Concatenación automática (script Python)
 
 El archivo final debe ser bios/x/La biografía de X.md.
 
-Usa un script PowerShell fijo para concatenar en el orden correcto.
+Usa un script Python fijo para concatenar en el orden correcto.
 
 
 Ejecutar con:
 
-.\concat.ps1 -personaje "joseph_stalin"
+python concat.py -personaje "joseph_stalin"
 
 Versión final en Word
 

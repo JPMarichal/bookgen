@@ -32,6 +32,6 @@ words_per_chapter: 2550
    - El script actualiza `bios/x/control/longitudes.csv` con longitud real y % cumplimiento.  
    - Si alguna sección < 100%, la IA se enfoca en mejorar solo esa sección hasta que alcance 100%, entonces pasa a la siguiente iteración sin interrumpirte, sin solicitar interacción, sin brindar reporte, hasta terminar el loop.
    - Repetir iteraciones hasta que todas estén ≥100%. 
-6. Concatenación → ejecutar `concat.ps1 -personaje "x"` → `bios/x/concat/La biografía de X.md`.
+6. Concatenación → ejecutar `python concat.py -personaje "x"` → `bios/x/concat/La biografía de X.md`.
 7. Word → `pandoc "bios\x\La biografía de X.md" -o "bios\x\doc\concat\La biografía de X.docx" --reference-doc="wordTemplate\reference.docx"`.
 8. Cierre → marcar personaje con ✅ en `colecciones/`.

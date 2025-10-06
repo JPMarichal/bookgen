@@ -11,7 +11,7 @@ trigger: always_on
 - docx/ → versiones finales en Word.
 
 ## Scripts
-- concat.ps1 concatena en orden fijo:
+- concat.py concatena en orden fijo:
   - prólogo, introducción, cronología, capítulos 1–15, epílogo, glosario, dramatis personae, fuentes.
 
 ## Conversión
