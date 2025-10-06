@@ -1,14 +1,20 @@
 
----
 description: Pipeline para generar biografías KDP en batch: planificación, redacción, concatenación y exportación a Word.
 trigger: manual
 auto_execution_mode: 3
----
+
+<!--
+Changelog 2025-10-06:
+Este documento ha sido consolidado como la única fuente de verdad del workflow general para biografías KDP.
+Se ha eliminado `.windsurf/workflows/general-workflow.md` y todas las referencias deben apuntar a este archivo.
+La información de ambos archivos ha sido revisada y unificada aquí, sin pérdida de detalles ni secciones.
+-->
+
 
 # Workflow unificado para biografías KDP
 
-## Cuándo ejecutar este workflow
 
+## Cuándo ejecutar este workflow
 Este workflow tiene `trigger: manual`, lo que significa que **debe iniciarse explícitamente** cuando:
 - Se inicia un nuevo personaje de la colección (primera vez que se trabaja en esa biografía)
 - Se requiere generar una biografía completa desde cero
