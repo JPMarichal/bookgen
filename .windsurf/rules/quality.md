@@ -12,7 +12,7 @@ trigger: always_on
   - Inclusión de contexto histórico, sociopolítico y cultural.
 
 ## Antes de concatenar
-- Validar que el manuscrito completo supere las 51,000 palabras.
+- Validar que el manuscrito completo supere el total de palabras definido en `.env` (`TOTAL_WORDS`).
 - Confirmar que todas las secciones estén presentes en el orden correcto.
 - Revisar que los encabezados usen la jerarquía correcta (`#`, `##`, `###`).
 - Verificar que las tablas y listas en Markdown estén bien formadas.

@@ -23,7 +23,7 @@ Planificación
 
 Crea esquemas/X - plan de trabajo.md con:
 
-20 capítulos con título, descripción y meta de palabras equilibrada.
+Capítulos según `CHAPTERS_NUMBER` de `.env` con título, descripción y meta de palabras equilibrada.
 
 Ajuste de metas para capítulos con menos documentación (ej. infancia).
 
@@ -39,7 +39,7 @@ introduccion.md
 
 cronologia.md
 
-capitulo-01.md … capitulo-20.md
+capitulo-01.md … capitulo-N.md (N según `CHAPTERS_NUMBER` de `.env`)
 
 epilogo.md
 
@@ -49,7 +49,7 @@ dramatis-personae.md
 
 fuentes.md
 
-Cada capítulo debe alcanzar la meta definida en el plan (~2,550 palabras promedio).
+Cada capítulo debe alcanzar la meta definida en el plan (meta promedio según `WORDS_PER_CHAPTER` de `.env`).
 
 
 Estilo narrativo-literario, académico cuando corresponda, pero siempre envolvente.

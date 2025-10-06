@@ -2,7 +2,7 @@
 trigger: always_on
 ---
 
-Debes validar la longitud de capítulos y secciones an tes de la concatenación y hacer las correcciones necesarias y ajustes que requiera cada uno antes de concatenar. Todos los capítulos y secciones deben cumplir la meta establecida en el plan.
+Debes validar la longitud de capítulos y secciones antes de la concatenación y hacer las correcciones necesarias y ajustes que requiera cada uno antes de concatenar. Todos los capítulos y secciones deben cumplir la meta establecida en el plan.
 
 Puedes usar un comando como 
 

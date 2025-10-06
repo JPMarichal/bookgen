@@ -6,22 +6,23 @@ auto_execution_mode: 3
 # Workflow de biografías KDP
 
 ## Config
-chapters: 20
-total_words: 51000
-words_per_chapter: 2550
+Los siguientes parámetros se cargan desde el archivo `.env` en la raíz del proyecto:
+- `CHAPTERS_NUMBER`: Número de capítulos (ejemplo: 20)
+- `TOTAL_WORDS`: Total de palabras meta (ejemplo: 51000)
+- `WORDS_PER_CHAPTER`: Palabras meta por capítulo (ejemplo: 2550)
 
 ## Pasos
 1. Selección → tomar primer personaje sin ✅ en `colecciones/`, normalizar nombre.
 2. Fuentes → crear `esquemas/X - fuentes.md` con bibliografía verificable (APA/Chicago + URLs). Todas las fuentes deben ser online, existir y devolver 200 (no 404, 403, 500 u otros códigos de error).
 3. Plan → crear `esquemas/X - plan de trabajo.md` con:
-   - 20 capítulos (título, descripción, meta de palabras).  
+   - Capítulos según `CHAPTERS_NUMBER` de `.env` (título, descripción, meta de palabras).  
    - Longitud planificada para todas las secciones (prólogo, introducción, cronología, capítulos, epílogo, glosario, dramatis-personae, fuentes).  
    - Crear `bios/x/control/longitudes.csv` con esas metas iniciales.
 4. Redacción batch → generar en `bios/x/` todos los archivos en orden, de un tirón (sin pausas, sin reportes, sin interacción del usuario):  
    - `prologo.md`  
    - `introduccion.md`  
    - `cronologia.md`  
-   - `capitulo-01.md` … `capitulo-20.md`  
+   - `capitulo-01.md` … `capitulo-N.md` (N según `CHAPTERS_NUMBER` de `.env`)
    - `epilogo.md`  
    - `glosario.md`  
    - `dramatis-personae.md`  
