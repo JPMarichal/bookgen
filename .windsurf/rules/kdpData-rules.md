@@ -12,7 +12,45 @@ Descripción de venta para Amazon KDP: Esta descripción se dirige directamente 
 
 Palabras clave: 15 palabras clave seo, dirigidas a facilitar el hallazgo del libro en la plataforma de Amazon.
 
-Ancho del lomo: El ancho del lomo se calcula **exclusivamente** mediante `spine_width.py`. No uses cálculos manuales.
+
+
+Ancho del lomo: El cálculo debe realizarse exclusivamente ejecutando el script:
+
+```bash
+python spine_width.py <total_paginas>
+```
+
+Donde `<total_paginas>` es el número total de páginas del libro, determinado manualmente por el usuario tras revisar el archivo `.docx` final generado. Este dato es único para cada libro y no debe almacenarse en `.env` ni en variables globales.
+
+Si no se cuenta con el total de páginas al inicio del proceso, debe preguntarse explícitamente al usuario y no avanzar hasta obtenerlo. El proceso de metadatos y cálculo de lomo debe detenerse hasta contar con ese dato.
+
+Opcionalmente, si el material de impresión es diferente (por ejemplo, papel color o gramaje especial), puedes usar:
+
+```bash
+python spine_width.py <total_paginas> --page-thickness 0.0033 --precision 3
+```
+
+Consulta la documentación de `spine_width.py` para más detalles sobre los parámetros `--page-thickness` y `--precision`.
+
+El resultado debe copiarse manualmente en el archivo `bios/x/kdp/metadata.md` bajo el campo "Ancho del lomo", junto con la fecha y hora del cálculo, y la fuente del número de páginas utilizada (por ejemplo: "contado manualmente en docx").
+
+**Checklist para metadatos KDP**
+
+- [ ] Subtítulo breve y atractivo
+- [ ] 10 categorías relevantes (Amazon.mx)
+- [ ] 15 palabras clave SEO
+- [ ] Ancho del lomo calculado con `spine_width.py` y copiado a `metadata.md`
+- [ ] Fecha y hora del cálculo del lomo registrada en `metadata.md`
+- [ ] Fuente del número de páginas (ej: "contado manualmente en docx") indicada en `metadata.md`
+- [ ] Validar que el total de páginas coincide con `TOTAL_WORDS` y `WORDS_PER_CHAPTER` (si aplica)
+
+**Ejemplo de registro en metadata.md:**
+
+```markdown
+- **Ancho del lomo (135 páginas, papel blanco, calculado el 2025-10-06 14:30, fuente: contado manualmente en docx)**: 0.94 cm
+```
+
+No se permite el cálculo manual ni aproximaciones. Siempre usar el script para asegurar consistencia.
 
 ### Cálculo del ancho del lomo
 
@@ -60,39 +98,8 @@ Con los datos anteriores, crearás los siguientes archivos cuando el usuario sol
 
 El archivo descripcion.md contendrá la descripción de venta para Amazon KDP únicamente. Deberás revisar todo el libro antes de generar la descripción. La descripción debe ser larga y colmada de términos seo de cola larga. 
 
-El archivo metadata.md contendrá el subtítulo, las categorías propuestas, palabras clave, y el ancho del lomo.
 
-### Contenido de metadata.md
-
-El archivo `bios/x/kdp/metadata.md` debe incluir:
-
-1. **Subtítulo**: Una sentencia muy breve descriptiva e interesante.
-2. **Categorías propuestas**: Las 10 categorías en español más apropiadas para el libro según el esquema de Amazon.mx.
-3. **Palabras clave**: 15 palabras clave SEO, dirigidas a facilitar el hallazgo del libro en la plataforma de Amazon.
-4. **Ancho del lomo**: El valor calculado mediante `spine_width.py`, incluyendo:
-   - Número total de páginas utilizado
-   - Tipo de papel (blanco y negro estándar, o especificar si es color u otro)
-   - Valor calculado en centímetros
-   - Fecha y hora del cálculo (formato ISO 8601: `YYYY-MM-DD HH:MM:SS`)
-
-**Ejemplo de formato para el ancho del lomo en metadata.md**:
-```markdown
-- **Ancho del lomo (150 páginas, papel blanco)**: 0.43 cm
-- **Fecha de cálculo**: 2024-01-15 14:30:00
-```
-
-O para interiores a color:
-```markdown
-- **Ancho del lomo (200 páginas, papel color)**: 0.66 cm  
-  _(calculado con --page-thickness 0.0033)_
-- **Fecha de cálculo**: 2024-01-15 14:35:00
-```
-
-El nombre del autor es Juan Pablo Marichal Catalán.
-
-### Checklist para creación de metadata KDP
-
-Antes de finalizar la creación de archivos KDP, verifica:
+El archivo metadata.md contendrá el subtítulo, las categorías propuestas, palabras clave, el ancho del lomo (calculado y documentado como se indica arriba).
 
 - [ ] Subtítulo creado: breve, descriptivo e interesante
 - [ ] 10 categorías propuestas para Amazon.mx
