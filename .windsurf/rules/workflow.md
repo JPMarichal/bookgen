@@ -3,14 +3,12 @@ description: Pipeline para generar biografías KDP en batch: planificación, red
 trigger: manual
 auto_execution_mode: 3
 
-<!--
-Changelog 2025-10-06:
-Este documento ha sido consolidado como la única fuente de verdad del workflow general para biografías KDP.
-Se ha eliminado `.windsurf/workflows/general-workflow.md` y todas las referencias deben apuntar a este archivo.
-La información de ambos archivos ha sido revisada y unificada aquí, sin pérdida de detalles ni secciones.
--->
+## Changelog
 
-
+**2025-10-06**
+- Este documento ha sido consolidado como la única fuente de verdad del workflow general para biografías KDP.
+- Se ha eliminado `.windsurf/workflows/general-workflow.md` y todas las referencias deben apuntar a este archivo.
+- La información de ambos archivos ha sido revisada y unificada aquí, sin pérdida de detalles ni secciones.
 # Workflow unificado para biografías KDP
 
 
