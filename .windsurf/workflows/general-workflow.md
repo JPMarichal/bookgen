@@ -107,7 +107,7 @@ python concat.py -personaje "nombre_personaje"
 ### 7. Conversión a Word
 7.1. Convertir con Pandoc usando plantilla de Word:
 ```
-pandoc "bios\x\La biografía de X.md" -o "bios\x\La biografía de X.docx" --reference-doc="wordTemplate\reference.docx"
+pandoc "bios/x/La biografía de X.md" -o "bios/x/La biografía de X.docx" --reference-doc="wordTemplate/reference.docx"
 ```
 7.2. Mover el archivo `.docx` a `docx/x/La biografía de X.docx`.
 
