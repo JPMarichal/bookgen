@@ -29,6 +29,10 @@ Pipeline completo para generar biografías KDP desde la selección del personaje
 - Archivo de colección en `colecciones/` con lista de personajes.
 - Acceso a fuentes bibliográficas verificables.
 - Herramientas instaladas: Python 3, Pandoc, plantilla Word en `wordTemplate/reference.docx`.
+- Variables de configuración desde `.env`:
+  - `CHAPTERS_NUMBER`: Número de capítulos (por defecto: 20)
+  - `TOTAL_WORDS`: Meta global de palabras (por defecto: 51000)
+  - `WORDS_PER_CHAPTER`: Meta de palabras por capítulo (por defecto: 2550)
 
 ## Pasos (orden estricto)
 1. **Selección**: Tomar el primer personaje sin ✅ en `colecciones/`, normalizar nombre para rutas.
@@ -167,7 +171,8 @@ Para cada fase del workflow, adjuntar:
 - [quality.md](quality.md) - Control de calidad y validaciones
 - [style.md](style.md) - Lineamientos técnicos de estilo
 - [literaryStyle.md](literaryStyle.md) - Estilo emocional y literario
-- [lenght.md](lenght.md) - Validación de longitudes con check_lengths.py
+- [length.md](length.md) - Validación de longitudes con check_lengths.py
+- [GLOSARIO.md](../GLOSARIO.md) - Glosario unificado de términos del proyecto
 
 ## Glosario de términos
 - **Batch**: Conjunto de capítulos o secciones redactadas de forma continua sin pausas, para mantener coherencia narrativa y tono.
