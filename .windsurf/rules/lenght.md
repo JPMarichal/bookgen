@@ -2,7 +2,7 @@
 trigger: always_on
 ---
 
-# Validación automática de longitudes
+Debes validar la longitud de capítulos y secciones antes de la concatenación y hacer las correcciones necesarias y ajustes que requiera cada uno antes de concatenar. Todos los capítulos y secciones deben cumplir la meta establecida en el plan.
 
 ## Objetivo
 Ejecutar el loop de verificación de longitudes de manera completamente autónoma, sin intervención humana, hasta que todas las secciones alcancen o superen el 100% de cumplimiento.
