@@ -16,9 +16,6 @@ Establecer lineamientos de optimización editorial y comercial para maximizar el
 
 ## Pasos automáticos
 
-### Optimización de títulos y subtítulos
-- Cada capítulo debe tener un título claro en el encabezado `#`
-- Subtítulos internos (`##`, `###`) deben reflejar ideas buscables y atractivas
 
 ### Optimización de títulos y subtítulos
 - Cada capítulo debe tener un título claro en el encabezado `#`
