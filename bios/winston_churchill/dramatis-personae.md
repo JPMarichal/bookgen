@@ -1,0 +1,62 @@
+# Dramatis personae
+
+- **Winston Churchill**: Político y estadista británico (1874-1965); primer ministro en 1940-1945 y 1951-1955; orador, escritor y pintor.
+- **Clementine Churchill**: Esposa de Winston; consejera influyente, activista social y gestora de apoyo civil durante la guerra.
+- **Randolph Churchill**: Hijo mayor; periodista, oficial de inteligencia, figura controvertida por su carácter impulsivo.
+- **Sarah Churchill**: Hija; actriz y miembro de la WAAF; acompañó a su padre en misiones diplomáticas.
+- **Mary Churchill (Lady Soames)**: Hija menor; sirvió en la ATS; autora de biografía sobre su padre.
+- **Lord Randolph Churchill**: Padre de Winston; político conservador, influyó en su deseo de servir y destacar.
+- **Jennie Jerome**: Madre estadounidense de Winston; fomentó su vocación literaria y social.
+- **Franklin D. Roosevelt**: Presidente de Estados Unidos (1933-1945); aliado clave en la Segunda Guerra Mundial.
+- **Harry S. Truman**: Presidente de Estados Unidos (1945-1953); colaboró con Churchill en la transición hacia la Guerra Fría.
+- **Joseph Stalin**: Líder de la Unión Soviética; aliado incómodo durante la guerra; interlocutor esencial en Yalta y Potsdam.
+- **Clement Attlee**: Primer ministro laborista (1945-1951); implementó el Estado de Bienestar y derrotó a Churchill en elecciones de 1945.
+- **Anthony Eden**: Canciller y sucesor de Churchill en 1955; colaborador cercano en política exterior.
+- **Neville Chamberlain**: Primer ministro británico (1937-1940); reemplazado por Churchill tras el fracaso del apaciguamiento.
+- **David Lloyd George**: Primer ministro liberal (1916-1922); mentor y rival en la carrera política de Churchill.
+- **King George VI**: Rey del Reino Unido durante la Segunda Guerra Mundial; apoyó la coalición y la resistencia.
+- **Queen Elizabeth II**: Monarca desde 1952; trabajó con Churchill en su segundo mandato.
+- **Charles de Gaulle**: Líder de la Francia Libre; aliado desafiante pero indispensable para legitimidad europea.
+- **Dwight D. Eisenhower**: Comandante Supremo Aliado en Europa; coordinó con Churchill la Operación Overlord.
+- **Bernard Montgomery**: General británico; comandante del 8.º Ejército en El Alamein y del 21.º Grupo de Ejércitos en Normandía.
+- **Alan Brooke (Lord Alanbrooke)**: Jefe del Estado Mayor Imperial; asesor estratégico de Churchill durante la guerra.
+- **Hugh Dowding**: Mariscal del Aire; lideró la RAF en la Batalla de Inglaterra.
+- **Ernest Bevin**: Ministro de Trabajo y luego de Relaciones Exteriores; figura central del laborismo y la reconstrucción.
+- **Mahatma Gandhi**: Líder del movimiento independentista indio; contrapunto moral a la visión imperial de Churchill.
+- **Jawaharlal Nehru**: Primer ministro de la India independiente; interlocutor en la transición postimperial.
+- **Field Marshal Erwin Rommel**: Comandante alemán; rival directo en el norte de África.
+- **Adolf Hitler**: Líder nazi; adversario principal cuya amenaza definió la estrategia de Churchill.
+- **Field Marshal Jan Smuts**: Primer ministro sudafricano; aliado de Churchill en la Commonwealth y en la planificación estratégica global.
+- **Lord Beaverbrook**: Magnate de prensa y ministro de Producción; aceleró la fabricación de aviones y apoyó la propaganda.
+- **William Lyon Mackenzie King**: Primer ministro de Canadá; coordinó el apoyo militar y logístico desde Norteamérica.
+- **Harry Hopkins**: Asesor cercano de Roosevelt; puente diplomático entre Washington y Londres en Lend-Lease y conferencias aliadas.
+- **William Stephenson**: Agente británico en Nueva York (“Intrepid”); organizó la inteligencia en América antes de la entrada estadounidense en la guerra.
+- **Alan Turing**: Matemático de Bletchley Park; descifró códigos Enigma, aportando ventaja táctica decisiva.
+- **Violet Bonham Carter**: Amiga y correligionaria liberal; comentarista política que defendió el liderazgo de Churchill en la oposición.
+- **Lord Moran (Charles Wilson)**: Médico personal; documentó la salud de Churchill y su capacidad de trabajo durante la guerra.
+- **Elizabeth Layton**: Secretaria; transcribió discursos y notas en los Cabinet War Rooms.
+- **Frederick Lindemann (Lord Cherwell)**: Consejero científico; influyó en decisiones técnicas, incluyendo bombardeos estratégicos.
+- **Jock Colville**: Secretario privado; dejó diarios que revelan la dinámica interna del gobierno.
+- **Brendan Bracken**: Ministro de Información; aliado político y protector mediático de Churchill.
+- **Eleanor Roosevelt**: Primera dama de Estados Unidos; cultivó amistad con Clementine y acompañó los esfuerzos humanitarios.
+- **Harold Macmillan**: Ministro de Vivienda y luego de Defensa; ejecutó el programa de 300 000 viviendas anuales y apoyó la “relación especial”.
+- **Rab Butler**: Canciller del Exchequer en el segundo gobierno de Churchill; arquitecto del consenso económico de posguerra.
+- **Lord Mountbatten**: Comandante Supremo Aliado en el Sudeste Asiático; coordinó operaciones contra Japón y mantuvo contacto directo con Churchill sobre la descolonización india.
+- **John Maynard Keynes**: Economista británico; negoció el préstamo anglo-estadounidense de 1945 y debatió con Churchill sobre política monetaria.
+- **Leo Amery**: Político conservador; antiguo mentor, discrepó con Churchill en la cuestión india y el gobierno de coalición.
+- **Tito (Josip Broz)**: Líder partisano yugoslavo; su reconocimiento en 1943 fue impulsado por Churchill para debilitar a los nazis en los Balcanes.
+- **Harold Nicolson**: Diputado y diplomático; miembro del “Focus” antibelicista, apoyó a Churchill durante los años de ostracismo.
+- **Vera Lynn**: Cantante icónica del Blitz; su música reforzó la moral civil promovida por el Ministerio de Información.
+- **Lord Halifax (Edward Wood)**: Predecesor de Eden como canciller; defensor del apaciguamiento tempranamente, luego embajador en Washington coordinando con Churchill.
+- **General Ismay (Pug Ismay)**: Jefe del Estado Mayor personal de Churchill; enlace con los jefes militares y acompañante en conferencias aliadas.
+- **John F. Kennedy**: Presidente de Estados Unidos (1961-1963); otorgó a Churchill la ciudadanía honoraria estadounidense y mantuvo correspondencia durante la crisis de los misiles.
+- **Anthony Montague Browne**: Secretario privado en la vejez de Churchill; organizó archivos, viajes y la agenda de visitas a Chartwell.
+- **Mary Soames**: Historiadora y editora de la correspondencia familiar; preservó el legado documental de los Churchill.
+- **Shashi Tharoor**: Político y autor contemporáneo; crítico de las políticas imperiales de Churchill, clave para debates sobre memoria colonial.
+- **Madhusree Mukerjee**: Escritora e investigadora; analizó la hambruna de Bengala y cuestionó la responsabilidad del gabinete de Churchill.
+- **Andrew Roberts**: Historiador moderno; autor de *Churchill: Walking with Destiny*, influyente en reinterpretar su liderazgo.
+- **Martin Gilbert**: Biógrafo oficial; compiló ocho volúmenes exhaustivos basados en archivos familiares y gubernamentales.
+- **Erik Larson**: Cronista de *The Splendid and the Vile*; ofrece visión íntima de la familia Churchill durante el Blitz.
+- **Peter Hennessy**: Historiador constitucional; evaluó el papel de Churchill en la evolución del Estado británico.
+- **William Manchester**: Autor de la trilogía inacabada *The Last Lion*; su narrativa popularizó la imagen heroica de Churchill.
+- **Gary Oldman**: Actor que interpretó a Churchill en *Darkest Hour* (2017); reavivó el interés global en su figura.

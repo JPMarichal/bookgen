@@ -1,0 +1,51 @@
+# Glosario
+
+- **Acuerdo de Potsdam**: Declaración firmada en agosto de 1945 por Reino Unido, Estados Unidos y la Unión Soviética. Estableció directrices para la desmilitarización, desnazificación y reconstrucción de Alemania. Churchill participó en la fase inicial antes de ser sustituido por Clement Attlee tras la derrota electoral.
+- **Almirantazgo**: Departamento del gobierno británico responsable de la Royal Navy hasta 1964. Churchill lo dirigió en 1911-1915 y nuevamente en 1939-1940, impulsando dreadnoughts, portaaviones improvisados y el uso masivo del radar en escoltas oceánicas.
+- **Atlántico Norte**: Ruta marítima que conecta América del Norte con el Reino Unido y Europa occidental. Fue arteria vital para convoyes de alimentos, petróleo y armamento. Su protección condicionó decisiones estratégicas de Churchill durante toda la guerra.
+- **Batalla del Atlántico**: Campaña naval que se extendió desde 1939 hasta 1945. Enfrentó convoyes aliados contra submarinos y corsarios alemanes. Churchill afirmó que si los U-Boote ganaban, la guerra estaría perdida, reflejando su prioridad sobre este frente.
+- **Batalla de Inglaterra**: Enfrentamiento aéreo de julio a octubre de 1940. La RAF derrotó a la Luftwaffe, evitó la invasión nazi y cimentó el discurso “Never was so much owed by so many to so few”. Consolidó la imagen de Churchill como líder inquebrantable.
+- **BBC Home Service**: Principal emisora radiofónica británica durante la Segunda Guerra Mundial. Difundió los discursos de Churchill, boletines del Ministerio de Información y programas de apoyo moral. Su cobertura moldeó el “Blitz spirit”.
+- **Bengala (hambruna de 1943)**: Catástrofe alimentaria en la India británica que causó millones de muertes. Las decisiones logísticas de Londres, bajo el gobierno de Churchill, fueron cuestionadas por desviar buques hacia campañas en el Mediterráneo.
+- **Cabinet War Rooms**: Búnker subterráneo en Whitehall donde el gabinete de guerra se reunía durante los bombardeos. Conserva mapas, teléfonos y pizarras originales. Símbolo del control centralizado que Churchill ejerció sobre la conducción del conflicto.
+- **Cairo Conference (1943)**: Reunión entre Churchill, Franklin D. Roosevelt y Chiang Kai-shek. Definió objetivos aliados en Asia y prometió independencia a territorios ocupados por Japón. Demostró la dimensión global de la estrategia churchilliana.
+- **Combined Chiefs of Staff**: Comité conjunto anglo-estadounidense encargado de coordinar operaciones militares y logística global. Churchill se apoyó en él en cada conferencia aliada para armonizar prioridades con Washington.
+- **Commonwealth of Nations**: Comunidad de cooperación voluntaria que sucedió al Imperio Británico. Churchill defendió su continuidad como vínculo cultural y político entre Reino Unido y antiguos dominios autónomos.
+- **Conferencia de Moscú (1942)**: Viaje de Churchill a la Unión Soviética tras la invasión alemana. Allí estableció la alianza anglo-soviética, discutió envíos de armamento y acordó ofensivas coordinadas.
+- **Conferencia de Yalta (1945)**: Encuentro en Crimea entre Churchill, Roosevelt y Stalin. Delimitó zonas de ocupación en Alemania, reorganizó fronteras polacas y programó la entrada soviética en la guerra del Pacífico.
+- **Cortina de Hierro**: Metáfora pronunciada por Churchill en Fulton, Missouri (1946). Identificó la división política y militar de Europa entre bloques enfrentados y anticipó la Guerra Fría.
+- **Declaración de las Naciones Unidas (1942)**: Compromiso firmado por 26 países aliados para derrotar al Eje y no negociar armisticios separados. Precedente directo de la Organización de las Naciones Unidas.
+- **Defensa civil**: Conjunto de medidas de protección para la población británica: refugios antiaéreos, brigadas contra incendios, rutas de evacuación y voluntariado. Churchill los exaltó como héroes cotidianos.
+- **Enigma**: Máquina de cifrado alemana. Su desarticulación en Bletchley Park proporcionó inteligencia decisiva sobre convoyes y ofensivas terrestres. Churchill valoró ULTRA como un multiplicador estratégico.
+- **Estado de Bienestar**: Sistema de seguridad social propuesto por William Beveridge en 1942 y aplicado tras la guerra. Incluye el Servicio Nacional de Salud, seguros de desempleo y pensiones contributivas.
+- **Foro de Bretton Woods (1944)**: Conferencia que creó el Fondo Monetario Internacional y el Banco Mundial. Churchill apoyó su ratificación como herramienta de estabilidad financiera y comercial.
+- **Fulton**: Ciudad estadounidense donde Churchill pronunció el discurso “The sinews of peace”. Alberga el National Churchill Museum y simboliza el inicio público de la Guerra Fría.
+- **Guerra total**: Estrategia que implica movilizar industria, finanzas, ciencia y población civil hacia el esfuerzo bélico. Churchill la adoptó tras Dunkerque, nacionalizando fábricas y controlando precios.
+- **Home Guard**: Fuerza de defensa territorial formada por voluntarios británicos no aptos para el servicio regular. Actuó como respaldo ante una invasión y colaboró en tareas logísticas.
+- **Imperio Británico**: Conjunto de territorios administrados por la Corona británica. Durante la vida de Churchill pasó de apogeo colonial a proceso de descolonización acelerada tras 1945.
+- **Informe Beveridge**: Documento que identificó cinco “gigantes” sociales (miseria, enfermedad, ignorancia, suciedad y ociosidad). Inspiró reformas sociales defendidas por el laborismo y debatidas por Churchill.
+- **Lend-Lease**: Programa estadounidense de préstamo y arriendo de armamento, barcos y alimentos. Permitió a Gran Bretaña resistir antes de la entrada de Estados Unidos en la guerra.
+- **Logística de convoyes**: Sistema de agrupación de barcos mercantes escoltados por destructores y corbetas. Su coordinación salvó millones de toneladas de suministros críticos.
+- **London Blitz Spirit**: Expresión mediática que sintetiza la resiliencia colectiva londinense durante los bombardeos nocturnos de 1940-1941.
+- **Operación Barbarroja**: Invasión alemana a la Unión Soviética iniciada el 22 de junio de 1941. Obligó a Churchill a pactar con Stalin y a incrementar envíos de armas al frente oriental.
+- **Operación Dynamo**: Evacuación de Dunkerque (26 de mayo-4 de junio de 1940) que rescató a más de 330.000 soldados. Fue presentada como “milagro de liberación”.
+- **Operación Husky**: Desembarco aliado en Sicilia (julio de 1943) que abrió el frente italiano, provocó la caída de Mussolini y permitió controlar el Mediterráneo central.
+- **Operación Overlord**: Nombre clave del desembarco de Normandía (6 de junio de 1944). Incluyó elaborados engaños, fuerzas multinacionales y la construcción de puertos artificiales Mulberry.
+- **Operación Sea Lion**: Plan alemán de invasión a Gran Bretaña. Su aplazamiento indefinido, tras la Batalla de Inglaterra, selló el fracaso del intento nazi de conquistar las islas.
+- **Operación Torch**: Desembarco aliado en el norte de África (noviembre de 1942). Facilitó el avance sobre Túnez y la cooperación operacional con Estados Unidos.
+- **Plan Marshall**: Programa económico estadounidense lanzado en 1948 para reconstruir Europa occidental y frenar el avance comunista. Churchill lo apoyó como inversión en estabilidad.
+- **RAF (Royal Air Force)**: Fuerza aérea británica. Jugó roles clave en la defensa del cielo británico, campañas de bombardeo y apoyo táctico terrestre.
+- **Racionamiento**: Política de control de alimentos y combustibles implementada desde 1940. Garantizó distribución equitativa y preservó reservas estratégicas.
+- **Relación especial**: Concepto que describe la alianza estratégica, cultural y económica entre Reino Unido y Estados Unidos. Churchill fue uno de sus arquitectos.
+- **Servicio Nacional de Salud (NHS)**: Sistema público de salud creado en 1948. Aun desde la oposición, Churchill defendió su permanencia con ajustes presupuestarios.
+- **SOE (Special Operations Executive)**: Agencia secreta británica fundada en 1940 para “prender fuego a Europa”. Entrenó comandos, coordinó sabotajes y apoyó a la resistencia.
+- **Telégrafo cifrado “Red”**: Red de comunicaciones seguras que enlazó Downing Street con la Casa Blanca y el Pentágono, permitiendo decisiones conjuntas en tiempo real.
+- **Telón de Acero**: Véase Cortina de Hierro; se refiere a la barrera ideológica y física que separó Europa oriental de Occidente tras 1945.
+- **UNESCO**: Agencia de la ONU dedicada a educación, ciencia y cultura. Churchill apoyó su creación como pilar de la reconstrucción moral posbélica.
+- **United Nations (ONU)**: Organización internacional fundada en 1945. Churchill contribuyó a su diseño, defendiendo el derecho de veto para las potencias vencedoras.
+- **V1 y V2**: Armas de represalia alemanas con motor a reacción (V1) y cohetes balísticos (V2). Su amenaza impulsó mejoras en radares y artillería antiaérea.
+- **Victory in Europe Day (VE Day)**: 8 de mayo de 1945, fecha de la capitulación alemana. Churchill encabezó los discursos que anunciaron la victoria en Europa.
+- **War Cabinet**: Comité reducido del gobierno británico que gestionó la guerra con representantes conservadores, laboristas y liberales.
+- **WVS (Women’s Voluntary Service)**: Organización femenina de voluntariado que operó comedores, centros de evacuación y servicios de emergencia.
+- **York Minster Speech**: Discurso de 1942 tras la devastación de la catedral de York. Churchill enfatizó la reconstrucción y la voluntad de resistir.
+- **Zona de ocupación**: Región alemana bajo administración aliada tras 1945. La zona británica cubrió el noroeste y fue base para la futura República Federal de Alemania.
