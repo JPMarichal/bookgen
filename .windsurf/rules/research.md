@@ -7,6 +7,9 @@ trigger: always_on
 ## Objetivo
 Establecer metodología rigurosa de investigación y documentación de fuentes bibliográficas verificables, asegurando que todo contenido histórico esté respaldado por fuentes académicas o primarias confiables antes de iniciar la redacción.
 
+## Origen
+Todas las fuentes deben ser online, a fin de que puedas consultarlas siempre durante la redacción. Todas las fuentes deben cumplir los requisitos de validación. 
+
 ## Entradas requeridas
 - Nombre del personaje seleccionado desde `colecciones/`.
 - Acceso a fuentes bibliográficas online verificables (primarias, secundarias, terciarias).
