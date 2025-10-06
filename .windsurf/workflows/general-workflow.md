@@ -1,37 +1,67 @@
----
-description: Pipeline para generar biografías KDP en batch: planificación, redacción, concatenación y exportación a Word.
+trigger: manual
 auto_execution_mode: 3
 ---
 
-# Workflow de biografías KDP
+# Workflow unificado para biografías KDP
 
-## Config
-chapters: 20
-total_words: 51000
-words_per_chapter: 2550
+## Objetivo
+Pipeline completo para generar biografías KDP desde la selección del personaje hasta la exportación final a Word, asegurando cumplimiento de estándares editoriales y técnicos.
 
-## Pasos
-1. Selección → tomar primer personaje sin ✅ en `colecciones/`, normalizar nombre.
-2. Fuentes → crear `esquemas/X - fuentes.md` con bibliografía verificable (APA/Chicago + URLs). Todas las fuentes deben ser online, existir y devolver 200 (no 404, 403, 500 u otros códigos de error).
-3. Plan → crear `esquemas/X - plan de trabajo.md` con:
-   - 20 capítulos (título, descripción, meta de palabras).  
-   - Longitud planificada para todas las secciones (prólogo, introducción, cronología, capítulos, epílogo, glosario, dramatis-personae, fuentes).  
-   - Crear `bios/x/control/longitudes.csv` con esas metas iniciales.
-4. Redacción batch → generar en `bios/x/` todos los archivos en orden, de un tirón (sin pausas, sin reportes, sin interacción del usuario):  
-   - `prologo.md`  
-   - `introduccion.md`  
-   - `cronologia.md`  
-   - `capitulo-01.md` … `capitulo-20.md`  
-   - `epilogo.md`  
-   - `glosario.md`  
-   - `dramatis-personae.md`  
-   - `fuentes.md`
-   Organiza la ejecución en batches, por medio de una lista de tareas, para vencer tus limitantes, de modo que puedas hacer la ejecución de manera ininterrumpida, pasando de manera inmediata de un batch a otro.
-5. Loop de verificación y ajustes →  
-   - Ejecutar: `python check_lengths.py x`  (ejemplo: python check_lengths.py joseph_stalin) al principio de cada iteración. Desde la primera iteración, organiza una lista de tareas, para que puedas seguirlas sin interrupción.
-   - El script actualiza `bios/x/control/longitudes.csv` con longitud real y % cumplimiento.  
-   - Si alguna sección < 100%, la IA se enfoca en mejorar solo esa sección hasta que alcance 100%, entonces pasa a la siguiente iteración sin interrumpirte, sin solicitar interacción, sin brindar reporte, hasta terminar el loop.
-   - Repetir iteraciones hasta que todas estén ≥100%. 
-6. Concatenación → ejecutar `python concat.py -personaje "x"` → `bios/x/concat/La biografía de X.md`.
-7. Word → `pandoc "bios\x\La biografía de X.md" -o "bios\x\doc\concat\La biografía de X.docx" --reference-doc="wordTemplate\reference.docx"`.
-8. Cierre → marcar personaje con ✅ en `colecciones/`.
+## Entradas requeridas
+- Archivo de colección en `colecciones/` con lista de personajes.
+- Acceso a fuentes bibliográficas verificables.
+- Herramientas instaladas: Python 3, Pandoc, plantilla Word en `wordTemplate/reference.docx`.
+
+## Pasos (orden estricto)
+1. **Selección**: Tomar el primer personaje sin ✅ en `colecciones/`, normalizar nombre para rutas.
+2. **Fuentes**: Crear `esquemas/X - fuentes.md` con bibliografía (APA/Chicago + URLs válidas). No iniciar redacción si faltan fuentes.
+3. **Planificación**: Crear `esquemas/X - plan de trabajo.md` con 20 capítulos (título, descripción, meta palabras), y `bios/x/control/longitudes.csv` con metas por sección.
+4. **Redacción batch**: Generar en `bios/x/` todos los archivos en orden (prologo.md, introduccion.md, cronologia.md, capitulo-01.md ... capitulo-20.md, epilogo.md, glosario.md, dramatis-personae.md, fuentes.md). Redactar en batches, sin pausas ni reportes intermedios.
+5. **Validación de longitudes**: Ejecutar `python check_lengths.py x` tras cada batch. Revisar y ajustar hasta que todas las secciones cumplan ≥100% de meta (±5%).
+6. **Concatenación**: Ejecutar `python concat.py -personaje "x"`. El archivo final debe ser `bios/x/La biografía de X.md`.
+7. **Conversión a Word**: Ejecutar `pandoc "bios/x/La biografía de X.md" -o "docx/x/La biografía de X.docx" --reference-doc="wordTemplate/reference.docx"`.
+8. **Cierre**: Marcar personaje con ✅ en `colecciones/` y verificar que el Word final esté en `docx/x/`.
+
+## Triggers y modos de ejecución
+- `trigger: manual`: El workflow debe ejecutarse manualmente cuando se inicia un nuevo personaje o cuando un agente detecta que hay un personaje sin procesar (sin ✅) en el archivo de colección.
+- `auto_execution_mode: 3`: Permite operación desatendida, pero requiere checklist previa:
+  - Fuentes completas (`esquemas/X - fuentes.md` existe y es válida).
+  - Plan aprobado (`esquemas/X - plan de trabajo.md` con metas y capítulos).
+  - Estructura de directorios y archivos creada.
+  - Herramientas instaladas y accesibles.
+- Un agente automatizado debe:
+  1. Verificar checklist anterior.
+  2. Si todo está listo, ejecutar el workflow completo sin intervención.
+  3. Si falta algún prerequisito, detenerse y reportar el estado.
+
+## Validaciones/Logs
+- **Fuentes completas**: `esquemas/X - fuentes.md` existe antes de redactar.
+- **Plan aprobado**: `esquemas/X - plan de trabajo.md` con 20 capítulos y metas definidas.
+- **Estructura de directorios**: `bios/x/` con todos los archivos `.md` necesarios.
+- **Longitudes**: Cada capítulo cumple ±5% de meta; total supera 51,000 palabras.
+- **Concatenación exitosa**: Archivo `bios/x/La biografía de X.md` generado sin errores.
+- **Conversión Word**: Archivo `docx/x/La biografía de X.docx` con formato aplicado.
+- **Personaje marcado**: ✅ aparece junto al nombre en archivo de colección.
+
+## Fallbacks/Escalada
+- Si faltan fuentes: no iniciar redacción hasta completar investigación mínima.
+- Si un capítulo no alcanza meta: expandir con contexto, detalles, descripciones sensoriales (ver literaryStyle.md).
+- Si manuscrito no alcanza 51,000 palabras: identificar capítulos prioritarios para expansión.
+- Si concat.py reporta archivos faltantes: completar archivos antes de generar Word.
+- Si Pandoc falla: revisar sintaxis Markdown (tablas, encabezados) en archivo concatenado.
+
+## Relacionados
+- [automation.md](automation.md) - Detalles de scripts concat.py y Pandoc
+- [research.md](research.md) - Estándares de investigación y fuentes
+- [structure.md](structure.md) - Estructura editorial obligatoria
+- [quality.md](quality.md) - Control de calidad y validaciones
+- [style.md](style.md) - Lineamientos técnicos de estilo
+- [literaryStyle.md](literaryStyle.md) - Estilo emocional y literario
+- [lenght.md](lenght.md) - Validación de longitudes con check_lengths.py
+
+## Glosario de términos
+- **Batch**: Conjunto de capítulos o secciones redactadas de forma continua sin pausas, para mantener coherencia narrativa y tono.
+- **Iteración**: Ciclo de redacción-validación-ajuste aplicado a cada capítulo o sección individual.
+- **Loop de verificación**: Proceso repetitivo de validar longitudes, formato y calidad hasta cumplir todos los criterios antes de concatenar.
+- **Concatenación**: Unión automática de todos los archivos `.md` en orden fijo para generar el manuscrito completo.
+- **Normalización**: Conversión del nombre del personaje a formato estándar (minúsculas, guiones bajos) para nombres de directorios y scripts.

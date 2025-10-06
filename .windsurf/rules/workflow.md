@@ -1,91 +1,40 @@
+
 ---
 trigger: manual
+auto_execution_mode: 3
 ---
 
-# Flujo de trabajo completo para biografías KDP
+# Workflow unificado para biografías KDP
 
 ## Objetivo
-Establecer el flujo de trabajo completo desde selección del personaje hasta publicación, definiendo todas las fases: selección, investigación, planificación, redacción, concatenación, conversión a Word y cierre. Garantizar que cada biografía cumpla con los estándares editoriales y técnicos para KDP.
+Pipeline completo para generar biografías KDP desde la selección del personaje hasta la exportación final a Word, asegurando cumplimiento de estándares editoriales y técnicos.
 
 ## Entradas requeridas
 - Archivo de colección en `colecciones/` con lista de personajes.
 - Acceso a fuentes bibliográficas verificables.
-- Herramientas instaladas: Python 3, Pandoc, plantilla de Word en `wordTemplate/reference.docx`.
+- Herramientas instaladas: Python 3, Pandoc, plantilla Word en `wordTemplate/reference.docx`.
 
-## Pasos automáticos
+## Pasos (orden estricto)
+1. **Selección**: Tomar el primer personaje sin ✅ en `colecciones/`, normalizar nombre para rutas.
+2. **Fuentes**: Crear `esquemas/X - fuentes.md` con bibliografía (APA/Chicago + URLs válidas). No iniciar redacción si faltan fuentes.
+3. **Planificación**: Crear `esquemas/X - plan de trabajo.md` con 20 capítulos (título, descripción, meta palabras), y `bios/x/control/longitudes.csv` con metas por sección.
+4. **Redacción batch**: Generar en `bios/x/` todos los archivos en orden (prologo.md, introduccion.md, cronologia.md, capitulo-01.md ... capitulo-20.md, epilogo.md, glosario.md, dramatis-personae.md, fuentes.md). Redactar en batches, sin pausas ni reportes intermedios.
+5. **Validación de longitudes**: Ejecutar `python check_lengths.py x` tras cada batch. Revisar y ajustar hasta que todas las secciones cumplan ≥100% de meta (±5%).
+6. **Concatenación**: Ejecutar `python concat.py -personaje "x"`. El archivo final debe ser `bios/x/La biografía de X.md`.
+7. **Conversión a Word**: Ejecutar `pandoc "bios/x/La biografía de X.md" -o "docx/x/La biografía de X.docx" --reference-doc="wordTemplate/reference.docx"`.
+8. **Cierre**: Marcar personaje con ✅ en `colecciones/` y verificar que el Word final esté en `docx/x/`.
 
-### 1. Selección del personaje
-1.1. Tomar nombre desde archivo de colección en `colecciones/`.
-1.2. Una vez completado el libro, marcar nombre con ✅ en el archivo de colección.
-
-### 2. Investigación y fuentes
-2.1. Crear `esquemas/X - fuentes.md` con bibliografía verificable en formato académico (APA o Chicago).
-2.2. Incluir al menos dominio o URL completa para fuentes online.
-2.3. Compilar mínimo 2-3 fuentes por capítulo (40-60 fuentes total).
-2.4. Clasificar fuentes en primarias, secundarias y terciarias.
-2.5. Las fuentes deben estar completas antes de iniciar redacción.
-
-### 3. Planificación
-3.1. Crear `esquemas/X - plan de trabajo.md` con:
-- 20 capítulos con título descriptivo.
-- Descripción breve del contenido de cada capítulo.
-- Meta de palabras equilibrada por capítulo (~2,550 palabras promedio).
-- Ajustes según disponibilidad de documentación (ej. infancia con menos fuentes puede tener meta menor).
-3.2. Crear directorio `bios/x/` para el personaje.
-3.3. Crear archivo `bios/x/control/longitudes.csv` con metas esperadas por sección.
-
-### 4. Redacción en batches
-4.1. Planear batches cuidadosamente para escribir sin interrupciones hasta concatenación.
-4.2. Una vez aprobado el plan, crear estructura completa de archivos en `bios/x/`:
-- prologo.md
-- introduccion.md
-- cronologia.md
-- capitulo-01.md hasta capitulo-20.md
-- epilogo.md
-- glosario.md
-- dramatis-personae.md
-- fuentes.md
-
-4.3. Redactar en batches todos los archivos hasta el final, sin pausas ni resúmenes intermedios.
-4.4. Cada capítulo debe alcanzar la meta definida en el plan (~2,550 palabras promedio).
-4.5. Aplicar estilo narrativo-literario, académico cuando corresponda, siempre envolvente.
-4.6. No usar citas directas. Narración corrida en voz propia.
-4.7. Recursos permitidos: tablas en Markdown, listas con `-` o `*`, mapas como descripciones en prosa.
-
-### 5. Validación de longitudes
-5.1. Al terminar cada capítulo, ejecutar:
-```
-python check_lengths.py x
-```
-5.2. Revisar `bios/x/control/longitudes.csv` para verificar cumplimiento de metas (±5%).
-5.3. Ajustar capítulos que no cumplan meta antes de continuar.
-
-### 6. Concatenación automática
-6.1. Una vez completados todos los archivos, ejecutar script oficial de concatenación:
-```
-python concat.py -personaje "nombre_personaje"
-```
-6.2. Script concatena archivos en orden fijo:
-- prologo.md
-- introduccion.md
-- cronologia.md
-- capitulo-01.md hasta capitulo-20.md
-- epilogo.md
-- glosario.md
-- dramatis-personae.md
-- fuentes.md
-6.3. Archivo final generado: `bios/x/La biografía de X.md`
-
-### 7. Conversión a Word
-7.1. Convertir con Pandoc usando plantilla de Word:
-```
-pandoc "bios\x\La biografía de X.md" -o "bios\x\La biografía de X.docx" --reference-doc="wordTemplate\reference.docx"
-```
-7.2. Mover el archivo `.docx` a `docx/x/La biografía de X.docx`.
-
-### 8. Cierre
-8.1. Marcar con ✅ al personaje en el archivo de colección correspondiente.
-8.2. Verificar que archivo Word final esté en `docx/x/`.
+## Triggers y modos de ejecución
+- `trigger: manual`: El workflow debe ejecutarse manualmente cuando se inicia un nuevo personaje o cuando un agente detecta que hay un personaje sin procesar (sin ✅) en el archivo de colección.
+- `auto_execution_mode: 3`: Permite operación desatendida, pero requiere checklist previa:
+	- Fuentes completas (`esquemas/X - fuentes.md` existe y es válida).
+	- Plan aprobado (`esquemas/X - plan de trabajo.md` con metas y capítulos).
+	- Estructura de directorios y archivos creada.
+	- Herramientas instaladas y accesibles.
+- Un agente automatizado debe:
+	1. Verificar checklist anterior.
+	2. Si todo está listo, ejecutar el workflow completo sin intervención.
+	3. Si falta algún prerequisito, detenerse y reportar el estado.
 
 ## Validaciones/Logs
 - **Fuentes completas**: `esquemas/X - fuentes.md` existe antes de redactar.
