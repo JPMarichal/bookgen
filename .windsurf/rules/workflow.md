@@ -1,8 +1,6 @@
-
 ---
+trigger: always_on
 description: Pipeline para generar biografías KDP en batch: planificación, redacción, concatenación y exportación a Word.
-trigger: manual
-auto_execution_mode: 3
 ---
 
 ## Changelog
