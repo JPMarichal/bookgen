@@ -9,6 +9,8 @@ docker-compose*.yml
 # Archivos de desarrollo
 .vscode/
 .idea/
+.windsurf/
+.trunk/
 *.swp
 *.swo
 *~
@@ -44,10 +46,12 @@ wheels/
 htmlcov/
 
 # Environments
+.env
 .env.local
 .env.development
 .env.staging
 .env.production
+.env.production.example
 .venv
 env/
 venv/
@@ -61,6 +65,7 @@ venv.bak/
 # Logs
 logs/
 *.log
+data/logs/*
 
 # Archivos temporales del sistema
 .DS_Store
@@ -73,12 +78,21 @@ Thumbs.db
 
 # Archivos de salida generados (no incluir en imagen)
 bios/*/
-docx/*/
+docx/*
 esquemas/*
-data/logs/*
+colecciones/*
+wordTemplate/*
 *.docx
 *.pdf
 
 # Archivos de configuración específicos del entorno
-.env.local
 config/local_*
+
+# Scripts de deployment
+deploy-vps.sh
+*.sh
+
+# Documentación
+PLAN_TRABAJO.md
+DEPLOYMENT.md
+REQUERIMIENTOS_SISTEMA_AUTOMATIZADO.md
