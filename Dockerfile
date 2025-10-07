@@ -14,6 +14,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     gcc \
     g++ \
     ca-certificates \
+    binutils \
     && update-ca-certificates \
     && rm -rf /var/lib/apt/lists/*
 
@@ -25,16 +26,22 @@ COPY requirements.txt .
 RUN pip install --upgrade pip --trusted-host pypi.org --trusted-host files.pythonhosted.org && \
     pip install --prefix=/install --no-cache-dir --no-warn-script-location \
     --trusted-host pypi.org --trusted-host files.pythonhosted.org -r requirements.txt && \
-    # Remover archivos innecesarios para reducir tamaño
-    find /install -type d -name "tests" -exec rm -rf {} + 2>/dev/null || true && \
-    find /install -type d -name "test" -exec rm -rf {} + 2>/dev/null || true && \
+    # Remover archivos innecesarios para reducir tamaño (sin afectar funcionalidad)
     find /install -type d -name "__pycache__" -exec rm -rf {} + 2>/dev/null || true && \
-    find /install -type d -name "*.dist-info" -exec rm -rf {}/RECORD {} + 2>/dev/null || true && \
     find /install -name "*.pyc" -delete 2>/dev/null || true && \
     find /install -name "*.pyo" -delete 2>/dev/null || true && \
+    # Remover archivos fuente de C/Cython (compilados ya están como .so)
     find /install -name "*.c" -delete 2>/dev/null || true && \
     find /install -name "*.pxd" -delete 2>/dev/null || true && \
-    rm -rf /install/share 2>/dev/null || true
+    find /install -name "*.pyx" -delete 2>/dev/null || true && \
+    find /install -name "*.h" -delete 2>/dev/null || true && \
+    # Remover documentación y ejemplos (pero mantener tests que son parte de APIs)
+    find /install -type d -name "doc" -exec rm -rf {} + 2>/dev/null || true && \
+    find /install -type d -name "docs" -exec rm -rf {} + 2>/dev/null || true && \
+    find /install -type d -name "examples" -exec rm -rf {} + 2>/dev/null || true && \
+    rm -rf /install/share 2>/dev/null || true && \
+    # Strip debug symbols from .so files
+    find /install -name "*.so" -exec strip --strip-debug {} + 2>/dev/null || true
 
 
 # ===================================
