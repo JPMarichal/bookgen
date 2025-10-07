@@ -104,27 +104,50 @@ def export_to_word(
     logger.info(f"Exporting {character_name} biography to Word")
     
     try:
-        # TODO: Implement actual Word export
-        # This would integrate with the Word export service
+        from src.services.word_exporter import WordExporter
+        from src.config.export_config import ExportConfig
+        from src.api.models.export import DocumentMetadata
+        from datetime import datetime
         
-        if template_path is None:
-            template_path = "/app/wordTemplate/reference.docx"
+        # Initialize Word exporter
+        config = ExportConfig()
+        if template_path:
+            config.word_template_path = template_path
         
-        output_path = f"/app/docx/{character_name}_biography.docx"
+        exporter = WordExporter(config)
+        
+        # Prepare metadata
+        metadata = DocumentMetadata(
+            title=f"La biografía de {character_name}",
+            author="BookGen Sistema Automatizado",
+            subject=f"Biografía de {character_name}",
+            date=datetime.now().strftime("%Y-%m-%d")
+        )
+        
+        # Export to Word
+        export_result = exporter.export_to_word_with_toc(
+            markdown_file=markdown_file,
+            toc_title="Contenido",
+            toc_depth=1,
+            metadata=metadata if include_toc else None
+        )
+        
+        if not export_result.success:
+            raise Exception(f"Word export failed: {export_result.error_message}")
         
         result = {
             'success': True,
             'character_name': character_name,
             'format': 'docx',
-            'output_path': output_path,
-            'template_used': template_path,
-            'has_toc': include_toc,
-            'toc_entries': 20 if include_toc else 0,
-            'file_size': 0,  # Placeholder
+            'output_path': export_result.output_file,
+            'template_used': export_result.template_used,
+            'has_toc': export_result.has_toc,
+            'toc_entries': export_result.toc_entries,
+            'file_size': export_result.file_size,
             'task_id': self.request.id
         }
         
-        logger.info(f"Word export complete: {output_path}")
+        logger.info(f"Word export complete: {export_result.output_file}")
         return result
         
     except Exception as e:
