@@ -1,301 +1,255 @@
 """
-Text analysis utilities for content quality assessment
+Text analysis utilities for chapter validation
+Provides density analysis, repetition detection, and n-gram analysis
 """
 import re
-from typing import List, Dict, Tuple, Set
-from collections import Counter, defaultdict
-import numpy as np
+from collections import Counter
+from typing import List, Dict, Tuple
 from sklearn.feature_extraction.text import TfidfVectorizer
+import numpy as np
 
 
 class TextAnalyzer:
-    """Utilities for analyzing text content quality"""
+    """Analyzer for text quality metrics"""
     
-    def __init__(self):
-        """Initialize text analyzer"""
-        self.stop_words = 'english'
+    def __init__(self, max_features: int = 1000, ngram_size: int = 5):
+        """
+        Initialize text analyzer
+        
+        Args:
+            max_features: Maximum features for TF-IDF analysis
+            ngram_size: Size of n-grams for repetition detection
+        """
+        self.max_features = max_features
+        self.ngram_size = ngram_size
     
     def count_words(self, text: str) -> int:
         """
-        Count words in text
+        Count words in text (same logic as check_lengths.py)
         
         Args:
             text: Text to analyze
             
         Returns:
-            Number of words
+            Word count
         """
-        # Remove markdown headers, links, and other formatting
-        clean_text = self._clean_markdown(text)
-        # Split by whitespace and count non-empty tokens
-        words = clean_text.split()
-        return len(words)
-    
-    def _clean_markdown(self, text: str) -> str:
-        """
-        Remove markdown formatting from text
-        
-        Args:
-            text: Text with markdown formatting
-            
-        Returns:
-            Clean text without markdown
-        """
-        # Remove markdown headers
-        text = re.sub(r'^#+\s+', '', text, flags=re.MULTILINE)
-        # Remove markdown links [text](url)
-        text = re.sub(r'\[([^\]]+)\]\([^\)]+\)', r'\1', text)
-        # Remove markdown bold/italic
-        text = re.sub(r'\*\*([^\*]+)\*\*', r'\1', text)
-        text = re.sub(r'\*([^\*]+)\*', r'\1', text)
-        text = re.sub(r'__([^_]+)__', r'\1', text)
-        text = re.sub(r'_([^_]+)_', r'\1', text)
-        # Remove code blocks
-        text = re.sub(r'```[^`]*```', '', text)
-        text = re.sub(r'`[^`]+`', '', text)
-        return text
+        return len(text.split())
     
     def calculate_information_density(self, text: str) -> float:
         """
         Calculate information density using TF-IDF
+        Higher density = more unique, informative content
         
         Args:
             text: Text to analyze
             
         Returns:
-            Information density score (0-1)
+            Density score (0-1)
         """
+        if not text or len(text.split()) < 10:
+            return 0.0
+        
         try:
-            # Clean text
-            clean_text = self._clean_markdown(text)
-            
-            # Need at least some content
-            if len(clean_text.strip()) < 100:
-                return 0.0
-            
             # Create TF-IDF vectorizer
             vectorizer = TfidfVectorizer(
-                stop_words=self.stop_words,
-                max_features=500,
+                max_features=self.max_features,
+                stop_words='english',
                 lowercase=True,
                 strip_accents='unicode'
             )
             
-            # Transform text - use list to handle single document
-            tfidf_matrix = vectorizer.fit_transform([clean_text])
+            # Split text into sentences for better analysis
+            sentences = self._split_into_sentences(text)
+            if len(sentences) < 2:
+                sentences = [text]
             
-            # Calculate mean TF-IDF score
-            # Higher scores indicate more informative content
-            mean_tfidf = np.mean(tfidf_matrix.toarray())
+            # Fit and transform
+            tfidf_matrix = vectorizer.fit_transform(sentences)
             
-            return float(mean_tfidf)
+            # Calculate mean TF-IDF score across all terms
+            # Higher mean = more informative content
+            scores = tfidf_matrix.toarray()
+            mean_score = np.mean(scores[scores > 0])
+            
+            # Normalize to 0-1 range (TF-IDF scores are typically 0-1 but can vary)
+            return min(float(mean_score), 1.0)
             
         except Exception as e:
-            # Return low score on error
-            return 0.0
+            # Fallback: simple uniqueness ratio
+            words = text.lower().split()
+            if len(words) == 0:
+                return 0.0
+            unique_ratio = len(set(words)) / len(words)
+            return unique_ratio
     
-    def detect_repetitive_content(
-        self,
-        text: str,
-        ngram_min: int = 3,
-        ngram_max: int = 7,
-        min_occurrences: int = 3
-    ) -> Dict[str, any]:
+    def detect_repetitive_content(self, text: str) -> Dict[str, float]:
         """
         Detect repetitive content using n-grams
         
         Args:
             text: Text to analyze
-            ngram_min: Minimum n-gram size
-            ngram_max: Maximum n-gram size
-            min_occurrences: Minimum occurrences to consider as repetitive
             
         Returns:
-            Dictionary with repetition analysis
+            Dictionary with repetition metrics
         """
-        clean_text = self._clean_markdown(text)
-        words = clean_text.lower().split()
+        words = text.lower().split()
         
-        if len(words) < ngram_min:
+        if len(words) < self.ngram_size:
             return {
-                'repetition_ratio': 0.0,
-                'repetitive_ngrams': [],
-                'total_repetitions': 0
+                'repetition_score': 0.0,
+                'most_repeated_ngram': '',
+                'repetition_count': 0,
+                'total_ngrams': 0
             }
         
-        # Find repetitive n-grams
-        repetitive_ngrams = []
-        total_repetitive_words = 0
+        # Generate n-grams
+        ngrams = []
+        for i in range(len(words) - self.ngram_size + 1):
+            ngram = ' '.join(words[i:i + self.ngram_size])
+            ngrams.append(ngram)
         
-        for n in range(ngram_min, min(ngram_max + 1, len(words))):
-            ngrams = self._extract_ngrams(words, n)
-            
-            # Count n-gram occurrences
-            ngram_counts = Counter(ngrams)
-            
-            # Find repetitive n-grams
-            for ngram, count in ngram_counts.items():
-                if count >= min_occurrences:
-                    repetitive_ngrams.append({
-                        'ngram': ' '.join(ngram),
-                        'size': n,
-                        'occurrences': count
-                    })
-                    # Count words involved in repetition
-                    # (count - 1) because first occurrence is not repetition
-                    total_repetitive_words += n * (count - 1)
-        
-        # Calculate repetition ratio
-        repetition_ratio = total_repetitive_words / len(words) if words else 0.0
-        
-        # Sort by occurrences (most repetitive first)
-        repetitive_ngrams.sort(key=lambda x: x['occurrences'], reverse=True)
-        
-        return {
-            'repetition_ratio': repetition_ratio,
-            'repetitive_ngrams': repetitive_ngrams[:10],  # Top 10 most repetitive
-            'total_repetitions': len(repetitive_ngrams)
-        }
-    
-    def _extract_ngrams(self, words: List[str], n: int) -> List[Tuple[str, ...]]:
-        """
-        Extract n-grams from word list
-        
-        Args:
-            words: List of words
-            n: N-gram size
-            
-        Returns:
-            List of n-grams as tuples
-        """
-        return [tuple(words[i:i+n]) for i in range(len(words) - n + 1)]
-    
-    def calculate_vocabulary_richness(self, text: str) -> float:
-        """
-        Calculate vocabulary richness (unique words ratio)
-        
-        Args:
-            text: Text to analyze
-            
-        Returns:
-            Vocabulary richness score (0-1)
-        """
-        clean_text = self._clean_markdown(text)
-        words = clean_text.lower().split()
-        
-        if not words:
-            return 0.0
-        
-        unique_words = set(words)
-        richness = len(unique_words) / len(words)
-        
-        return richness
-    
-    def analyze_sentence_structure(self, text: str) -> Dict[str, any]:
-        """
-        Analyze sentence structure and complexity
-        
-        Args:
-            text: Text to analyze
-            
-        Returns:
-            Dictionary with sentence analysis
-        """
-        clean_text = self._clean_markdown(text)
-        
-        # Split into sentences (simple approach)
-        sentences = re.split(r'[.!?]+', clean_text)
-        sentences = [s.strip() for s in sentences if s.strip()]
-        
-        if not sentences:
+        if not ngrams:
             return {
-                'sentence_count': 0,
-                'avg_sentence_length': 0.0,
-                'sentence_variety': 0.0
+                'repetition_score': 0.0,
+                'most_repeated_ngram': '',
+                'repetition_count': 0,
+                'total_ngrams': 0
             }
         
-        # Calculate sentence lengths
-        sentence_lengths = [len(s.split()) for s in sentences]
-        avg_length = np.mean(sentence_lengths) if sentence_lengths else 0
+        # Count n-gram frequencies
+        ngram_counts = Counter(ngrams)
+        total_ngrams = len(ngrams)
         
-        # Calculate sentence variety (standard deviation of lengths)
-        # Higher variety indicates more varied sentence structure
-        variety = np.std(sentence_lengths) / avg_length if avg_length > 0 else 0
+        # Find most repeated n-gram
+        most_common = ngram_counts.most_common(1)[0] if ngram_counts else ('', 0)
+        most_repeated_ngram, repetition_count = most_common
+        
+        # Calculate repetition score (what % of n-grams are duplicates)
+        unique_ngrams = len(set(ngrams))
+        repetition_score = 1.0 - (unique_ngrams / total_ngrams) if total_ngrams > 0 else 0.0
         
         return {
-            'sentence_count': len(sentences),
-            'avg_sentence_length': float(avg_length),
-            'sentence_variety': float(variety)
+            'repetition_score': repetition_score,
+            'most_repeated_ngram': most_repeated_ngram,
+            'repetition_count': repetition_count,
+            'total_ngrams': total_ngrams
         }
     
-    def extract_key_terms(self, text: str, top_n: int = 10) -> List[Tuple[str, float]]:
+    def extract_keywords(self, text: str, top_n: int = 10) -> List[Tuple[str, float]]:
         """
-        Extract key terms from text using TF-IDF
+        Extract top keywords using TF-IDF
         
         Args:
             text: Text to analyze
-            top_n: Number of top terms to extract
+            top_n: Number of keywords to extract
             
         Returns:
-            List of (term, score) tuples
+            List of (keyword, score) tuples
         """
+        if not text or len(text.split()) < 5:
+            return []
+        
         try:
-            clean_text = self._clean_markdown(text)
-            
-            if len(clean_text.strip()) < 50:
-                return []
-            
-            # Create TF-IDF vectorizer
             vectorizer = TfidfVectorizer(
-                stop_words=self.stop_words,
-                max_features=100,
-                lowercase=True,
-                strip_accents='unicode'
+                max_features=self.max_features,
+                stop_words='english',
+                lowercase=True
             )
             
-            # Transform text
-            tfidf_matrix = vectorizer.fit_transform([clean_text])
-            
-            # Get feature names and scores
+            tfidf_matrix = vectorizer.fit_transform([text])
             feature_names = vectorizer.get_feature_names_out()
             scores = tfidf_matrix.toarray()[0]
             
-            # Get top N terms
+            # Get top N keywords
             top_indices = np.argsort(scores)[-top_n:][::-1]
-            key_terms = [(feature_names[i], float(scores[i])) for i in top_indices if scores[i] > 0]
+            keywords = [(feature_names[i], float(scores[i])) for i in top_indices if scores[i] > 0]
             
-            return key_terms
-            
+            return keywords
         except Exception:
             return []
     
-    def get_content_statistics(self, text: str) -> Dict[str, any]:
+    def calculate_readability_metrics(self, text: str) -> Dict[str, float]:
         """
-        Get comprehensive content statistics
+        Calculate basic readability metrics
         
         Args:
             text: Text to analyze
             
         Returns:
-            Dictionary with various statistics
+            Dictionary with readability metrics
         """
-        word_count = self.count_words(text)
-        clean_text = self._clean_markdown(text)
+        words = text.split()
+        sentences = self._split_into_sentences(text)
         
-        # Character count (excluding whitespace)
-        char_count = len(clean_text.replace(' ', '').replace('\n', ''))
+        if not words or not sentences:
+            return {
+                'avg_sentence_length': 0.0,
+                'avg_word_length': 0.0,
+                'sentence_count': 0,
+                'word_count': 0
+            }
         
-        # Paragraph count
-        paragraphs = [p.strip() for p in clean_text.split('\n\n') if p.strip()]
+        # Average words per sentence
+        avg_sentence_length = len(words) / len(sentences)
         
         # Average word length
-        words = clean_text.split()
-        avg_word_length = np.mean([len(w) for w in words]) if words else 0
+        total_chars = sum(len(word) for word in words)
+        avg_word_length = total_chars / len(words) if words else 0.0
         
         return {
-            'word_count': word_count,
-            'character_count': char_count,
-            'paragraph_count': len(paragraphs),
-            'avg_word_length': float(avg_word_length),
-            'avg_words_per_paragraph': word_count / len(paragraphs) if paragraphs else 0
+            'avg_sentence_length': avg_sentence_length,
+            'avg_word_length': avg_word_length,
+            'sentence_count': len(sentences),
+            'word_count': len(words)
+        }
+    
+    def _split_into_sentences(self, text: str) -> List[str]:
+        """
+        Split text into sentences
+        
+        Args:
+            text: Text to split
+            
+        Returns:
+            List of sentences
+        """
+        # Simple sentence splitting on common terminators
+        # Using regex to split on . ! ? followed by space and capital letter
+        sentences = re.split(r'[.!?]+\s+(?=[A-Z])', text)
+        return [s.strip() for s in sentences if s.strip()]
+    
+    def analyze_content_balance(self, text: str) -> Dict[str, any]:
+        """
+        Analyze if content is balanced (not too much dialogue, description, etc.)
+        
+        Args:
+            text: Text to analyze
+            
+        Returns:
+            Dictionary with balance metrics
+        """
+        # Count dialogue (text in quotes)
+        dialogue_pattern = r'["\']([^"\']+)["\']'
+        dialogue_matches = re.findall(dialogue_pattern, text)
+        dialogue_words = sum(len(d.split()) for d in dialogue_matches)
+        
+        total_words = self.count_words(text)
+        
+        if total_words == 0:
+            return {
+                'dialogue_ratio': 0.0,
+                'narrative_ratio': 1.0,
+                'is_balanced': True
+            }
+        
+        dialogue_ratio = dialogue_words / total_words
+        narrative_ratio = 1.0 - dialogue_ratio
+        
+        # Content is balanced if dialogue is between 20-60%
+        is_balanced = 0.2 <= dialogue_ratio <= 0.6
+        
+        return {
+            'dialogue_ratio': dialogue_ratio,
+            'narrative_ratio': narrative_ratio,
+            'is_balanced': is_balanced
         }

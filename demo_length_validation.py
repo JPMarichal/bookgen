@@ -1,152 +1,241 @@
+#!/usr/bin/env python
 """
-Demo script for intelligent chapter length validation service
+Demo script for the intelligent chapter length validation service
+Shows how to use the LengthValidationService with various scenarios
 """
+
 from src.services.length_validator import LengthValidationService
+from src.config.validation_config import ValidationConfig
 
 
-def print_separator(char='=', length=80):
-    """Print a separator line"""
-    print(char * length)
+def print_section(title: str):
+    """Print a section header"""
+    print("\n" + "=" * 80)
+    print(f"  {title}")
+    print("=" * 80)
 
 
-def demo_validation():
-    """Demonstrate the length validation service"""
-    print_separator()
-    print("DEMO: Intelligent Chapter Length Validation Service")
-    print_separator()
-    print()
+def print_result(result):
+    """Print validation result in a nice format"""
+    print(f"\n📊 Validation Result:")
+    print(f"  • Valid: {'✅ Yes' if result.is_valid else '❌ No'}")
+    print(f"  • Word Count: {result.word_count:,} words")
+    print(f"  • Expected: {result.expected_words:,} words")
+    print(f"  • Percentage: {result.percentage_of_target:.1f}%")
+    print(f"  • Target Range: {result.target_min:,} - {result.target_max:,} words")
+    print(f"  • Quality Score: {result.quality_score:.1f}/100")
+    print(f"  • Density Score: {result.density_score:.2f}")
+    print(f"  • Repetition Score: {result.repetition_score:.2f}")
     
-    # Initialize service
-    validator = LengthValidationService()
+    if result.keywords:
+        print(f"\n🔑 Top Keywords:")
+        for keyword, score in result.keywords[:5]:
+            print(f"  • {keyword}: {score:.3f}")
     
-    # Demo 1: Optimal chapter
-    print("📊 DEMO 1: Optimal Chapter (~5000 words)")
-    print_separator('-')
-    
-    optimal_chapter = generate_quality_chapter(5000)
-    result1 = validator.validate_chapter(optimal_chapter, target_length=5000)
-    
-    print_result_summary(result1)
-    print()
-    
-    # Demo 2: Too short chapter
-    print("📊 DEMO 2: Too Short Chapter (~2000 words)")
-    print_separator('-')
-    
-    short_chapter = generate_quality_chapter(2000)
-    result2 = validator.validate_chapter(short_chapter, target_length=5000)
-    
-    print_result_summary(result2)
-    print()
-    
-    # Demo 3: Too long chapter
-    print("📊 DEMO 3: Too Long Chapter (~16000 words)")
-    print_separator('-')
-    
-    long_chapter = generate_quality_chapter(16000)
-    result3 = validator.validate_chapter(long_chapter, target_length=5000)
-    
-    print_result_summary(result3)
-    print()
-    
-    # Demo 4: Repetitive content
-    print("📊 DEMO 4: Repetitive Content Detection")
-    print_separator('-')
-    
-    repetitive_chapter = "This is a repetitive phrase that appears many times. " * 100
-    result4 = validator.validate_chapter(repetitive_chapter, target_length=5000)
-    
-    print_result_summary(result4)
-    print()
-    
-    # Demo 5: Low information density
-    print("📊 DEMO 5: Low Information Density")
-    print_separator('-')
-    
-    low_density_chapter = "the and of to a in is it that was " * 600
-    result5 = validator.validate_chapter(low_density_chapter, target_length=5000)
-    
-    print_result_summary(result5)
-    print()
-    
-    print_separator()
-    print("✅ Demo completed successfully!")
-    print_separator()
+    if result.suggestions:
+        print(f"\n💡 Suggestions ({len(result.suggestions)}):")
+        for i, suggestion in enumerate(result.suggestions, 1):
+            icon = "🔴" if suggestion.severity == "critical" else "⚠️" if suggestion.severity == "warning" else "ℹ️"
+            print(f"  {i}. {icon} [{suggestion.type.upper()}] {suggestion.message}")
+            if suggestion.details:
+                print(f"     {suggestion.details}")
 
 
-def print_result_summary(result):
-    """Print a summary of validation result"""
-    print(f"Valid: {'✅ YES' if result.is_valid else '❌ NO'}")
-    print(f"Word Count: {result.word_count:,} / {result.target_length:,}")
-    print(f"Quality Score: {result.quality_score:.1f}/100")
-    print()
+def demo_basic_validation():
+    """Demonstrate basic chapter validation"""
+    print_section("1. Basic Chapter Validation")
     
-    print("Component Scores:")
-    print(f"  - Length Compliance: {result.length_score:.1f}/100")
-    print(f"  - Information Density: {result.density_score:.1f}/100")
-    print(f"  - Repetition Score: {result.repetition_score:.1f}/100")
-    print(f"  - Vocabulary Richness: {result.vocabulary_score:.1f}/100")
-    print()
+    service = LengthValidationService()
     
-    print("Analysis Metrics:")
-    print(f"  - Information Density: {result.information_density:.3f}")
-    print(f"  - Repetition Ratio: {result.repetition_ratio:.3f} ({result.repetition_ratio*100:.1f}%)")
-    print(f"  - Vocabulary Richness: {result.vocabulary_richness:.3f} ({result.vocabulary_richness*100:.1f}%)")
-    print()
+    # Create a sample chapter
+    sample_chapter = """
+    Chapter 1: The Beginning
     
-    print(f"Top {min(3, len(result.suggestions))} Suggestions:")
-    for i, suggestion in enumerate(result.suggestions[:3], 1):
-        priority_emoji = {
-            'high': '🔴',
-            'medium': '🟡',
-            'low': '🟢'
-        }.get(suggestion.priority, '⚪')
-        print(f"  {i}. {priority_emoji} [{suggestion.priority.upper()}] {suggestion.message}")
-    print()
+    This chapter introduces the main character and sets the stage for the story.
+    The protagonist discovers something that will change their life forever.
+    Through careful planning and determination, they begin their journey.
+    
+    The world around them is rich with detail and complexity.
+    Every decision has consequences that ripple through the narrative.
+    Character development is key to understanding their motivations.
+    
+    Dialogue brings the characters to life and reveals their personalities.
+    "This is the start of something new," the protagonist said.
+    "I can feel it in my bones. Change is coming."
+    
+    The setting is carefully crafted to immerse the reader.
+    From the bustling streets to the quiet moments of reflection,
+    every scene serves a purpose in the larger narrative arc.
+    """ * 100  # Repeat to get ~2500 words
+    
+    result = service.validate_chapter(sample_chapter, target_length=2550)
+    print_result(result)
 
 
-def generate_quality_chapter(target_words: int) -> str:
-    """Generate a quality chapter with varied content"""
-    paragraphs = [
-        "Artificial intelligence has fundamentally transformed modern technology in unprecedented ways. "
-        "Machine learning algorithms efficiently process vast amounts of data to identify complex patterns. "
-        "Neural networks, inspired by biological brain structures, enable computers to learn from experience. "
-        "Deep learning architectures have revolutionized computer vision and natural language processing.",
+def demo_too_short_chapter():
+    """Demonstrate validation of a too-short chapter"""
+    print_section("2. Too Short Chapter (Should Suggest Expansion)")
+    
+    service = LengthValidationService()
+    
+    short_chapter = """
+    This is a very short chapter that doesn't meet the minimum requirements.
+    It needs much more content to be considered complete.
+    """ * 50  # Only ~1000 words
+    
+    result = service.validate_chapter(short_chapter, target_length=5000)
+    print_result(result)
+
+
+def demo_too_long_chapter():
+    """Demonstrate validation of a too-long chapter"""
+    print_section("3. Too Long Chapter (Should Suggest Reduction)")
+    
+    service = LengthValidationService()
+    
+    long_chapter = "This chapter has way too much content and should be condensed. " * 1000  # ~10000 words
+    
+    result = service.validate_chapter(long_chapter, target_length=5000)
+    print_result(result)
+
+
+def demo_repetitive_content():
+    """Demonstrate detection of repetitive content"""
+    print_section("4. Repetitive Content Detection")
+    
+    service = LengthValidationService()
+    
+    repetitive_chapter = """
+    The same sentence appears over and over again.
+    The same sentence appears over and over again.
+    The same sentence appears over and over again.
+    The same sentence appears over and over again.
+    """ * 300  # Highly repetitive
+    
+    result = service.validate_chapter(repetitive_chapter, target_length=2550)
+    print_result(result)
+
+
+def demo_high_quality_content():
+    """Demonstrate validation of high-quality, varied content"""
+    print_section("5. High Quality Content")
+    
+    service = LengthValidationService()
+    
+    quality_chapter = """
+    Albert Einstein revolutionized physics with his theory of relativity.
+    His groundbreaking work fundamentally changed our understanding of space and time.
+    
+    The special theory of relativity, published in 1905, introduced revolutionary concepts.
+    Time dilation and length contraction challenged classical Newtonian mechanics.
+    Einstein's famous equation, E=mc², demonstrated mass-energy equivalence.
+    
+    General relativity, completed in 1915, explained gravity as curved spacetime.
+    Massive objects bend the fabric of space and time around them.
+    This elegant theory predicted phenomena like gravitational lensing and black holes.
+    
+    Einstein's contributions extended far beyond relativity theory alone.
+    His work on the photoelectric effect earned him the Nobel Prize in 1921.
+    He made fundamental advances in quantum mechanics and statistical physics.
+    
+    The scientific community initially resisted some of Einstein's radical ideas.
+    However, experimental evidence gradually confirmed his theoretical predictions.
+    Today, GPS satellites and particle accelerators rely on relativistic corrections.
+    
+    Einstein's philosophical views on science influenced generations of researchers.
+    He believed in the power of thought experiments and mathematical beauty.
+    His legacy continues to inspire physicists exploring the frontiers of knowledge.
+    
+    Beyond science, Einstein became an advocate for peace and social justice.
+    He spoke out against nuclear weapons and supported civil rights movements.
+    His humanitarian efforts reflected his deep concern for humanity's future.
+    """ * 60  # Varied, informative content
+    
+    result = service.validate_chapter(quality_chapter, target_length=2550)
+    print_result(result)
+
+
+def demo_env_configuration():
+    """Demonstrate usage with environment configuration"""
+    print_section("6. Configuration from .env")
+    
+    config = ValidationConfig.from_env()
+    print(f"\n📋 Configuration loaded from .env:")
+    print(f"  • Total Words: {config.total_words:,}")
+    print(f"  • Chapters Number: {config.chapters_number}")
+    print(f"  • Words Per Chapter: {config.words_per_chapter:,}")
+    print(f"  • Validation Tolerance: {config.validation_tolerance:.1%}")
+    print(f"  • Absolute Min Words: {config.absolute_min_words:,}")
+    print(f"  • Absolute Max Words: {config.absolute_max_words:,}")
+    
+    service = LengthValidationService(config=config)
+    
+    # Validate with env config
+    chapter = "word " * config.words_per_chapter
+    result = service.validate_chapter(chapter)
+    
+    print(f"\n✅ Chapter validated using .env configuration:")
+    print(f"  • Target: {result.expected_words:,} words (from WORDS_PER_CHAPTER)")
+    print(f"  • Actual: {result.word_count:,} words")
+    print(f"  • Valid: {'✅ Yes' if result.is_valid else '❌ No'}")
+
+
+def demo_character_validation():
+    """Demonstrate character content validation (migrated from check_lengths.py)"""
+    print_section("7. Character Content Validation (CSV Integration)")
+    
+    print("""
+This feature validates all content for a character using the CSV workflow
+from check_lengths.py:
+
+Example usage:
+    service = LengthValidationService()
+    results = service.validate_character_content('albert_einstein', base_dir='bios')
+    
+This will:
+1. Read bios/albert_einstein/control/longitudes.csv
+2. Validate each section file (capitulo-01.md, capitulo-02.md, etc.)
+3. Calculate quality metrics for each section
+4. Update the CSV with actual word counts and percentages
+5. Return detailed validation results for each section
+
+The CSV format remains compatible with check_lengths.py:
+    seccion,longitud_esperada,longitud_real,porcentaje
+    capitulo-01,2550,2645,103.73
+    capitulo-02,2550,2487,97.53
+    ...
+    """)
+
+
+def main():
+    """Run all demonstrations"""
+    print("\n" + "🚀" * 40)
+    print("  INTELLIGENT CHAPTER LENGTH VALIDATION SERVICE DEMO")
+    print("🚀" * 40)
+    
+    try:
+        demo_basic_validation()
+        demo_too_short_chapter()
+        demo_too_long_chapter()
+        demo_repetitive_content()
+        demo_high_quality_content()
+        demo_env_configuration()
+        demo_character_validation()
         
-        "The development of transformer models marked a significant breakthrough in AI research capabilities. "
-        "These sophisticated models excel at understanding context and relationships in sequential data streams. "
-        "Applications range from language translation to content generation and sentiment analysis tasks. "
-        "Researchers worldwide continue pushing boundaries, creating increasingly sophisticated intelligent systems.",
+        print("\n" + "=" * 80)
+        print("  ✅ Demo completed successfully!")
+        print("=" * 80)
+        print("\nNext steps:")
+        print("  • Review the validation results above")
+        print("  • Check tests/test_length_validation.py for more examples")
+        print("  • Integrate into your chapter generation pipeline")
+        print("  • Use validate_character_content() for batch validation")
         
-        "Data quality remains absolutely crucial for successful machine learning implementations everywhere. "
-        "Training datasets must be diverse, representative, and properly labeled for optimal results. "
-        "Bias in training data can lead to unfair or inaccurate model predictions downstream. "
-        "Ethical considerations have become paramount in AI development and deployment strategies.",
-        
-        "Cloud computing platforms have democratized access to powerful AI technologies globally. "
-        "Organizations of all sizes can now leverage sophisticated machine learning tools effectively. "
-        "Scalable infrastructure supports training and deploying complex models efficiently at scale. "
-        "The integration of AI into business processes continues to accelerate worldwide.",
-        
-        "Computer vision systems can now recognize objects, faces, and scenes with remarkable accuracy. "
-        "Medical imaging analysis benefits tremendously from AI-powered diagnostic assistance tools today. "
-        "Autonomous vehicles rely heavily on real-time visual processing and intelligent decision making. "
-        "Augmented reality applications blend digital content with physical environments seamlessly together.",
-    ]
-    
-    # Calculate repetitions needed
-    avg_words_per_paragraph = 50
-    repetitions = max(1, target_words // (len(paragraphs) * avg_words_per_paragraph))
-    
-    # Build chapter with variations
-    chapter_parts = []
-    for rep in range(repetitions):
-        for i, para in enumerate(paragraphs):
-            variation = f" This demonstrates key concept {i+1} in context {rep+1}."
-            chapter_parts.append(para + variation)
-    
-    return "\n\n".join(chapter_parts)
+    except Exception as e:
+        print(f"\n❌ Error running demo: {e}")
+        import traceback
+        traceback.print_exc()
 
 
 if __name__ == "__main__":
-    demo_validation()
+    main()

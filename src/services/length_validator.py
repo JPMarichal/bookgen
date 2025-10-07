@@ -1,22 +1,22 @@
 """
-Intelligent chapter length validation service with semantic analysis
+Intelligent chapter length validation service
+Migrates and enhances functionality from check_lengths.py
 """
-import logging
-from typing import Dict, List, Any, Optional
-from dataclasses import dataclass, field
+import os
+import csv
+from dataclasses import dataclass
+from typing import List, Optional, Dict
+from pathlib import Path
 
-from ..config.validation_config import ValidationConfig
-from ..utils.text_analyzer import TextAnalyzer
-
-
-logger = logging.getLogger(__name__)
+from src.config.validation_config import ValidationConfig
+from src.utils.text_analyzer import TextAnalyzer
 
 
 @dataclass
 class ValidationSuggestion:
-    """Suggestion for improving content"""
-    type: str  # 'expansion', 'reduction', 'improvement'
-    priority: str  # 'high', 'medium', 'low'
+    """A suggestion for improving chapter content"""
+    type: str  # 'expansion', 'reduction', 'quality', 'repetition'
+    severity: str  # 'critical', 'warning', 'info'
     message: str
     details: Optional[str] = None
 
@@ -26,25 +26,28 @@ class LengthValidationResult:
     """Result of chapter length validation"""
     is_valid: bool
     word_count: int
-    target_length: int
-    quality_score: float
+    expected_words: int
+    target_min: int
+    target_max: int
+    quality_score: float  # 0-100
+    length_score: float  # 0-100
+    density_score: float  # 0-1
+    repetition_score: float  # 0-1
+    suggestions: List[ValidationSuggestion]
+    keywords: List[tuple]  # Top keywords from content
+    metrics: Dict[str, any]  # Additional metrics
     
-    # Component scores
-    length_score: float
-    density_score: float
-    repetition_score: float
-    vocabulary_score: float
+    @property
+    def percentage_of_target(self) -> float:
+        """Calculate percentage of expected word count"""
+        if self.expected_words == 0:
+            return 0.0
+        return round((self.word_count / self.expected_words) * 100, 2)
     
-    # Analysis details
-    information_density: float
-    repetition_ratio: float
-    vocabulary_richness: float
-    
-    # Suggestions
-    suggestions: List[ValidationSuggestion] = field(default_factory=list)
-    
-    # Additional details
-    details: Dict[str, Any] = field(default_factory=dict)
+    @property
+    def deviation_words(self) -> int:
+        """Words above or below target (negative = too short)"""
+        return self.word_count - self.expected_words
 
 
 class LengthValidationService:
@@ -52,389 +55,339 @@ class LengthValidationService:
     
     def __init__(self, config: Optional[ValidationConfig] = None):
         """
-        Initialize length validation service
+        Initialize validation service
         
         Args:
-            config: Validation configuration (uses default if not provided)
+            config: Validation configuration (defaults to loading from .env)
         """
-        self.config = config or ValidationConfig()
-        self.text_analyzer = TextAnalyzer()
+        self.config = config or ValidationConfig.from_env()
+        self.text_analyzer = TextAnalyzer(
+            max_features=self.config.max_features_tfidf,
+            ngram_size=self.config.ngram_size
+        )
     
     def validate_chapter(
         self,
         chapter_text: str,
-        target_length: Optional[int] = None
+        target_length: Optional[int] = None,
+        section_type: str = "chapter"
     ) -> LengthValidationResult:
         """
-        Validate chapter length and quality
+        Validate a chapter with intelligent analysis
         
         Args:
-            chapter_text: Chapter text to validate
-            target_length: Target word count (uses default if not provided)
+            chapter_text: The chapter text to validate
+            target_length: Expected word count (defaults to config.words_per_chapter)
+            section_type: Type of section for context
             
         Returns:
-            LengthValidationResult with validation details
+            LengthValidationResult with comprehensive analysis
         """
-        # Use default target if not provided
+        # Use configured target if not specified
         if target_length is None:
-            target_length = self.config.TARGET_CHAPTER_LENGTH
+            target_length = self.config.words_per_chapter
+        
+        # Get acceptable range
+        target_min, target_max = self.config.get_target_range(section_type)
         
         # Count words
         word_count = self.text_analyzer.count_words(chapter_text)
         
-        # Calculate individual component scores
-        length_score = self._calculate_length_score(word_count, target_length)
-        density_score = self._calculate_density_score(chapter_text)
-        repetition_score = self._calculate_repetition_score(chapter_text)
-        vocabulary_score = self._calculate_vocabulary_score(chapter_text)
+        # Calculate length score
+        length_score = self.config.calculate_length_score(word_count, target_length)
+        
+        # Analyze information density
+        density_score = self.text_analyzer.calculate_information_density(chapter_text)
+        
+        # Detect repetition
+        repetition_metrics = self.text_analyzer.detect_repetitive_content(chapter_text)
+        repetition_score = repetition_metrics['repetition_score']
+        
+        # Extract keywords
+        keywords = self.text_analyzer.extract_keywords(chapter_text, top_n=10)
+        
+        # Get readability metrics
+        readability = self.text_analyzer.calculate_readability_metrics(chapter_text)
+        
+        # Get content balance
+        balance = self.text_analyzer.analyze_content_balance(chapter_text)
         
         # Calculate overall quality score (0-100)
         quality_score = self._calculate_quality_score(
-            length_score,
-            density_score,
-            repetition_score,
-            vocabulary_score
+            length_score=length_score,
+            density_score=density_score,
+            repetition_score=repetition_score,
+            readability=readability,
+            balance=balance
         )
-        
-        # Determine if valid
-        min_length, max_length = self.config.get_length_range(target_length)
-        is_valid = (
-            min_length <= word_count <= max_length and
-            quality_score >= 60.0  # Minimum acceptable quality
-        )
-        
-        # Get detailed analysis
-        repetition_analysis = self.text_analyzer.detect_repetitive_content(
-            chapter_text,
-            self.config.NGRAM_SIZE_MIN,
-            self.config.NGRAM_SIZE_MAX,
-            self.config.REPETITION_MIN_OCCURRENCES
-        )
-        
-        information_density = self.text_analyzer.calculate_information_density(chapter_text)
-        vocabulary_richness = self.text_analyzer.calculate_vocabulary_richness(chapter_text)
         
         # Generate suggestions
         suggestions = self._generate_suggestions(
             word_count=word_count,
             target_length=target_length,
-            quality_score=quality_score,
-            information_density=information_density,
-            repetition_ratio=repetition_analysis['repetition_ratio'],
-            vocabulary_richness=vocabulary_richness,
-            repetitive_ngrams=repetition_analysis['repetitive_ngrams']
+            target_min=target_min,
+            target_max=target_max,
+            density_score=density_score,
+            repetition_metrics=repetition_metrics,
+            readability=readability,
+            balance=balance,
+            quality_score=quality_score
         )
         
-        # Get additional statistics
-        content_stats = self.text_analyzer.get_content_statistics(chapter_text)
-        sentence_analysis = self.text_analyzer.analyze_sentence_structure(chapter_text)
-        key_terms = self.text_analyzer.extract_key_terms(chapter_text, top_n=5)
+        # Determine if valid
+        is_valid = (
+            target_min <= word_count <= target_max and
+            quality_score >= self.config.min_quality_score
+        )
+        
+        # Compile metrics
+        metrics = {
+            'readability': readability,
+            'balance': balance,
+            'repetition': repetition_metrics
+        }
         
         return LengthValidationResult(
             is_valid=is_valid,
             word_count=word_count,
-            target_length=target_length,
+            expected_words=target_length,
+            target_min=target_min,
+            target_max=target_max,
             quality_score=quality_score,
             length_score=length_score,
             density_score=density_score,
             repetition_score=repetition_score,
-            vocabulary_score=vocabulary_score,
-            information_density=information_density,
-            repetition_ratio=repetition_analysis['repetition_ratio'],
-            vocabulary_richness=vocabulary_richness,
             suggestions=suggestions,
-            details={
-                'length_range': (min_length, max_length),
-                'content_statistics': content_stats,
-                'sentence_analysis': sentence_analysis,
-                'key_terms': key_terms,
-                'repetitive_ngrams': repetition_analysis['repetitive_ngrams'][:5]
-            }
+            keywords=keywords,
+            metrics=metrics
         )
     
-    def _calculate_length_score(self, word_count: int, target_length: int) -> float:
+    def validate_character_content(
+        self,
+        character_name: str,
+        base_dir: str = "bios"
+    ) -> Dict[str, LengthValidationResult]:
         """
-        Calculate score based on length compliance
+        Validate all content for a character (migrates check_lengths.py functionality)
         
         Args:
-            word_count: Actual word count
-            target_length: Target word count
+            character_name: Name of the character
+            base_dir: Base directory for biographies
             
         Returns:
-            Score from 0 to 100
+            Dictionary mapping section names to validation results
         """
-        min_length, max_length = self.config.get_length_range(target_length)
+        character_dir = Path(base_dir) / character_name
+        control_dir = character_dir / "control"
+        csv_file = control_dir / "longitudes.csv"
         
-        # Perfect score if within tolerance
-        if min_length <= word_count <= max_length:
-            # Even better score if very close to target
-            deviation = abs(word_count - target_length)
-            max_deviation = target_length * self.config.LENGTH_TOLERANCE
-            if max_deviation > 0:
-                return 100 - (deviation / max_deviation * 10)
-            return 100.0
+        if not csv_file.exists():
+            raise FileNotFoundError(
+                f"Control file not found: {csv_file}. "
+                "Must be generated during planning phase."
+            )
         
-        # Penalty for being outside range
-        if word_count < min_length:
-            # Too short
-            deficit = min_length - word_count
-            penalty = min(deficit / min_length * 100, 100)
-            return max(0, 100 - penalty)
-        else:
-            # Too long
-            excess = word_count - max_length
-            penalty = min(excess / max_length * 100, 100)
-            return max(0, 100 - penalty)
-    
-    def _calculate_density_score(self, text: str) -> float:
-        """
-        Calculate score based on information density
+        # Read CSV file
+        results = {}
+        rows = []
         
-        Args:
-            text: Text to analyze
+        with open(csv_file, "r", encoding="utf-8") as f:
+            reader = csv.DictReader(f)
+            for row in reader:
+                rows.append(row)
+        
+        # Validate each section
+        for row in rows:
+            section_name = row["seccion"]
+            expected_length = int(row["longitud_esperada"])
+            file_path = character_dir / f"{section_name}.md"
             
-        Returns:
-            Score from 0 to 100
-        """
-        density = self.text_analyzer.calculate_information_density(text)
+            if file_path.exists():
+                with open(file_path, "r", encoding="utf-8") as f:
+                    text = f.read()
+                
+                # Validate the section
+                result = self.validate_chapter(
+                    chapter_text=text,
+                    target_length=expected_length,
+                    section_type="chapter" if "capitulo" in section_name else "special"
+                )
+                
+                results[section_name] = result
+                
+                # Update CSV row with new data
+                row["longitud_real"] = str(result.word_count)
+                row["porcentaje"] = str(result.percentage_of_target)
+            else:
+                # File doesn't exist
+                row["longitud_real"] = "0"
+                row["porcentaje"] = "0.0"
         
-        # Score based on proximity to optimal density
-        optimal = self.config.OPTIMAL_INFORMATION_DENSITY
-        min_density = self.config.MIN_INFORMATION_DENSITY
+        # Write updated CSV
+        with open(csv_file, "w", newline="", encoding="utf-8") as f:
+            writer = csv.DictWriter(
+                f,
+                fieldnames=["seccion", "longitud_esperada", "longitud_real", "porcentaje"]
+            )
+            writer.writeheader()
+            writer.writerows(rows)
         
-        if density >= optimal:
-            # At or above optimal - excellent
-            return 100.0
-        elif density >= min_density:
-            # Between minimum and optimal - scale linearly
-            range_size = optimal - min_density
-            score_range = 100 - 60  # 60-100 range
-            return 60 + (density - min_density) / range_size * score_range
-        else:
-            # Below minimum - poor quality
-            if min_density > 0:
-                return (density / min_density) * 60
-            return 0.0
-    
-    def _calculate_repetition_score(self, text: str) -> float:
-        """
-        Calculate score based on content repetition
-        
-        Args:
-            text: Text to analyze
-            
-        Returns:
-            Score from 0 to 100
-        """
-        repetition_analysis = self.text_analyzer.detect_repetitive_content(
-            text,
-            self.config.NGRAM_SIZE_MIN,
-            self.config.NGRAM_SIZE_MAX,
-            self.config.REPETITION_MIN_OCCURRENCES
-        )
-        
-        repetition_ratio = repetition_analysis['repetition_ratio']
-        max_acceptable = self.config.MAX_ACCEPTABLE_REPETITION_RATIO
-        
-        # Perfect score if no or minimal repetition
-        if repetition_ratio <= max_acceptable:
-            # Better score for less repetition
-            return 100 - (repetition_ratio / max_acceptable * 10)
-        
-        # Penalty for excessive repetition
-        excess = repetition_ratio - max_acceptable
-        penalty = min(excess / max_acceptable * 100, 100)
-        return max(0, 90 - penalty)
-    
-    def _calculate_vocabulary_score(self, text: str) -> float:
-        """
-        Calculate score based on vocabulary richness
-        
-        Args:
-            text: Text to analyze
-            
-        Returns:
-            Score from 0 to 100
-        """
-        richness = self.text_analyzer.calculate_vocabulary_richness(text)
-        
-        optimal = self.config.OPTIMAL_UNIQUE_WORDS_RATIO
-        min_ratio = self.config.MIN_UNIQUE_WORDS_RATIO
-        
-        if richness >= optimal:
-            # At or above optimal - excellent
-            return 100.0
-        elif richness >= min_ratio:
-            # Between minimum and optimal - scale linearly
-            range_size = optimal - min_ratio
-            score_range = 100 - 60  # 60-100 range
-            return 60 + (richness - min_ratio) / range_size * score_range
-        else:
-            # Below minimum - poor vocabulary
-            if min_ratio > 0:
-                return (richness / min_ratio) * 60
-            return 0.0
+        return results
     
     def _calculate_quality_score(
         self,
         length_score: float,
         density_score: float,
         repetition_score: float,
-        vocabulary_score: float
+        readability: Dict[str, float],
+        balance: Dict[str, any]
     ) -> float:
         """
-        Calculate overall quality score using weighted average
+        Calculate overall quality score (0-100)
+        
+        Weights:
+        - Length compliance: 35%
+        - Information density: 30%
+        - Repetition (inverse): 20%
+        - Content balance: 15%
         
         Args:
-            length_score: Score for length compliance
-            density_score: Score for information density
-            repetition_score: Score for lack of repetition
-            vocabulary_score: Score for vocabulary richness
+            length_score: Score from length compliance (0-100)
+            density_score: Information density (0-1)
+            repetition_score: Repetition score (0-1, higher = more repetitive)
+            readability: Readability metrics
+            balance: Content balance metrics
             
         Returns:
-            Overall quality score from 0 to 100
+            Quality score (0-100)
         """
-        quality = (
-            length_score * self.config.WEIGHT_LENGTH_COMPLIANCE +
-            density_score * self.config.WEIGHT_INFORMATION_DENSITY +
-            repetition_score * self.config.WEIGHT_REPETITION_SCORE +
-            vocabulary_score * self.config.WEIGHT_VOCABULARY_RICHNESS
+        # Weight components
+        length_component = length_score * 0.35
+        density_component = (density_score * 100) * 0.30
+        
+        # Repetition: lower is better, so invert
+        repetition_component = ((1.0 - repetition_score) * 100) * 0.20
+        
+        # Balance: give full points if balanced, partial otherwise
+        balance_component = (100 if balance.get('is_balanced', True) else 60) * 0.15
+        
+        total_score = (
+            length_component +
+            density_component +
+            repetition_component +
+            balance_component
         )
         
-        return round(quality, 2)
+        return round(min(max(total_score, 0.0), 100.0), 2)
     
     def _generate_suggestions(
         self,
         word_count: int,
         target_length: int,
-        quality_score: float,
-        information_density: float,
-        repetition_ratio: float,
-        vocabulary_richness: float,
-        repetitive_ngrams: List[Dict]
+        target_min: int,
+        target_max: int,
+        density_score: float,
+        repetition_metrics: Dict[str, any],
+        readability: Dict[str, float],
+        balance: Dict[str, any],
+        quality_score: float
     ) -> List[ValidationSuggestion]:
         """
-        Generate suggestions for improving content
+        Generate context-aware suggestions for improvement
         
         Args:
-            word_count: Current word count
+            word_count: Actual word count
             target_length: Target word count
+            target_min: Minimum acceptable words
+            target_max: Maximum acceptable words
+            density_score: Information density score
+            repetition_metrics: Repetition analysis results
+            readability: Readability metrics
+            balance: Content balance metrics
             quality_score: Overall quality score
-            information_density: Information density score
-            repetition_ratio: Repetition ratio
-            vocabulary_richness: Vocabulary richness score
-            repetitive_ngrams: List of repetitive n-grams
             
         Returns:
             List of suggestions
         """
         suggestions = []
-        min_length, max_length = self.config.get_length_range(target_length)
         
-        # Length-based suggestions
-        if word_count < min_length:
-            deficit = min_length - word_count
+        # Length suggestions
+        if word_count < target_min:
+            shortage = target_min - word_count
+            severity = 'critical' if shortage > 1000 else 'warning'
             suggestions.append(ValidationSuggestion(
                 type='expansion',
-                priority='high',
-                message=f'Chapter is {deficit} words too short',
-                details=f'Current: {word_count} words. Target range: {min_length}-{max_length} words. '
-                       f'Consider adding more examples, explanations, or details to reach the target.'
+                severity=severity,
+                message=f'Chapter is {shortage} words short of minimum ({target_min} words)',
+                details=f'Consider adding more details, examples, or expanding existing sections. '
+                       f'Target: {target_length} words, Current: {word_count} words.'
             ))
-        elif word_count > max_length:
-            excess = word_count - max_length
+        elif word_count > target_max:
+            excess = word_count - target_max
+            severity = 'critical' if excess > 1000 else 'warning'
             suggestions.append(ValidationSuggestion(
                 type='reduction',
-                priority='high',
-                message=f'Chapter is {excess} words too long',
-                details=f'Current: {word_count} words. Target range: {min_length}-{max_length} words. '
-                       f'Consider condensing content, removing redundancies, or splitting into multiple chapters.'
+                severity=severity,
+                message=f'Chapter is {excess} words over maximum ({target_max} words)',
+                details=f'Consider condensing repetitive sections or removing tangential content. '
+                       f'Target: {target_length} words, Current: {word_count} words.'
             ))
         else:
+            # Within range
             suggestions.append(ValidationSuggestion(
-                type='improvement',
-                priority='low',
-                message='Chapter length is within acceptable range',
-                details=f'Current: {word_count} words. Target: {target_length} words.'
+                type='expansion',
+                severity='info',
+                message=f'Word count is within acceptable range ({word_count}/{target_length} words)',
+                details=f'Current completion: {round((word_count/target_length)*100, 1)}%'
             ))
         
-        # Information density suggestions
-        if information_density < self.config.MIN_INFORMATION_DENSITY:
+        # Density suggestions
+        if density_score < self.config.min_density_score:
             suggestions.append(ValidationSuggestion(
-                type='improvement',
-                priority='high',
-                message='Low information density detected',
-                details=f'Density score: {information_density:.2f}. Add more specific details, facts, '
-                       f'or unique insights to improve content quality.'
-            ))
-        elif information_density < self.config.OPTIMAL_INFORMATION_DENSITY:
-            suggestions.append(ValidationSuggestion(
-                type='improvement',
-                priority='medium',
-                message='Information density could be improved',
-                details=f'Density score: {information_density:.2f}. Consider adding more substantive '
-                       f'content to increase information value.'
+                type='quality',
+                severity='warning',
+                message=f'Low information density ({density_score:.2f})',
+                details='Content may be repetitive or lack substance. '
+                       'Add more unique information, facts, or insights.'
             ))
         
         # Repetition suggestions
-        if repetition_ratio > self.config.MAX_ACCEPTABLE_REPETITION_RATIO:
+        if repetition_metrics['repetition_score'] > self.config.max_repetition_threshold:
+            most_repeated = repetition_metrics.get('most_repeated_ngram', 'N/A')
+            count = repetition_metrics.get('repetition_count', 0)
             suggestions.append(ValidationSuggestion(
-                type='improvement',
-                priority='high',
-                message=f'High content repetition detected ({repetition_ratio:.1%})',
-                details='Review and remove repetitive phrases. Vary sentence structure and word choice.'
+                type='repetition',
+                severity='warning',
+                message=f'High repetition detected ({repetition_metrics["repetition_score"]:.2f})',
+                details=f'Most repeated phrase appears {count} times. '
+                       f'Consider varying sentence structure and word choice.'
             ))
-            
-            # Add specific repetitive phrases
-            if repetitive_ngrams:
-                top_repetitions = ', '.join([
-                    f'"{ng["ngram"]}" ({ng["occurrences"]}x)'
-                    for ng in repetitive_ngrams[:3]
-                ])
+        
+        # Balance suggestions
+        if not balance.get('is_balanced', True):
+            dialogue_ratio = balance.get('dialogue_ratio', 0.0)
+            if dialogue_ratio < 0.1:
                 suggestions.append(ValidationSuggestion(
-                    type='improvement',
-                    priority='medium',
-                    message='Specific repetitive phrases found',
-                    details=f'Most repeated: {top_repetitions}'
+                    type='quality',
+                    severity='info',
+                    message='Very little dialogue detected',
+                    details='Consider adding dialogue to make the content more engaging.'
+                ))
+            elif dialogue_ratio > 0.7:
+                suggestions.append(ValidationSuggestion(
+                    type='quality',
+                    severity='info',
+                    message='High dialogue ratio detected',
+                    details='Consider balancing with more narrative or descriptive content.'
                 ))
         
-        # Vocabulary suggestions
-        if vocabulary_richness < self.config.MIN_UNIQUE_WORDS_RATIO:
-            suggestions.append(ValidationSuggestion(
-                type='improvement',
-                priority='high',
-                message=f'Low vocabulary richness ({vocabulary_richness:.1%})',
-                details='Use more varied vocabulary and synonyms to improve readability and engagement.'
-            ))
-        elif vocabulary_richness < self.config.OPTIMAL_UNIQUE_WORDS_RATIO:
-            suggestions.append(ValidationSuggestion(
-                type='improvement',
-                priority='medium',
-                message='Vocabulary richness could be improved',
-                details=f'Richness: {vocabulary_richness:.1%}. Consider using more diverse vocabulary.'
-            ))
-        
         # Overall quality suggestion
-        if quality_score < 60:
+        if quality_score < self.config.min_quality_score:
             suggestions.append(ValidationSuggestion(
-                type='improvement',
-                priority='high',
-                message=f'Overall quality score is low ({quality_score:.1f}/100)',
-                details='Review all suggestions above to improve chapter quality.'
-            ))
-        elif quality_score < 80:
-            suggestions.append(ValidationSuggestion(
-                type='improvement',
-                priority='medium',
-                message=f'Quality score is acceptable but could be improved ({quality_score:.1f}/100)',
-                details='Address the suggestions above to achieve excellent quality.'
-            ))
-        else:
-            suggestions.append(ValidationSuggestion(
-                type='improvement',
-                priority='low',
-                message=f'Excellent quality score ({quality_score:.1f}/100)',
-                details='Chapter meets high quality standards. Minor improvements may still be possible.'
+                type='quality',
+                severity='critical',
+                message=f'Quality score below threshold ({quality_score:.1f}/{self.config.min_quality_score})',
+                details='Chapter needs improvement in multiple areas. Review all suggestions above.'
             ))
         
         return suggestions

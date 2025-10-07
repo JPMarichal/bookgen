@@ -1,86 +1,135 @@
 """
-Configuration for chapter length validation service
+Configuration for length validation service
+Reads thresholds and targets from environment variables
 """
-from typing import Dict, Any
+import os
+from dataclasses import dataclass
+from typing import Optional
+from dotenv import load_dotenv
+
+# Load environment variables
+load_dotenv()
 
 
+@dataclass
 class ValidationConfig:
     """Configuration for chapter length validation"""
     
-    # Length thresholds (in words)
-    MIN_CHAPTER_LENGTH = 3000
-    MAX_CHAPTER_LENGTH = 15000
-    TARGET_CHAPTER_LENGTH = 5000
+    # Core targets from .env
+    total_words: int
+    chapters_number: int
+    words_per_chapter: int
+    validation_tolerance: float
     
-    # Tolerance percentage (±5%)
-    LENGTH_TOLERANCE = 0.05
+    # Quality thresholds
+    min_quality_score: float = 70.0
+    min_density_score: float = 0.6
+    max_repetition_threshold: float = 0.3
     
-    # Quality scoring thresholds
-    MIN_QUALITY_SCORE = 0
-    MAX_QUALITY_SCORE = 100
+    # Length boundaries
+    absolute_min_words: int = 3000
+    absolute_max_words: int = 15000
     
-    # Information density thresholds
-    MIN_INFORMATION_DENSITY = 0.3  # Minimum TF-IDF score for good content
-    OPTIMAL_INFORMATION_DENSITY = 0.6  # Optimal TF-IDF score
-    
-    # Repetition detection thresholds
-    MAX_ACCEPTABLE_REPETITION_RATIO = 0.15  # Max 15% repetitive content
-    NGRAM_SIZE_MIN = 3  # Minimum n-gram size for repetition detection
-    NGRAM_SIZE_MAX = 7  # Maximum n-gram size for repetition detection
-    REPETITION_MIN_OCCURRENCES = 3  # Minimum occurrences to consider as repetitive
-    
-    # Content variety thresholds
-    MIN_UNIQUE_WORDS_RATIO = 0.3  # Minimum 30% unique words
-    OPTIMAL_UNIQUE_WORDS_RATIO = 0.5  # Optimal 50% unique words
-    
-    # Scoring weights (must sum to 1.0)
-    WEIGHT_LENGTH_COMPLIANCE = 0.25
-    WEIGHT_INFORMATION_DENSITY = 0.30
-    WEIGHT_REPETITION_SCORE = 0.25
-    WEIGHT_VOCABULARY_RICHNESS = 0.20
+    # Analysis parameters
+    ngram_size: int = 5
+    max_features_tfidf: int = 1000
     
     @classmethod
-    def get_length_range(cls, target_length: int = None) -> tuple:
+    def from_env(cls) -> "ValidationConfig":
         """
-        Get valid length range for a chapter
+        Create configuration from environment variables
+        
+        Returns:
+            ValidationConfig instance with values from .env
+        """
+        total_words = int(os.getenv('TOTAL_WORDS', '51000'))
+        chapters_number = int(os.getenv('CHAPTERS_NUMBER', '20'))
+        words_per_chapter = int(os.getenv('WORDS_PER_CHAPTER', '2550'))
+        validation_tolerance = float(os.getenv('VALIDATION_TOLERANCE', '0.05'))
+        
+        return cls(
+            total_words=total_words,
+            chapters_number=chapters_number,
+            words_per_chapter=words_per_chapter,
+            validation_tolerance=validation_tolerance
+        )
+    
+    def get_target_range(self, section_type: str = "chapter") -> tuple[int, int]:
+        """
+        Get acceptable word count range for a section
         
         Args:
-            target_length: Target length in words (optional)
+            section_type: Type of section (chapter, prologue, etc.)
             
         Returns:
-            Tuple of (min_length, max_length)
+            Tuple of (min_words, max_words)
         """
-        if target_length is None:
-            target_length = cls.TARGET_CHAPTER_LENGTH
+        if section_type == "chapter":
+            target = self.words_per_chapter
+        else:
+            # Special sections might have different targets
+            target = self.words_per_chapter
         
-        tolerance = int(target_length * cls.LENGTH_TOLERANCE)
-        min_length = max(cls.MIN_CHAPTER_LENGTH, target_length - tolerance)
-        max_length = min(cls.MAX_CHAPTER_LENGTH, target_length + tolerance)
+        tolerance_words = int(target * self.validation_tolerance)
+        min_words = max(target - tolerance_words, self.absolute_min_words)
+        max_words = min(target + tolerance_words, self.absolute_max_words)
         
-        return (min_length, max_length)
+        return (min_words, max_words)
     
-    @classmethod
-    def get_config_dict(cls) -> Dict[str, Any]:
+    def is_within_tolerance(self, actual_words: int, expected_words: Optional[int] = None) -> bool:
         """
-        Get configuration as dictionary
+        Check if word count is within acceptable tolerance
         
+        Args:
+            actual_words: Actual word count
+            expected_words: Expected word count (defaults to words_per_chapter)
+            
         Returns:
-            Dictionary with all configuration values
+            True if within tolerance
         """
-        return {
-            'min_chapter_length': cls.MIN_CHAPTER_LENGTH,
-            'max_chapter_length': cls.MAX_CHAPTER_LENGTH,
-            'target_chapter_length': cls.TARGET_CHAPTER_LENGTH,
-            'length_tolerance': cls.LENGTH_TOLERANCE,
-            'min_information_density': cls.MIN_INFORMATION_DENSITY,
-            'optimal_information_density': cls.OPTIMAL_INFORMATION_DENSITY,
-            'max_acceptable_repetition_ratio': cls.MAX_ACCEPTABLE_REPETITION_RATIO,
-            'min_unique_words_ratio': cls.MIN_UNIQUE_WORDS_RATIO,
-            'optimal_unique_words_ratio': cls.OPTIMAL_UNIQUE_WORDS_RATIO,
-            'scoring_weights': {
-                'length_compliance': cls.WEIGHT_LENGTH_COMPLIANCE,
-                'information_density': cls.WEIGHT_INFORMATION_DENSITY,
-                'repetition_score': cls.WEIGHT_REPETITION_SCORE,
-                'vocabulary_richness': cls.WEIGHT_VOCABULARY_RICHNESS
-            }
-        }
+        if expected_words is None:
+            expected_words = self.words_per_chapter
+        
+        min_allowed = expected_words * (1 - self.validation_tolerance)
+        max_allowed = expected_words * (1 + self.validation_tolerance)
+        
+        return min_allowed <= actual_words <= max_allowed
+    
+    def calculate_length_score(self, actual_words: int, expected_words: Optional[int] = None) -> float:
+        """
+        Calculate length compliance score (0-100)
+        
+        Args:
+            actual_words: Actual word count
+            expected_words: Expected word count (defaults to words_per_chapter)
+            
+        Returns:
+            Score from 0 to 100
+        """
+        if expected_words is None:
+            expected_words = self.words_per_chapter
+        
+        if expected_words == 0:
+            return 0.0
+        
+        ratio = actual_words / expected_words
+        
+        # Perfect score at 100% compliance
+        if 0.95 <= ratio <= 1.05:
+            return 100.0
+        
+        # Within tolerance gets 80-100 points
+        if self.is_within_tolerance(actual_words, expected_words):
+            deviation = abs(ratio - 1.0)
+            # Linear scale from 100 (perfect) to 80 (edge of tolerance)
+            return 100.0 - (deviation / self.validation_tolerance) * 20.0
+        
+        # Outside tolerance gets 0-80 points based on severity
+        if ratio < (1 - self.validation_tolerance):
+            # Too short
+            deviation = (1 - self.validation_tolerance) - ratio
+            return max(0.0, 80.0 - deviation * 100.0)
+        else:
+            # Too long
+            deviation = ratio - (1 + self.validation_tolerance)
+            return max(0.0, 80.0 - deviation * 100.0)
