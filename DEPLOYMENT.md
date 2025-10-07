@@ -2,6 +2,10 @@
 
 Esta guía te ayudará a desplegar BookGen en tu VPS Ubuntu de IONOS con Docker y configurar el pipeline de CI/CD con GitHub Actions.
 
+> 📚 **Documentación Relacionada:**
+> - [VPS_SETUP.md](VPS_SETUP.md) - Guía completa de configuración del VPS con todos los detalles técnicos
+> - [verify-vps-deployment.sh](verify-vps-deployment.sh) - Script automático de verificación del deployment
+
 ## 📋 Prerrequisitos
 
 ### Entorno de Desarrollo (Windows 11)
@@ -122,7 +126,112 @@ cd /opt/bookgen
 docker-compose -f docker-compose.prod.yml logs -f
 ```
 
+### 6. Verificación Post-Despliegue
+
+Ejecuta los siguientes comandos para verificar que todo esté configurado correctamente:
+
+```bash
+# ✅ Verificar acceso SSH con Docker
+ssh user@vps-ip "docker ps"
+
+# ✅ Verificar servicios
+systemctl status bookgen
+systemctl status fail2ban
+
+# ✅ Verificar firewall
+sudo ufw status | grep -E '22|80|443'
+
+# ✅ Verificar backups programados
+ls -la /opt/bookgen/backups/
+
+# ✅ Verificar monitoreo
+tail -f /var/log/bookgen/monitor.log
+
+# ✅ Verificar health endpoint
+curl -f http://localhost:8000/health
+```
+
+Si tienes dominio y SSL configurado:
+```bash
+# ✅ Verificar certificado SSL
+curl -I https://bookgen.yourdomain.com
+
+# ✅ Verificar Nginx
+sudo nginx -t
+```
+
 ## 📊 Monitoreo y Mantenimiento
+
+### Verificación de Componentes
+
+#### Verificar acceso SSH y Docker
+```bash
+# Test SSH access and Docker
+ssh user@vps-ip "docker ps"
+```
+
+#### Verificar SSL y Nginx
+```bash
+# Verify SSL certificate
+curl -I https://bookgen.yourdomain.com
+
+# Check Nginx configuration
+sudo nginx -t
+
+# Test Nginx reverse proxy
+curl -v http://localhost
+```
+
+#### Verificar servicios activos
+```bash
+# Check services
+systemctl status bookgen
+systemctl status nginx
+systemctl status fail2ban
+
+# Check Docker containers
+docker ps
+
+# Verify all containers are running
+docker-compose -f /opt/bookgen/docker-compose.prod.yml ps
+```
+
+#### Verificar backups
+```bash
+# Verify backups directory and files
+ls -la /opt/bookgen/backups/
+
+# Check backup cron job
+crontab -l | grep backup
+
+# Test backup script
+sudo /opt/bookgen/backup.sh
+```
+
+#### Verificar monitoreo
+```bash
+# Test monitoring logs
+tail -f /var/log/bookgen/monitor.log
+
+# Check monitoring cron job
+crontab -l | grep monitor
+
+# Manual health check
+curl -f http://localhost:8000/health
+```
+
+#### Verificar firewall y seguridad
+```bash
+# Check UFW status
+sudo ufw status verbose
+
+# Verify open ports
+sudo netstat -tulpn | grep -E ':(22|80|443)'
+
+# Check Fail2ban status
+sudo fail2ban-client status
+sudo fail2ban-client status sshd
+```
 
 ### Comandos Útiles
 

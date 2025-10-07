@@ -123,18 +123,75 @@ if ! command -v certbot &> /dev/null; then
     apt install -y certbot python3-certbot-nginx
 fi
 
-# 8. Configurar certificado SSL (comentado para primera instalación)
+# 8. Instalar y configurar Fail2ban para protección SSH
+if ! command -v fail2ban-client &> /dev/null; then
+    print_status "Instalando Fail2ban para protección SSH..."
+    apt install -y fail2ban
+    
+    # Crear configuración personalizada de Fail2ban
+    cat > /etc/fail2ban/jail.local << EOF
+[DEFAULT]
+bantime = 3600
+findtime = 600
+maxretry = 5
+destemail = admin@${DOMAIN}
+sendername = Fail2Ban
+action = %(action_mwl)s
+
+[sshd]
+enabled = true
+port = 22
+filter = sshd
+logpath = /var/log/auth.log
+maxretry = 3
+bantime = 7200
+
+[nginx-http-auth]
+enabled = true
+port = http,https
+filter = nginx-http-auth
+logpath = /var/log/nginx/*error.log
+maxretry = 5
+
+[nginx-noscript]
+enabled = true
+port = http,https
+filter = nginx-noscript
+logpath = /var/log/nginx/*access.log
+maxretry = 6
+
+[nginx-badbots]
+enabled = true
+port = http,https
+filter = nginx-badbots
+logpath = /var/log/nginx/*access.log
+maxretry = 2
+
+[nginx-noproxy]
+enabled = true
+port = http,https
+filter = nginx-noproxy
+logpath = /var/log/nginx/*access.log
+maxretry = 2
+EOF
+
+    systemctl enable fail2ban
+    systemctl start fail2ban
+    print_status "Fail2ban configurado y activo"
+fi
+
+# 9. Configurar certificado SSL (comentado para primera instalación)
 # print_status "Configurando certificado SSL..."
 # certbot certonly --standalone -d $DOMAIN --agree-tos --no-eff-email --email admin@$DOMAIN
 
-# 9. Configurar firewall
+# 10. Configurar firewall
 print_status "Configurando firewall..."
 ufw allow 22/tcp  # SSH
 ufw allow 80/tcp  # HTTP
 ufw allow 443/tcp # HTTPS
 ufw --force enable
 
-# 10. Crear servicio systemd para auto-inicio
+# 11. Crear servicio systemd para auto-inicio
 cat > /etc/systemd/system/bookgen.service << EOF
 [Unit]
 Description=BookGen Docker Compose Application
@@ -160,7 +217,7 @@ systemctl enable bookgen.service
 
 print_status "Servicio systemd configurado"
 
-# 11. Configurar rotación de logs
+# 12. Configurar rotación de logs
 cat > /etc/logrotate.d/bookgen << EOF
 /var/log/bookgen/*.log {
     daily
@@ -177,7 +234,7 @@ EOF
 
 print_status "Rotación de logs configurada"
 
-# 12. Crear script de backup
+# 13. Crear script de backup
 cat > $BOOKGEN_DIR/backup.sh << 'EOF'
 #!/bin/bash
 BACKUP_DIR="/opt/bookgen/backups"
@@ -208,7 +265,7 @@ echo "0 2 * * * $SERVICE_USER $BOOKGEN_DIR/backup.sh" >> /etc/crontab
 
 print_status "Script de backup configurado"
 
-# 13. Configurar monitoreo básico
+# 14. Configurar monitoreo básico
 cat > $BOOKGEN_DIR/monitor.sh << 'EOF'
 #!/bin/bash
 # Script básico de monitoreo
@@ -240,7 +297,7 @@ echo "*/5 * * * * $SERVICE_USER $BOOKGEN_DIR/monitor.sh" >> /etc/crontab
 
 print_status "Monitoreo configurado"
 
-# 14. Mostrar información final
+# 15. Mostrar información final
 print_status "¡Despliegue inicial completado!"
 echo ""
 echo "📋 Pasos siguientes:"
@@ -255,5 +312,11 @@ echo "- Ver logs: docker-compose -f $BOOKGEN_DIR/docker-compose.prod.yml logs -f
 echo "- Reiniciar: systemctl restart bookgen"
 echo "- Backup manual: $BOOKGEN_DIR/backup.sh"
 echo "- Monitor manual: $BOOKGEN_DIR/monitor.sh"
+echo ""
+echo "🔐 Seguridad configurada:"
+echo "- Firewall UFW activo (puertos 22, 80, 443)"
+echo "- Fail2ban protegiendo SSH y Nginx"
+echo "- Rate limiting en Nginx"
+echo "- SSL listo para configurar"
 echo ""
 print_status "BookGen está listo para usar en: https://$DOMAIN"
