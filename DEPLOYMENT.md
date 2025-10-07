@@ -2,6 +2,10 @@
 
 Esta guía te ayudará a desplegar BookGen en tu VPS Ubuntu de IONOS con Docker y configurar el pipeline de CI/CD con GitHub Actions.
 
+> 📚 **Documentación Relacionada:**
+> - [VPS_SETUP.md](VPS_SETUP.md) - Guía completa de configuración del VPS con todos los detalles técnicos
+> - [verify-vps-deployment.sh](verify-vps-deployment.sh) - Script automático de verificación del deployment
+
 ## 📋 Prerrequisitos
 
 ### Entorno de Desarrollo (Windows 11)
