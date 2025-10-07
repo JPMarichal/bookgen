@@ -90,6 +90,7 @@ config/local_*
 
 # Scripts de deployment
 deploy-vps.sh
+test-docker-setup.sh
 *.sh
 
 # Documentación
