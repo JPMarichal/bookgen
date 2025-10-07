@@ -1,0 +1,80 @@
+version: '3.8'
+
+services:
+  bookgen-api:
+    build: .
+    container_name: bookgen-api
+    ports:
+      - "8000:8000"
+    environment:
+      - ENV=development
+      - DEBUG=true
+    env_file:
+      - .env
+    volumes:
+      # Datos persistentes
+      - ./data:/app/data
+      - ./config:/app/config
+      
+      # Directorios de trabajo (para desarrollo)
+      - ./bios:/app/bios
+      - ./docx:/app/docx
+      - ./esquemas:/app/esquemas
+      - ./colecciones:/app/colecciones
+      - ./wordTemplate:/app/wordTemplate
+      
+      # Logs para debugging
+      - bookgen_logs:/app/data/logs
+    networks:
+      - bookgen-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  bookgen-worker:
+    build: .
+    container_name: bookgen-worker
+    command: ["python", "src/worker.py"]
+    environment:
+      - ENV=development
+      - WORKER_TYPE=content_generator
+      - DEBUG=true
+    env_file:
+      - .env
+    volumes:
+      - ./data:/app/data
+      - ./bios:/app/bios
+      - ./docx:/app/docx
+      - ./esquemas:/app/esquemas
+      - ./colecciones:/app/colecciones
+      - ./wordTemplate:/app/wordTemplate
+    networks:
+      - bookgen-network
+    restart: unless-stopped
+    depends_on:
+      bookgen-api:
+        condition: service_healthy
+
+  # Base de datos para desarrollo (SQLite en volumen)
+  bookgen-storage:
+    image: alpine:latest
+    container_name: bookgen-storage
+    command: tail -f /dev/null  # Mantener contenedor vivo
+    volumes:
+      - bookgen_db:/data
+    networks:
+      - bookgen-network
+
+volumes:
+  bookgen_db:
+    driver: local
+  bookgen_logs:
+    driver: local
+
+networks:
+  bookgen-network:
+    driver: bridge

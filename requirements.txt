@@ -1,0 +1,45 @@
+# BookGen Sistema Automatizado - Dependencias de Producción
+
+# Core Framework y Web
+fastapi>=0.104.1
+uvicorn>=0.24.0
+pydantic>=2.5.0
+
+# Base de Datos
+sqlalchemy>=2.0.23
+alembic>=1.13.0
+
+# APIs y HTTP Clients
+requests>=2.31.0
+httpx>=0.25.2
+aiohttp>=3.9.0
+
+# Procesamiento de Texto y NLP
+nltk>=3.8.1
+scikit-learn>=1.3.2
+beautifulsoup4>=4.12.2
+lxml>=4.9.3
+textstat>=0.7.3
+
+# Configuración y Variables de Entorno  
+python-dotenv>=1.0.0
+pyyaml>=6.0.1
+
+# Validación y Parsing
+validators>=0.22.0
+python-dateutil>=2.8.2
+regex>=2023.10.3
+
+# Logging y Monitoreo
+structlog>=23.2.0
+rich>=13.7.0
+
+# Procesamiento de Archivos
+pandas>=2.1.3
+openpyxl>=3.1.2
+python-docx>=1.1.0
+
+# Utilidades
+tqdm>=4.66.1
+click>=8.1.7
+python-slugify>=8.0.1

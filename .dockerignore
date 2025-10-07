@@ -1,0 +1,84 @@
+# Archivos y directorios a ignorar en build de Docker
+.git
+.gitignore
+README.md
+Dockerfile*
+docker-compose*.yml
+.dockerignore
+
+# Archivos de desarrollo
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Testing
+.tox/
+.coverage
+.coverage.*
+.cache
+.pytest_cache/
+htmlcov/
+
+# Environments
+.env.local
+.env.development
+.env.staging
+.env.production
+.venv
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+
+# Jupyter Notebook
+.ipynb_checkpoints
+
+# Logs
+logs/
+*.log
+
+# Archivos temporales del sistema
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Archivos de salida generados (no incluir en imagen)
+bios/*/
+docx/*/
+esquemas/*
+data/logs/*
+*.docx
+*.pdf
+
+# Archivos de configuración específicos del entorno
+.env.local
+config/local_*
