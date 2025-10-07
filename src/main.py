@@ -5,13 +5,33 @@ Main entry point for the BookGen API server
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 import os
-from datetime import datetime
+import logging
+from datetime import datetime, timezone
+
+# Import routers
+from .api.routers.biographies import router as biographies_router
+from .api.routers.sources import router as sources_router
+from .api.routers.metrics import router as metrics_router
+
+# Import middleware
+from .api.middleware.rate_limiter import RateLimitMiddleware
+from .api.middleware.request_logger import RequestLoggerMiddleware
+
+# Configure logging
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+)
+logger = logging.getLogger(__name__)
 
 # Crear aplicación FastAPI
 app = FastAPI(
     title="BookGen AI System",
     description="Sistema Automatizado de Generación de Libros con IA",
-    version="1.0.0"
+    version="1.0.0",
+    docs_url="/docs",
+    redoc_url="/redoc",
+    openapi_url="/openapi.json"
 )
 
 # Configurar CORS
@@ -23,6 +43,24 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+# Add custom middleware
+# Request logging middleware
+app.add_middleware(RequestLoggerMiddleware)
+
+# Rate limiting middleware (60 requests per minute per IP)
+rate_limit_per_minute = int(os.getenv("RATE_LIMIT_PER_MINUTE", "60"))
+app.add_middleware(
+    RateLimitMiddleware,
+    requests_per_minute=rate_limit_per_minute
+)
+
+# Include routers
+app.include_router(biographies_router)
+app.include_router(sources_router)
+app.include_router(metrics_router)
+
+logger.info("BookGen API server initialized")
 
 
 @app.get("/")
@@ -44,7 +82,7 @@ async def health_check():
     """
     return {
         "status": "healthy",
-        "timestamp": datetime.utcnow().isoformat(),
+        "timestamp": datetime.now(timezone.utc).isoformat(),
         "environment": os.getenv("ENV", "development"),
         "debug": os.getenv("DEBUG", "false").lower() == "true"
     }
