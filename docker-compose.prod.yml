@@ -4,9 +4,8 @@ services:
   bookgen-api:
     image: ghcr.io/jpmarichal/bookgen:latest
     container_name: bookgen-api-prod
-    ports:
-      - "80:8000"
-      - "443:8000"  # HTTPS via reverse proxy
+    expose:
+      - "8000"
     environment:
       - ENV=production
       - DEBUG=false
@@ -94,6 +93,29 @@ services:
         limits:
           memory: 2G
           cpus: '1.0'
+
+  # Nginx reverse proxy for HTTPS and rate limiting
+  nginx-proxy:
+    image: nginx:alpine
+    container_name: bookgen-nginx-prod
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - /etc/letsencrypt:/etc/letsencrypt:ro
+      - /var/log/nginx:/var/log/nginx
+    networks:
+      - bookgen-prod-network
+    restart: always
+    depends_on:
+      bookgen-api:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "nginx", "-t"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
 
 volumes:
   bookgen_prod_data:
