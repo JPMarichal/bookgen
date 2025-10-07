@@ -139,15 +139,17 @@ python scripts/benchmark_generation.py --save
 
 ## 📋 Running All Tests
 
+**Important:** To avoid rate limiting during tests, set the `RATE_LIMIT_PER_MINUTE` environment variable to a high value:
+
 ```bash
 # Install dependencies
 pip install -r requirements.txt
 
-# Run performance benchmarks
-pytest tests/performance/ --benchmark-only -v
+# Run performance benchmarks (disable rate limiting)
+RATE_LIMIT_PER_MINUTE=10000 pytest tests/performance/ --benchmark-only -v
 
 # Run stress tests
-pytest tests/stress/ -v
+RATE_LIMIT_PER_MINUTE=10000 pytest tests/stress/ -v
 
 # Run load tests (requires running server)
 # Terminal 1: Start the server
@@ -161,38 +163,103 @@ python scripts/profile_memory.py
 
 # Run generation benchmarks
 python scripts/benchmark_generation.py
+
+# Quick verification of all tests
+./verify_performance_tests.sh
 ```
 
 ## 📊 Understanding Results
 
 ### Performance Benchmark Results
 
+Example output from pytest-benchmark:
+
 ```
-test_health_endpoint_performance
-  Mean: 15.23ms
-  Min: 12.45ms
-  Max: 21.78ms
-  ✅ PASS: < 50ms target
+---------------------------------------------------- benchmark: 1 tests ---------------------------------------------------
+Name (time in ms)                       Min     Max    Mean  StdDev  Median     IQR  Outliers       OPS  Rounds  Iterations
+---------------------------------------------------------------------------------------------------------------------------
+test_health_endpoint_performance     1.2818  2.5393  1.3730  0.1412  1.3372  0.0516      8;15  728.3064     105           1
+---------------------------------------------------------------------------------------------------------------------------
+
+Legend:
+  Outliers: 1 Standard Deviation from Mean; 1.5 IQR (InterQuartile Range) from 1st Quartile and 3rd Quartile.
+  OPS: Operations Per Second, computed as 1 / Mean
 ```
 
+**Interpretation:**
+- **Mean: 1.37ms** - Average response time (target: < 50ms for health, < 200ms for API endpoints)
+- **Min/Max: 1.28ms / 2.54ms** - Range of response times
+- **OPS: 728** - Operations per second (requests/second this endpoint can handle)
+- **✅ PASS** - 1.37ms is well under the 50ms target for health endpoint
+
 ### Load Test Results
+
+Example output from Locust:
 
 ```
 Total requests: 1234
 Total failures: 5
 Average response time: 145.32ms
+Median response time: 132.15ms
 95th percentile: 189.45ms
+99th percentile: 245.78ms
 Error rate: 0.4%
 ✅ PASS: All metrics within targets
 ```
 
+**Interpretation:**
+- **Average: 145ms** - Well under 200ms target
+- **95th percentile: 189ms** - 95% of requests completed under 200ms
+- **Error rate: 0.4%** - Well under 1% target
+
 ### Memory Profiling Results
 
+Example output:
+
 ```
-Maximum memory usage: 1.245 GB
-✅ PASS: Memory usage < 2GB target
-Memory per operation: 124.5 MB
+==========================================
+System Information
+==========================================
+CPU count: 4
+CPU percent: 15.2%
+Total memory: 16.00 GB
+Available memory: 12.34 GB
+Memory percent used: 22.9%
+==========================================
+
+==========================================
+Testing OpenRouter Client Memory Usage
+==========================================
+Baseline (before client creation)
+Current memory: 125.45 MB
+Memory increase: 0.00 MB
+Memory percent: 0.78%
+
+After client initialization
+Current memory: 156.23 MB
+Memory increase: 30.78 MB
+Memory percent: 0.98%
+
+==========================================
+Maximum memory usage: 0.153 GB
+✅ PASS: Memory usage (0.153 GB) < 2GB target
+==========================================
 ```
+
+### Stress Test Results
+
+Example output:
+
+```
+tests/stress/test_stress.py::TestStressScenarios::test_rapid_fire_requests
+Processed 677.37 requests/second
+PASSED
+```
+
+**Interpretation:**
+- System handled 100 rapid requests in ~0.15 seconds
+- Throughput: ~677 requests/second
+- All requests succeeded without errors
 
 ## 🚨 Alerting and Monitoring
 
