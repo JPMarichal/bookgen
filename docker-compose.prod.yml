@@ -38,6 +38,21 @@ services:
         reservations:
           memory: 2G
           cpus: '1.0'
+  nginx:
+    image: nginx:latest
+    container_name: bookgen-nginx-prod
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - /etc/letsencrypt:/etc/letsencrypt:ro
+      - /var/log/nginx:/var/log/nginx
+    depends_on:
+      - bookgen-api
+    networks:
+      - bookgen-prod-network
+    restart: always
 
   bookgen-worker-1:
     image: ghcr.io/jpmarichal/bookgen:latest
@@ -102,6 +117,13 @@ volumes:
       type: none
       o: bind
       device: /opt/bookgen/data
+  # Volumen para certificados SSL (opcional, si se desea persistencia fuera del contenedor)
+  # ssl_certs:
+  #   driver: local
+  #   driver_opts:
+  #     type: none
+  #     o: bind
+  #     device: /etc/letsencrypt
 
 networks:
   bookgen-prod-network:
