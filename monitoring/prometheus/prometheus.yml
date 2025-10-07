@@ -1,0 +1,65 @@
+# Prometheus Configuration for BookGen Monitoring
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+  external_labels:
+    monitor: 'bookgen-monitor'
+    environment: 'production'
+
+# Alertmanager configuration
+alerting:
+  alertmanagers:
+    - static_configs:
+        - targets:
+            - alertmanager:9093
+
+# Load rules once and periodically evaluate them
+rule_files:
+  - "alerts.yml"
+
+# Scrape configurations
+scrape_configs:
+  # BookGen API metrics
+  - job_name: 'bookgen-api'
+    metrics_path: '/metrics'
+    static_configs:
+      - targets: ['bookgen-api:8000']
+        labels:
+          service: 'bookgen-api'
+          component: 'api'
+    scrape_interval: 10s
+    scrape_timeout: 5s
+
+  # Prometheus self-monitoring
+  - job_name: 'prometheus'
+    static_configs:
+      - targets: ['localhost:9090']
+        labels:
+          service: 'prometheus'
+          component: 'monitoring'
+
+  # Node exporter for system metrics (optional, can be added if installed)
+  # - job_name: 'node-exporter'
+  #   static_configs:
+  #     - targets: ['node-exporter:9100']
+  #       labels:
+  #         service: 'node-exporter'
+  #         component: 'system'
+
+  # Redis exporter (optional, can be added for detailed Redis metrics)
+  # - job_name: 'redis-exporter'
+  #   static_configs:
+  #     - targets: ['redis-exporter:9121']
+  #       labels:
+  #         service: 'redis-exporter'
+  #         component: 'cache'
+
+  # Celery flower (already has metrics endpoint)
+  - job_name: 'celery-flower'
+    metrics_path: '/metrics'
+    static_configs:
+      - targets: ['flower:5555']
+        labels:
+          service: 'celery-flower'
+          component: 'task-queue'
+    scrape_interval: 15s

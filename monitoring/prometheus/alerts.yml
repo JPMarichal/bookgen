@@ -1,0 +1,163 @@
+# Alert Rules for BookGen Monitoring
+groups:
+  - name: bookgen_alerts
+    interval: 30s
+    rules:
+      # High Error Rate Alert
+      - alert: HighErrorRate
+        expr: |
+          (
+            rate(bookgen_errors_total[5m]) > 0.05
+            or
+            (
+              rate(bookgen_api_requests_total{status="5xx"}[5m]) 
+              / 
+              rate(bookgen_api_requests_total[5m])
+            ) > 0.05
+          )
+        for: 5m
+        labels:
+          severity: critical
+          component: application
+        annotations:
+          summary: "High error rate detected in BookGen"
+          description: "Error rate is above 5% for the last 5 minutes (current: {{ $value | humanizePercentage }})"
+
+      # Long Biography Generation Time Alert
+      - alert: LongBiographyGenerationTime
+        expr: |
+          bookgen_biography_generation_seconds > 2700
+        for: 1m
+        labels:
+          severity: warning
+          component: content_generation
+        annotations:
+          summary: "Biography generation taking too long"
+          description: "Biography generation has exceeded 45 minutes (current: {{ $value | humanizeDuration }})"
+
+      # High Memory Usage Alert
+      - alert: HighMemoryUsage
+        expr: |
+          bookgen_memory_percent > 80
+        for: 5m
+        labels:
+          severity: warning
+          component: system
+        annotations:
+          summary: "High memory usage detected"
+          description: "Memory usage is above 80% for the last 5 minutes (current: {{ $value }}%)"
+
+      # Critical Memory Usage Alert
+      - alert: CriticalMemoryUsage
+        expr: |
+          bookgen_memory_percent > 90
+        for: 2m
+        labels:
+          severity: critical
+          component: system
+        annotations:
+          summary: "Critical memory usage detected"
+          description: "Memory usage is above 90% (current: {{ $value }}%)"
+
+      # High CPU Usage Alert
+      - alert: HighCPUUsage
+        expr: |
+          bookgen_cpu_percent > 85
+        for: 10m
+        labels:
+          severity: warning
+          component: system
+        annotations:
+          summary: "High CPU usage detected"
+          description: "CPU usage is above 85% for the last 10 minutes (current: {{ $value }}%)"
+
+      # Queue Backup Alert
+      - alert: QueueBackup
+        expr: |
+          bookgen_jobs_total{status="pending"} > 50
+        for: 5m
+        labels:
+          severity: warning
+          component: task_queue
+        annotations:
+          summary: "Task queue backup detected"
+          description: "More than 50 tasks are pending in the queue (current: {{ $value }})"
+
+      # API Downtime Alert
+      - alert: APIDown
+        expr: |
+          up{job="bookgen-api"} == 0
+        for: 1m
+        labels:
+          severity: critical
+          component: api
+        annotations:
+          summary: "BookGen API is down"
+          description: "The BookGen API has been down for more than 1 minute"
+
+      # High API Latency Alert
+      - alert: HighAPILatency
+        expr: |
+          histogram_quantile(0.95, rate(bookgen_api_request_duration_seconds_bucket[5m])) > 0.5
+        for: 5m
+        labels:
+          severity: warning
+          component: api
+        annotations:
+          summary: "High API latency detected"
+          description: "95th percentile API latency is above 500ms (current: {{ $value | humanizeDuration }})"
+
+      # High Disk Usage Alert
+      - alert: HighDiskUsage
+        expr: |
+          bookgen_disk_percent > 80
+        for: 5m
+        labels:
+          severity: warning
+          component: system
+        annotations:
+          summary: "High disk usage detected"
+          description: "Disk usage is above 80% (current: {{ $value }}%)"
+
+      # Critical Disk Usage Alert
+      - alert: CriticalDiskUsage
+        expr: |
+          bookgen_disk_percent > 90
+        for: 1m
+        labels:
+          severity: critical
+          component: system
+        annotations:
+          summary: "Critical disk usage detected"
+          description: "Disk usage is above 90% (current: {{ $value }}%)"
+
+  - name: sla_monitoring
+    interval: 1m
+    rules:
+      # SLA: 99% uptime monitoring
+      - alert: SLAUptimeViolation
+        expr: |
+          avg_over_time(up{job="bookgen-api"}[1h]) < 0.99
+        for: 5m
+        labels:
+          severity: critical
+          component: sla
+        annotations:
+          summary: "SLA uptime violation"
+          description: "API uptime is below 99% over the last hour (current: {{ $value | humanizePercentage }})"
+
+      # SLA: Success rate monitoring
+      - alert: SLASuccessRateViolation
+        expr: |
+          (
+            sum(rate(bookgen_biography_generation_total{status="success"}[1h]))
+            /
+            sum(rate(bookgen_biography_generation_total[1h]))
+          ) < 0.95
+        for: 5m
+        labels:
+          severity: warning
+          component: sla
+        annotations:
+          summary: "SLA success rate violation"
+          description: "Biography generation success rate is below 95% over the last hour (current: {{ $value | humanizePercentage }})"
