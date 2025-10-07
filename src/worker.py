@@ -1,50 +1,78 @@
 """
-BookGen Sistema Automatizado - Worker Process
-Background worker for content generation tasks
+BookGen Sistema Automatizado - Celery Worker
+Background worker for content generation tasks using Celery
 """
 import os
-import time
 import logging
-from datetime import datetime
+from celery import Celery
+from celery.signals import worker_ready, worker_shutdown
 
-# Configurar logging
+# Configure logging
 logging.basicConfig(
     level=logging.INFO,
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
 )
 logger = logging.getLogger(__name__)
 
+# Create Celery app
+app = Celery('bookgen')
 
-class BookGenWorker:
-    """Worker principal para generación de contenido"""
+# Load configuration from celery_config module
+app.config_from_object('src.config.celery_config')
+
+# Auto-discover tasks in tasks modules
+app.autodiscover_tasks([
+    'src.tasks.generation_tasks',
+    'src.tasks.validation_tasks',
+    'src.tasks.export_tasks',
+    'src.tasks.monitoring_tasks',
+])
+
+
+@worker_ready.connect
+def on_worker_ready(sender=None, **kwargs):
+    """Called when worker is ready to accept tasks"""
+    worker_id = os.getenv("WORKER_ID", "unknown")
+    worker_type = os.getenv("WORKER_TYPE", "general")
+    logger.info(f"Worker {worker_id} ({worker_type}) is ready to accept tasks")
+
+
+@worker_shutdown.connect
+def on_worker_shutdown(sender=None, **kwargs):
+    """Called when worker is shutting down"""
+    worker_id = os.getenv("WORKER_ID", "unknown")
+    logger.info(f"Worker {worker_id} is shutting down")
+
+
+if __name__ == '__main__':
+    # Start worker with appropriate settings
+    worker_type = os.getenv("WORKER_TYPE", "general")
     
-    def __init__(self):
-        self.worker_id = os.getenv("WORKER_ID", "worker-1")
-        self.worker_type = os.getenv("WORKER_TYPE", "content_generator")
-        self.environment = os.getenv("ENV", "development")
-        
-        logger.info(f"Inicializando worker {self.worker_id} ({self.worker_type})")
-        logger.info(f"Entorno: {self.environment}")
+    # Configure worker based on type
+    worker_config = {
+        'loglevel': 'INFO',
+        'traceback': True,
+        'task_events': True,
+        'without_gossip': False,
+        'without_mingle': False,
+        'without_heartbeat': False,
+    }
     
-    def run(self):
-        """Ejecutar worker en loop continuo"""
-        logger.info(f"Worker {self.worker_id} iniciado")
-        
-        while True:
-            try:
-                # Placeholder para lógica de worker
-                # TODO: Implementar procesamiento de trabajos desde cola
-                logger.debug(f"Worker {self.worker_id} en espera de trabajos...")
-                time.sleep(10)
-                
-            except KeyboardInterrupt:
-                logger.info("Worker detenido por usuario")
-                break
-            except Exception as e:
-                logger.error(f"Error en worker: {e}")
-                time.sleep(5)
+    # Add queue configuration based on worker type
+    if worker_type == 'content_generator':
+        worker_config['queues'] = ['content_generation', 'high_priority']
+    elif worker_type == 'validator':
+        worker_config['queues'] = ['validation']
+    elif worker_type == 'exporter':
+        worker_config['queues'] = ['export']
+    elif worker_type == 'monitor':
+        worker_config['queues'] = ['monitoring']
+    else:
+        worker_config['queues'] = ['default']
+    
+    logger.info(f"Starting {worker_type} worker with queues: {worker_config['queues']}")
+    
+    # Start the worker
+    app.worker_main(['worker'] + [f'--{k}={v}' if not isinstance(v, list) else f'--{k}={",".join(v)}' 
+                                   for k, v in worker_config.items()])
 
-
-if __name__ == "__main__":
-    worker = BookGenWorker()
-    worker.run()
