@@ -13,8 +13,11 @@ from ..models.sources import (
     SourceValidationResponse,
     SourceValidationResult,
     SourceItem,
-    SourceType
+    SourceType,
+    AdvancedSourceValidationRequest,
+    AdvancedSourceValidationResponse
 )
+from ...services.source_validator import SourceValidationService
 
 logger = logging.getLogger(__name__)
 
@@ -167,5 +170,84 @@ async def validate_sources(request: SourceValidationRequest):
         valid_sources=valid_count,
         invalid_sources=invalid_count,
         results=results,
+        summary=summary
+    )
+
+
+@router.post(
+    "/validate-advanced",
+    response_model=AdvancedSourceValidationResponse,
+    status_code=status.HTTP_200_OK
+)
+async def validate_sources_advanced(request: AdvancedSourceValidationRequest):
+    """
+    Validate sources with advanced AI analysis
+    
+    Performs comprehensive validation including:
+    - TF-IDF relevance analysis
+    - Domain credibility checking
+    - Recency and completeness scoring
+    - Automatic source filtering
+    - Quality recommendations
+    """
+    logger.info(
+        f"Advanced validation: {len(request.sources)} sources for topic '{request.biography_topic}'"
+    )
+    
+    # Create validation service with configured thresholds
+    validator = SourceValidationService(
+        min_relevance=request.min_relevance,
+        min_credibility=request.min_credibility,
+        timeout=10
+    )
+    
+    # Perform validation
+    result = validator.validate_sources(
+        biography_topic=request.biography_topic,
+        sources_list=request.sources,
+        check_accessibility=request.check_accessibility
+    )
+    
+    # Build summary
+    summary = {
+        "validation_rate": round((result["valid_sources"] / result["total_sources"]) * 100, 2)
+            if result["total_sources"] > 0 else 0,
+        "rejection_rate": round((result["rejected_sources"] / result["total_sources"]) * 100, 2)
+            if result["total_sources"] > 0 else 0,
+        "source_types": {},
+        "trusted_sources": 0,
+        "untrusted_sources": 0,
+        "domain_categories": {}
+    }
+    
+    # Count source types and domain info
+    for res in result["results"]:
+        source_type = res.source.source_type.value
+        summary["source_types"][source_type] = summary["source_types"].get(source_type, 0) + 1
+        
+        if res.is_trusted:
+            summary["trusted_sources"] += 1
+        else:
+            summary["untrusted_sources"] += 1
+        
+        if res.domain_category:
+            category = res.domain_category
+            summary["domain_categories"][category] = summary["domain_categories"].get(category, 0) + 1
+    
+    logger.info(
+        f"Advanced validation complete: avg_relevance={result['average_relevance']:.2f}, "
+        f"avg_credibility={result['average_credibility']:.1f}, "
+        f"rejected={result['rejected_sources']}"
+    )
+    
+    return AdvancedSourceValidationResponse(
+        total_sources=result["total_sources"],
+        valid_sources=result["valid_sources"],
+        invalid_sources=result["invalid_sources"],
+        rejected_sources=result["rejected_sources"],
+        average_relevance=result["average_relevance"],
+        average_credibility=result["average_credibility"],
+        results=result["results"],
+        recommendations=result["recommendations"],
         summary=summary
     )
