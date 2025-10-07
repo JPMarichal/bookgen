@@ -50,8 +50,8 @@ class DocumentInfo:
         
         Args:
             file_path: Path to the Word document
-            has_toc: Whether document has TOC
-            toc_entries: Number of TOC entries
+            has_toc: Whether document has TOC (default from export result)
+            toc_entries: Number of TOC entries (default from export result)
             
         Returns:
             DocumentInfo instance
@@ -79,8 +79,11 @@ class DocumentInfo:
                 metadata['created'] = core_props.created.isoformat()
             if core_props.modified:
                 metadata['modified'] = core_props.modified.isoformat()
+        except ImportError:
+            # python-docx not available
+            pass
         except Exception:
-            # If python-docx is not available or file can't be read, use empty metadata
+            # If file can't be read, use empty metadata
             pass
         
         return cls(

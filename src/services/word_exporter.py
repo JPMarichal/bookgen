@@ -230,17 +230,30 @@ class WordExporter:
         
         return result.output_file
     
-    def get_document_info(self, doc_path: str) -> DocumentInfo:
+    def get_document_info(self, doc_path: str, source_markdown: Optional[str] = None) -> DocumentInfo:
         """
         Get information about a Word document
         
         Args:
             doc_path: Path to Word document
+            source_markdown: Optional path to source markdown for TOC counting
             
         Returns:
             DocumentInfo with document details
         """
-        return DocumentInfo.from_file(doc_path)
+        # Try to determine if document has TOC by checking if it was created with TOC enabled
+        has_toc = self.config.include_toc
+        toc_entries = 0
+        
+        # Try to count TOC entries from source markdown if provided
+        if source_markdown and os.path.exists(source_markdown):
+            toc_entries = self.pandoc.count_headings(source_markdown)
+        
+        return DocumentInfo.from_file(
+            doc_path,
+            has_toc=has_toc,
+            toc_entries=toc_entries
+        )
     
     def _extract_character_name(self, file_path: str) -> str:
         """

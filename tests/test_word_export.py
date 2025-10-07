@@ -302,45 +302,51 @@ class TestWordExporter:
         name = exporter._extract_character_name("/tmp/test_character/file.md")
         assert name == "test_character"
     
-    @patch('src.utils.pandoc_wrapper.PandocWrapper.convert_to_word')
-    @patch('src.utils.pandoc_wrapper.PandocWrapper.is_available')
-    @patch('src.utils.pandoc_wrapper.PandocWrapper.count_headings')
-    def test_export_to_word_with_toc(self, mock_count, mock_available, mock_convert):
+    @patch('subprocess.run')
+    def test_export_to_word_with_toc(self, mock_subprocess):
         """Test exporting to Word with TOC"""
-        # Setup mocks
-        mock_available.return_value = True
-        mock_count.return_value = 5
-        mock_convert.return_value = (True, "Success")
+        # Mock subprocess for Pandoc
+        mock_subprocess.return_value = Mock(
+            returncode=0,
+            stdout="",
+            stderr=""
+        )
         
         with tempfile.TemporaryDirectory() as tmpdir:
             # Create test markdown file
             md_file = os.path.join(tmpdir, "test.md")
             with open(md_file, 'w') as f:
-                f.write("# Heading 1\nContent")
+                f.write("# Heading 1\nContent\n# Heading 2\nMore content")
             
             # Create template
             template_file = os.path.join(tmpdir, "template.docx")
             Path(template_file).touch()
             
-            # Create output file (simulating Pandoc output)
+            # Setup output path
             output_dir = os.path.join(tmpdir, "output")
             os.makedirs(output_dir)
-            output_file = os.path.join(output_dir, "test_char", "La biografía de test_char.docx")
-            os.makedirs(os.path.dirname(output_file), exist_ok=True)
-            
-            # Mock the output file creation
-            def create_output(*args, **kwargs):
-                with open(output_file, 'wb') as f:
-                    f.write(b'fake docx content')
-                return True, "Success"
-            
-            mock_convert.side_effect = create_output
             
             config = ExportConfig(
                 output_directory=output_dir,
-                word_template_path=template_file
+                word_template_path=template_file,
+                pandoc_executable="pandoc"
             )
             exporter = WordExporter(config)
+            
+            # Mock the actual file creation by Pandoc
+            def subprocess_side_effect(command, **kwargs):
+                # Extract output file from command
+                if '-o' in command:
+                    idx = command.index('-o')
+                    output_file = command[idx + 1]
+                    # Create the output file
+                    os.makedirs(os.path.dirname(output_file), exist_ok=True)
+                    with open(output_file, 'wb') as f:
+                        f.write(b'fake docx content - ' * 100)
+                
+                return Mock(returncode=0, stdout="", stderr="")
+            
+            mock_subprocess.side_effect = subprocess_side_effect
             
             result = exporter.export_to_word_with_toc(
                 markdown_file=md_file,
@@ -350,7 +356,8 @@ class TestWordExporter:
             
             assert result.success is True
             assert result.has_toc is True
-            assert result.toc_entries == 5
+            assert result.toc_entries == 2  # Two level 1 headings in test file
+            assert result.file_size > 0
     
     @patch('src.utils.pandoc_wrapper.PandocWrapper.is_available')
     def test_export_biography(self, mock_available):
