@@ -71,7 +71,7 @@ python -m pytest tests/test_sources.py -v
 
 ```bash
 # Use the provided test script
-bash manual_test_api.sh
+bash scripts/manual_test_api.sh
 
 # Or test individual endpoints
 curl http://localhost:8000/health
@@ -251,7 +251,7 @@ All Issue #5 acceptance criteria met:
 - [Complete API Documentation](./API_DOCUMENTATION.md)
 - [Implementation Summary](./FASTAPI_IMPLEMENTATION_SUMMARY.md)
 - [OpenRouter Integration Docs](./OPENROUTER_INTEGRATION.md)
-- Test scripts: `manual_test_api.sh`, `verify_api_implementation.py`
+- Test scripts: `scripts/manual_test_api.sh`, `verify_api_implementation.py`
 
 ## 🤝 Support
 

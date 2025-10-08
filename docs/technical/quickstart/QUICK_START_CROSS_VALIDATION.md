@@ -159,7 +159,7 @@ def improve_source_set(sources, character, max_iterations=3):
 ### Run Interactive Demo
 
 ```bash
-python3 demo_cross_validation.py
+python3 examples/demo_cross_validation.py
 ```
 
 Shows a complete demonstration with sample data.
@@ -167,7 +167,7 @@ Shows a complete demonstration with sample data.
 ### Verify Acceptance Criteria
 
 ```bash
-python3 verify_cross_validation.py
+python3 scripts/verification/verify_cross_validation.py
 ```
 
 Verifies all acceptance criteria are met.

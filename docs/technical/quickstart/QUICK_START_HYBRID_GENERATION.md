@@ -333,7 +333,7 @@ except requests.RequestException as e:
 Run the demo:
 
 ```bash
-python demo_hybrid_generator.py
+python examples/demo_hybrid_generator.py
 ```
 
 Run unit tests:

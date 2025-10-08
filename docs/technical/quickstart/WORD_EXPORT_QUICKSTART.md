@@ -254,14 +254,14 @@ pytest tests/test_word_export.py --cov=src.services.word_exporter
 
 ```bash
 # Run interactive demo
-python demo_word_export.py
+python examples/demo_word_export.py
 ```
 
 ### Verify Implementation
 
 ```bash
 # Verify all acceptance criteria
-python verify_word_export.py
+python scripts/verification/verify_word_export.py
 ```
 
 ## Troubleshooting
