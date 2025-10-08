@@ -28,18 +28,24 @@ docs/
 ├── architecture/               # For architects
 ├── operations/                 # For DevOps
 ├── emergency/                  # For on-call
+├── technical/                  # Technical documentation
+│   ├── quickstart/             # Quick start guides
+│   ├── components/             # Component deep-dives
+│   ├── deployment/             # Deployment guides
+│   └── testing/                # Testing strategies
 ├── archive/                    # Historical implementation docs
 └── project/                    # Project planning docs (Spanish)
 ```
 
-### Technical Documentation (Root)
+### Technical Documentation (`/docs/technical`)
 
 **Purpose**: Quick-reference technical guides and component documentation
 
-Located in repository root for easy access during development:
-- **Quick Start Guides**: Component-specific getting started docs
-- **Component Documentation**: Deep-dive technical references
-- **Deployment Guides**: Production deployment specifics
+Located in `/docs/technical/` for organized access:
+- **Quick Start Guides** (`technical/quickstart/`): Component-specific getting started docs
+- **Component Documentation** (`technical/components/`): Deep-dive technical references
+- **Deployment Guides** (`technical/deployment/`): Production deployment specifics
+- **Testing & Verification** (`technical/testing/`): Testing strategies and verification
 
 ---
 
@@ -49,89 +55,96 @@ Located in repository root for easy access during development:
 
 | Topic | User Guide | Technical Reference |
 |-------|------------|---------------------|
-| **Installation** | [docs/getting-started/installation.md](docs/getting-started/installation.md) | [DEPLOYMENT.md](DEPLOYMENT.md) |
-| **Configuration** | [docs/getting-started/configuration.md](docs/getting-started/configuration.md) | Various .md files |
-| **Quick Start** | [docs/getting-started/quick-start.md](docs/getting-started/quick-start.md) | Quick start guides |
-| **VPS Setup** | [docs/operations/deployment.md](docs/operations/deployment.md) | [VPS_SETUP.md](VPS_SETUP.md) |
-| **Docker** | [docs/operations/deployment.md](docs/operations/deployment.md) | [DOCKER_README.md](DOCKER_README.md) |
+| **Installation** | [docs/getting-started/installation.md](docs/getting-started/installation.md) | [docs/technical/deployment/DEPLOYMENT.md](docs/technical/deployment/DEPLOYMENT.md) |
+| **Configuration** | [docs/getting-started/configuration.md](docs/getting-started/configuration.md) | Various technical docs |
+| **Quick Start** | [docs/getting-started/quick-start.md](docs/getting-started/quick-start.md) | [docs/technical/quickstart/](docs/technical/quickstart/) |
+| **VPS Setup** | [docs/operations/deployment.md](docs/operations/deployment.md) | [docs/technical/deployment/VPS_SETUP.md](docs/technical/deployment/VPS_SETUP.md) |
+| **Docker** | [docs/operations/deployment.md](docs/operations/deployment.md) | [docs/technical/components/DOCKER_README.md](docs/technical/components/DOCKER_README.md) |
 
 ### API & Development
 
 | Topic | User Guide | Technical Reference |
 |-------|------------|---------------------|
-| **API Overview** | [docs/api/overview.md](docs/api/overview.md) | [API_DOCUMENTATION.md](API_DOCUMENTATION.md) |
-| **Architecture** | [docs/architecture/system-overview.md](docs/architecture/system-overview.md) | Component-specific docs |
-| **Testing** | [docs/INDEX.md](docs/INDEX.md) | [TESTING_STRATEGY.md](TESTING_STRATEGY.md) |
+| **API Overview** | [docs/api/overview.md](docs/api/overview.md) | [docs/technical/components/API_DOCUMENTATION.md](docs/technical/components/API_DOCUMENTATION.md) |
+| **Architecture** | [docs/architecture/system-overview.md](docs/architecture/system-overview.md) | [docs/technical/components/](docs/technical/components/) |
+| **Testing** | [docs/INDEX.md](docs/INDEX.md) | [docs/technical/testing/TESTING_STRATEGY.md](docs/technical/testing/TESTING_STRATEGY.md) |
 
 ### Core Features
 
 | Feature | User Guide | Technical Reference |
 |---------|------------|---------------------|
-| **Biography Creation** | [docs/user-guide/creating-biographies.md](docs/user-guide/creating-biographies.md) | [ENGINE_QUICK_START.md](ENGINE_QUICK_START.md) |
-| **Notifications** | [docs/user-guide/notifications.md](docs/user-guide/notifications.md) | [NOTIFICATION_SYSTEM.md](NOTIFICATION_SYSTEM.md) |
-| **Source Validation** | [docs/user-guide/creating-biographies.md](docs/user-guide/creating-biographies.md) | [ADVANCED_SOURCE_VALIDATION.md](ADVANCED_SOURCE_VALIDATION.md) |
-| **Length Validation** | In API docs | [LENGTH_VALIDATION_README.md](LENGTH_VALIDATION_README.md) |
-| **Word Export** | In user guide | [WORD_EXPORT_QUICKSTART.md](WORD_EXPORT_QUICKSTART.md) |
+| **Biography Creation** | [docs/user-guide/creating-biographies.md](docs/user-guide/creating-biographies.md) | [docs/technical/quickstart/ENGINE_QUICK_START.md](docs/technical/quickstart/ENGINE_QUICK_START.md) |
+| **Notifications** | [docs/user-guide/notifications.md](docs/user-guide/notifications.md) | [docs/technical/components/NOTIFICATION_SYSTEM.md](docs/technical/components/NOTIFICATION_SYSTEM.md) |
+| **Source Validation** | [docs/user-guide/creating-biographies.md](docs/user-guide/creating-biographies.md) | [docs/technical/components/ADVANCED_SOURCE_VALIDATION.md](docs/technical/components/ADVANCED_SOURCE_VALIDATION.md) |
+| **Length Validation** | In API docs | [docs/technical/components/LENGTH_VALIDATION_README.md](docs/technical/components/LENGTH_VALIDATION_README.md) |
+| **Word Export** | In user guide | [docs/technical/quickstart/WORD_EXPORT_QUICKSTART.md](docs/technical/quickstart/WORD_EXPORT_QUICKSTART.md) |
 
 ### Operations
 
 | Topic | User Guide | Technical Reference |
 |-------|------------|---------------------|
-| **Deployment** | [docs/operations/deployment.md](docs/operations/deployment.md) | [DEPLOYMENT.md](DEPLOYMENT.md), [VPS_SETUP.md](VPS_SETUP.md) |
-| **Runbooks** | [docs/operations/runbooks.md](docs/operations/runbooks.md) | [VERIFICATION_COMMANDS.md](VERIFICATION_COMMANDS.md) |
-| **Troubleshooting** | [docs/operations/troubleshooting.md](docs/operations/troubleshooting.md) | [VPS_SETUP.md](VPS_SETUP.md) |
-| **CI/CD** | [docs/operations/deployment.md](docs/operations/deployment.md) | [CI_CD_IMPLEMENTATION.md](CI_CD_IMPLEMENTATION.md) |
+| **Deployment** | [docs/operations/deployment.md](docs/operations/deployment.md) | [docs/technical/deployment/](docs/technical/deployment/) |
+| **Runbooks** | [docs/operations/runbooks.md](docs/operations/runbooks.md) | [docs/technical/testing/VERIFICATION_COMMANDS.md](docs/technical/testing/VERIFICATION_COMMANDS.md) |
+| **Troubleshooting** | [docs/operations/troubleshooting.md](docs/operations/troubleshooting.md) | [docs/technical/deployment/VPS_SETUP.md](docs/technical/deployment/VPS_SETUP.md) |
+| **CI/CD** | [docs/operations/deployment.md](docs/operations/deployment.md) | [docs/technical/deployment/CI_CD_IMPLEMENTATION.md](docs/technical/deployment/CI_CD_IMPLEMENTATION.md) |
 
 ---
 
 ## 📚 Technical Documentation Reference
 
-### Quick Start Guides (Root)
+All technical documentation is now organized in [docs/technical/](docs/technical/).
 
-Fast-track guides for specific components:
+### Quick Start Guides
 
-- [QUICKSTART_API.md](QUICKSTART_API.md) - API quick start
-- [QUICKSTART_DATABASE.md](QUICKSTART_DATABASE.md) - Database setup
-- [ENGINE_QUICK_START.md](ENGINE_QUICK_START.md) - State machine engine
-- [QUICK_START_CICD.md](QUICK_START_CICD.md) - CI/CD setup
-- [QUICK_START_LENGTH_VALIDATION.md](QUICK_START_LENGTH_VALIDATION.md) - Length validation
-- [QUICK_START_SOURCE_VALIDATION.md](QUICK_START_SOURCE_VALIDATION.md) - Source validation
-- [QUICK_START_CONTENT_ANALYZER.md](QUICK_START_CONTENT_ANALYZER.md) - Content analysis
-- [QUICK_START_CROSS_VALIDATION.md](QUICK_START_CROSS_VALIDATION.md) - Cross validation
-- [QUICK_START_FEEDBACK_SYSTEM.md](QUICK_START_FEEDBACK_SYSTEM.md) - Feedback system
-- [QUICK_START_HYBRID_GENERATION.md](QUICK_START_HYBRID_GENERATION.md) - Hybrid generation
-- [QUICK_START_PERSONALIZED_STRATEGIES.md](QUICK_START_PERSONALIZED_STRATEGIES.md) - Personalized strategies
-- [QUICK_START_SOURCE_STRATEGIES.md](QUICK_START_SOURCE_STRATEGIES.md) - Source strategies
-- [WORD_EXPORT_QUICKSTART.md](WORD_EXPORT_QUICKSTART.md) - Document export
-- [NOTIFICATION_QUICKSTART.md](NOTIFICATION_QUICKSTART.md) - Notifications
+Fast-track guides in [docs/technical/quickstart/](docs/technical/quickstart/):
 
-### Component Documentation (Root)
+- [QUICKSTART_API.md](docs/technical/quickstart/QUICKSTART_API.md) - API quick start
+- [QUICKSTART_DATABASE.md](docs/technical/quickstart/QUICKSTART_DATABASE.md) - Database setup
+- [ENGINE_QUICK_START.md](docs/technical/quickstart/ENGINE_QUICK_START.md) - State machine engine
+- [QUICK_START_CICD.md](docs/technical/quickstart/QUICK_START_CICD.md) - CI/CD setup
+- [QUICK_START_LENGTH_VALIDATION.md](docs/technical/quickstart/QUICK_START_LENGTH_VALIDATION.md) - Length validation
+- [QUICK_START_SOURCE_VALIDATION.md](docs/technical/quickstart/QUICK_START_SOURCE_VALIDATION.md) - Source validation
+- [QUICK_START_CONTENT_ANALYZER.md](docs/technical/quickstart/QUICK_START_CONTENT_ANALYZER.md) - Content analysis
+- [QUICK_START_CROSS_VALIDATION.md](docs/technical/quickstart/QUICK_START_CROSS_VALIDATION.md) - Cross validation
+- [QUICK_START_FEEDBACK_SYSTEM.md](docs/technical/quickstart/QUICK_START_FEEDBACK_SYSTEM.md) - Feedback system
+- [QUICK_START_HYBRID_GENERATION.md](docs/technical/quickstart/QUICK_START_HYBRID_GENERATION.md) - Hybrid generation
+- [QUICK_START_PERSONALIZED_STRATEGIES.md](docs/technical/quickstart/QUICK_START_PERSONALIZED_STRATEGIES.md) - Personalized strategies
+- [QUICK_START_SOURCE_STRATEGIES.md](docs/technical/quickstart/QUICK_START_SOURCE_STRATEGIES.md) - Source strategies
+- [WORD_EXPORT_QUICKSTART.md](docs/technical/quickstart/WORD_EXPORT_QUICKSTART.md) - Document export
+- [NOTIFICATION_QUICKSTART.md](docs/technical/quickstart/NOTIFICATION_QUICKSTART.md) - Notifications
 
-Deep-dive technical documentation:
+### Component Documentation
 
-- [API_DOCUMENTATION.md](API_DOCUMENTATION.md) - Complete API reference
-- [CELERY_TASK_QUEUE.md](CELERY_TASK_QUEUE.md) - Celery implementation
-- [DATABASE_README.md](DATABASE_README.md) - Database design
-- [DOCKER_README.md](DOCKER_README.md) - Docker configuration
-- [DOCKER_OPTIMIZATION.md](DOCKER_OPTIMIZATION.md) - Docker best practices
-- [NOTIFICATION_SYSTEM.md](NOTIFICATION_SYSTEM.md) - Notification architecture
-- [OPENROUTER_INTEGRATION.md](OPENROUTER_INTEGRATION.md) - LLM integration
-- [ADVANCED_SOURCE_VALIDATION.md](ADVANCED_SOURCE_VALIDATION.md) - Source validation
-- [AUTOMATIC_SOURCE_GENERATION.md](AUTOMATIC_SOURCE_GENERATION.md) - Automatic source generation
-- [CROSS_VALIDATION_IMPLEMENTATION.md](CROSS_VALIDATION_IMPLEMENTATION.md) - Cross validation
-- [LENGTH_VALIDATION_README.md](LENGTH_VALIDATION_README.md) - Length validation
-- [CONCATENATION_SERVICE_README.md](CONCATENATION_SERVICE_README.md) - Document concatenation
-- [PERFORMANCE_OPTIMIZATION.md](PERFORMANCE_OPTIMIZATION.md) - Performance tuning
-- [TESTING_STRATEGY.md](TESTING_STRATEGY.md) - Testing approach
+Deep-dive technical documentation in [docs/technical/components/](docs/technical/components/):
 
-### Deployment Documentation (Root)
+- [API_DOCUMENTATION.md](docs/technical/components/API_DOCUMENTATION.md) - Complete API reference
+- [CELERY_TASK_QUEUE.md](docs/technical/components/CELERY_TASK_QUEUE.md) - Celery implementation
+- [DATABASE_README.md](docs/technical/components/DATABASE_README.md) - Database design
+- [DOCKER_README.md](docs/technical/components/DOCKER_README.md) - Docker configuration
+- [DOCKER_OPTIMIZATION.md](docs/technical/components/DOCKER_OPTIMIZATION.md) - Docker best practices
+- [NOTIFICATION_SYSTEM.md](docs/technical/components/NOTIFICATION_SYSTEM.md) - Notification architecture
+- [OPENROUTER_INTEGRATION.md](docs/technical/components/OPENROUTER_INTEGRATION.md) - LLM integration
+- [ADVANCED_SOURCE_VALIDATION.md](docs/technical/components/ADVANCED_SOURCE_VALIDATION.md) - Source validation
+- [AUTOMATIC_SOURCE_GENERATION.md](docs/technical/components/AUTOMATIC_SOURCE_GENERATION.md) - Automatic source generation
+- [CROSS_VALIDATION_IMPLEMENTATION.md](docs/technical/components/CROSS_VALIDATION_IMPLEMENTATION.md) - Cross validation
+- [LENGTH_VALIDATION_README.md](docs/technical/components/LENGTH_VALIDATION_README.md) - Length validation
+- [CONCATENATION_SERVICE_README.md](docs/technical/components/CONCATENATION_SERVICE_README.md) - Document concatenation
+- [PERFORMANCE_OPTIMIZATION.md](docs/technical/components/PERFORMANCE_OPTIMIZATION.md) - Performance tuning
 
-Production deployment guides:
+### Deployment Documentation
 
-- [DEPLOYMENT.md](DEPLOYMENT.md) - IONOS VPS deployment (Spanish)
-- [VPS_SETUP.md](VPS_SETUP.md) - VPS Ubuntu IONOS setup
-- [CI_CD_IMPLEMENTATION.md](CI_CD_IMPLEMENTATION.md) - CI/CD pipeline
-- [VERIFICATION_COMMANDS.md](VERIFICATION_COMMANDS.md) - Verification procedures
+Production deployment guides in [docs/technical/deployment/](docs/technical/deployment/):
+
+- [DEPLOYMENT.md](docs/technical/deployment/DEPLOYMENT.md) - IONOS VPS deployment (Spanish)
+- [VPS_SETUP.md](docs/technical/deployment/VPS_SETUP.md) - VPS Ubuntu IONOS setup
+- [CI_CD_IMPLEMENTATION.md](docs/technical/deployment/CI_CD_IMPLEMENTATION.md) - CI/CD pipeline
+
+### Testing & Verification
+
+Testing strategies in [docs/technical/testing/](docs/technical/testing/):
+
+- [TESTING_STRATEGY.md](docs/technical/testing/TESTING_STRATEGY.md) - Testing approach
+- [VERIFICATION_COMMANDS.md](docs/technical/testing/VERIFICATION_COMMANDS.md) - Verification procedures
 
 ### Historical Documentation (Archive)
 
@@ -167,17 +180,17 @@ See [docs/project/README.md](docs/project/README.md) for details.
 ### For Developers
 → **Use both**
 - `/docs` for overview and integration
-- Root docs for implementation details
+- `/docs/technical/` for implementation details
 - Quick starts for specific components
 
 ### For DevOps
 → **Start with `/docs/operations`**
-- Then reference root deployment docs
+- Then reference `/docs/technical/deployment/`
 - Use quick starts for setup
 - Keep runbooks handy
 
 ### For Contributors
-→ **Use root documentation + archives**
+→ **Use `/docs/technical/` + archives**
 - Component documentation for technical details
 - Quick starts for component setup
 - docs/archive/ for historical context
@@ -199,7 +212,7 @@ See [docs/project/README.md](docs/project/README.md) for details.
 
 ```
 1. docs/api/overview.md
-2. API_DOCUMENTATION.md (technical details)
+2. docs/technical/components/API_DOCUMENTATION.md (technical details)
 3. Interactive docs at /docs endpoint
 ```
 
@@ -207,8 +220,8 @@ See [docs/project/README.md](docs/project/README.md) for details.
 
 ```
 1. docs/operations/deployment.md (overview)
-2. VPS_SETUP.md (detailed VPS setup)
-3. DEPLOYMENT.md (additional details)
+2. docs/technical/deployment/VPS_SETUP.md (detailed VPS setup)
+3. docs/technical/deployment/DEPLOYMENT.md (additional details)
 4. docs/operations/runbooks.md (operations)
 ```
 
@@ -216,7 +229,7 @@ See [docs/project/README.md](docs/project/README.md) for details.
 
 ```
 1. docs/architecture/system-overview.md (high-level)
-2. Component-specific docs (detailed)
+2. docs/technical/components/ (detailed)
 3. docs/archive/ (historical implementation details)
 ```
 
@@ -224,18 +237,18 @@ See [docs/project/README.md](docs/project/README.md) for details.
 
 ```
 1. docs/operations/troubleshooting.md (common issues)
-2. VPS_SETUP.md (deployment troubleshooting)
+2. docs/technical/deployment/VPS_SETUP.md (deployment troubleshooting)
 3. docs/emergency/incident-response.md (critical issues)
-4. Component-specific docs (detailed debugging)
+4. docs/technical/components/ (detailed debugging)
 ```
 
 ### Goal: Contribute to Project
 
 ```
 1. README.md (project overview)
-2. TESTING_STRATEGY.md (testing approach)
+2. docs/technical/testing/TESTING_STRATEGY.md (testing approach)
 3. docs/archive/ (historical implementations)
-4. Component documentation (architecture)
+4. docs/technical/components/ (architecture)
 ```
 
 ---
@@ -248,7 +261,7 @@ See [docs/project/README.md](docs/project/README.md) for details.
 - **Format**: Markdown
 - **Audience**: All users
 
-### Root Documentation
+### `/docs/technical/` Directory
 - **Purpose**: Technical reference, implementation details
 - **Updates**: During development
 - **Format**: Markdown
@@ -270,7 +283,7 @@ See [docs/project/README.md](docs/project/README.md) for details.
 - Include screenshots where helpful
 - Keep navigation current
 
-### Technical Documentation (Root)
+### Technical Documentation (`/docs/technical/`)
 - Focus on implementation details
 - Document design decisions
 - Include code examples
@@ -299,18 +312,18 @@ See [docs/project/README.md](docs/project/README.md) for details.
 
 ### For Emergencies
 - [docs/emergency/incident-response.md](docs/emergency/incident-response.md) - Critical procedures
-- [VPS_SETUP.md](VPS_SETUP.md) - VPS troubleshooting
+- [docs/technical/deployment/VPS_SETUP.md](docs/technical/deployment/VPS_SETUP.md) - VPS troubleshooting
 
 ---
 
 **Last Updated**: January 2025  
-**Documentation Version**: 1.1.0 (Root documentation cleanup completed)
+**Documentation Version**: 2.0.0 (Root documentation fully consolidated)
 
 **Recent Changes:**
-- Moved 20 implementation summaries to docs/archive/
-- Moved 4 project planning docs to docs/project/
-- Updated references and navigation
-- Cleaned root directory from 59 to 34 documentation files
+- Moved all 32 technical documentation files from root to docs/technical/
+- Organized into quickstart/, components/, deployment/, and testing/ subdirectories
+- Updated all references and navigation
+- **Cleaned root directory from 34 to 2 documentation files (README.md + DOCUMENTATION_MAP.md)**
 
 ---
 
