@@ -200,7 +200,7 @@ class TestAPILatency:
         def cold_request():
             return client.get("/api/v1/status")
         
-        result = benchmark.rounds(1)(cold_request)
+        result = benchmark(cold_request)
     
     def test_warm_cache_latency(self, benchmark):
         """Measure warm cache latency"""
