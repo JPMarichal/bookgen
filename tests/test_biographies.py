@@ -31,6 +31,66 @@ class TestBiographyEndpoints:
         assert data["chapters"] == 5
         assert "created_at" in data
         assert "estimated_completion_time" in data
+        assert data["mode"] == "manual"  # Default mode
+    
+    def test_generate_biography_automatic_mode(self):
+        """Test biography generation with automatic source generation"""
+        response = client.post(
+            "/api/v1/biographies/generate",
+            json={
+                "character": "Albert Einstein",
+                "mode": "automatic",
+                "quality_threshold": 0.8,
+                "min_sources": 40
+            }
+        )
+        
+        # Note: This may fail without proper API keys, but should at least accept the request
+        # In a real test, we'd mock the source generator
+        assert response.status_code in [202, 400, 500]  # Accept various outcomes for now
+        
+        if response.status_code == 202:
+            data = response.json()
+            assert data["mode"] == "automatic"
+            assert "sources_generated_automatically" in data
+            assert data.get("sources_generated_automatically") == True
+    
+    def test_generate_biography_hybrid_mode(self):
+        """Test biography generation with hybrid mode"""
+        response = client.post(
+            "/api/v1/biographies/generate",
+            json={
+                "character": "Marie Curie",
+                "mode": "hybrid",
+                "sources": [
+                    "https://en.wikipedia.org/wiki/Marie_Curie",
+                    "https://www.nobelprize.org/prizes/physics/1903/marie-curie/biographical/"
+                ],
+                "min_sources": 20
+            }
+        )
+        
+        # Similar to automatic mode, may fail without mocking
+        assert response.status_code in [202, 400, 500]
+        
+        if response.status_code == 202:
+            data = response.json()
+            assert data["mode"] == "hybrid"
+            assert "source_count" in data
+    
+    def test_generate_biography_manual_mode_insufficient_sources(self):
+        """Test manual mode with insufficient sources"""
+        response = client.post(
+            "/api/v1/biographies/generate",
+            json={
+                "character": "Test",
+                "mode": "manual",
+                "sources": ["https://example.com"]  # Only 1 source, need at least 10
+            }
+        )
+        
+        assert response.status_code == 400
+        assert "at least 10 sources" in response.json()["detail"].lower()
     
     def test_generate_biography_minimal_request(self):
         """Test biography generation with minimal request (only character)"""

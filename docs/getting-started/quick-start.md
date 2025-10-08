@@ -10,44 +10,119 @@ Before starting, ensure you have:
 - ✅ Services running (`docker-compose ps` shows all healthy)
 - ✅ OpenRouter API key configured in `.env`
 
-## 🎯 Your First Biography
+## 🎯 Three Ways to Generate Biographies
 
-### Step 1: Prepare Source URLs
+BookGen offers three modes of operation to suit different workflows:
 
-Collect 40-60 high-quality sources about your subject:
+### 1. 🤖 Automatic Mode (Fully Automated)
+
+**Best for:** Quick generation without manual source collection
+
+The system automatically:
+- Analyzes the character using AI
+- Searches multiple databases (Wikipedia, academic sources, etc.)
+- Validates and scores sources for quality
+- Selects the best 40-60 sources
 
 ```bash
-# Example: Albert Einstein
-sources=(
-  "https://en.wikipedia.org/wiki/Albert_Einstein"
-  "https://www.nobelprize.org/prizes/physics/1921/einstein/biographical/"
-  "https://www.britannica.com/biography/Albert-Einstein"
-  # Add 37+ more quality sources
-)
+curl -X POST http://localhost:8000/api/v1/biographies/generate \
+  -H "Content-Type: application/json" \
+  -d '{
+    "character": "Marie Curie",
+    "mode": "automatic",
+    "quality_threshold": 0.8,
+    "min_sources": 50
+  }'
 ```
 
-**Source Quality Tips:**
-- ✅ Academic sources (.edu, scholarly articles)
-- ✅ Official biographies and archives
-- ✅ Reputable encyclopedias
-- ❌ Social media posts
-- ❌ Unreliable blogs
-- ❌ Paywalled content
+**Response:**
+```json
+{
+  "job_id": "abc-123-def",
+  "status": "pending",
+  "mode": "automatic",
+  "sources_generated_automatically": true,
+  "source_count": 52,
+  "message": "Biography generation job created successfully"
+}
+```
+
+### 2. 🔗 Hybrid Mode (Mix of Manual + Automatic)
+
+**Best for:** When you have key sources but want automatic completion
+
+Provide your essential sources, and BookGen auto-completes the rest:
+
+```bash
+curl -X POST http://localhost:8000/api/v1/biographies/generate \
+  -H "Content-Type: application/json" \
+  -d '{
+    "character": "Albert Einstein",
+    "mode": "hybrid",
+    "sources": [
+      "https://special-archive.org/einstein-papers",
+      "https://family-collection.org/einstein-letters"
+    ],
+    "min_sources": 50
+  }'
+```
+
+**Response:**
+```json
+{
+  "job_id": "def-456-ghi",
+  "status": "pending",
+  "mode": "hybrid",
+  "sources_generated_automatically": true,
+  "source_count": 50,
+  "message": "Biography generation job created successfully (2 user sources + 48 auto-generated)"
+}
+```
+
+### 3. 📝 Manual Mode (Full Control)
+
+**Best for:** When you have all your sources ready
+
+Provide all sources manually for complete control:
+
+```bash
+curl -X POST http://localhost:8000/api/v1/biographies/generate \
+  -H "Content-Type: application/json" \
+  -d '{
+    "character": "Isaac Newton",
+    "mode": "manual",
+    "sources": [
+      "https://en.wikipedia.org/wiki/Isaac_Newton",
+      "https://www.britannica.com/biography/Isaac-Newton",
+      "... (at least 10 sources required)"
+    ]
+  }'
+```
+
+**Note:** Manual mode requires at least 10 sources.
+
+---
+
+## 🎯 Your First Biography (Automatic Mode)
+
+The easiest way to get started is with automatic mode:
+
+### Step 1: Choose Your Subject
+
+Simply decide who you want to write about - no source collection needed!
 
 ### Step 2: Create Biography Job
 
 **Using the API:**
 
 ```bash
-curl -X POST http://localhost:8000/api/v1/biographies \
+curl -X POST http://localhost:8000/api/v1/biographies/generate \
   -H "Content-Type: application/json" \
   -d '{
     "character": "Albert Einstein",
-    "sources": [
-      "https://en.wikipedia.org/wiki/Albert_Einstein",
-      "https://www.nobelprize.org/prizes/physics/1921/einstein/biographical/",
-      "https://www.britannica.com/biography/Albert-Einstein"
-    ]
+    "mode": "automatic",
+    "chapters": 20,
+    "total_words": 51000
   }'
 ```
 
@@ -57,6 +132,9 @@ curl -X POST http://localhost:8000/api/v1/biographies \
   "job_id": "123e4567-e89b-12d3-a456-426614174000",
   "character": "Albert Einstein",
   "status": "pending",
+  "mode": "automatic",
+  "sources_generated_automatically": true,
+  "source_count": 47,
   "created_at": "2025-01-07T12:00:00Z",
   "message": "Biography generation job created successfully"
 }
@@ -65,9 +143,9 @@ curl -X POST http://localhost:8000/api/v1/biographies \
 **Using Interactive API Docs:**
 
 1. Navigate to [http://localhost:8000/docs](http://localhost:8000/docs)
-2. Click on `POST /api/v1/biographies`
+2. Click on `POST /api/v1/biographies/generate`
 3. Click "Try it out"
-4. Fill in the request body
+4. Fill in the request body with `"mode": "automatic"`
 5. Click "Execute"
 
 ### Step 3: Monitor Progress

@@ -5,7 +5,7 @@ import uuid
 import logging
 import os
 from datetime import datetime, timezone
-from typing import Dict
+from typing import Dict, List
 from fastapi import APIRouter, HTTPException, status, BackgroundTasks
 from fastapi.responses import FileResponse
 
@@ -13,9 +13,14 @@ from ..models.biographies import (
     BiographyGenerateRequest,
     BiographyGenerateResponse,
     BiographyStatusResponse,
-    JobStatus
+    JobStatus,
+    GenerationMode
 )
+from ..models.source_generation import AutomaticSourceGenerationRequest
+from ..models.hybrid_generation import HybridSourceGenerationRequest
 from ...services.openrouter_client import OpenRouterClient
+from ...services.source_generator import AutomaticSourceGenerator
+from ...services.hybrid_generator import HybridSourceGenerator
 
 logger = logging.getLogger(__name__)
 
@@ -26,6 +31,99 @@ router = APIRouter(
 
 # In-memory job storage (in production, use a database)
 jobs: Dict[str, Dict] = {}
+
+
+def generate_sources_for_biography(
+    character: str,
+    mode: GenerationMode,
+    user_sources: List[str] = None,
+    min_sources: int = 40,
+    quality_threshold: float = 0.8
+) -> Dict:
+    """
+    Generate sources for biography based on mode
+    
+    Args:
+        character: Character name
+        mode: Generation mode (manual/automatic/hybrid)
+        user_sources: User-provided sources (for manual/hybrid)
+        min_sources: Minimum sources to generate (for automatic/hybrid)
+        quality_threshold: Quality threshold for source validation
+        
+    Returns:
+        Dictionary with sources and metadata
+    """
+    logger.info(f"Generating sources for '{character}' in {mode.value} mode")
+    
+    if mode == GenerationMode.MANUAL:
+        # Manual mode: Use user-provided sources as-is
+        if not user_sources or len(user_sources) < 10:
+            raise ValueError(f"Manual mode requires at least 10 sources, got {len(user_sources) if user_sources else 0}")
+        
+        return {
+            "sources": user_sources,
+            "source_count": len(user_sources),
+            "mode": mode.value,
+            "sources_generated_automatically": False
+        }
+    
+    elif mode == GenerationMode.AUTOMATIC:
+        # Automatic mode: Generate all sources automatically
+        generator = AutomaticSourceGenerator()
+        request = AutomaticSourceGenerationRequest(
+            character_name=character,
+            min_sources=min_sources,
+            max_sources=min_sources + 20,
+            check_accessibility=True,
+            min_relevance=quality_threshold,
+            min_credibility=quality_threshold * 100
+        )
+        
+        result = generator.generate_sources_for_character(request)
+        
+        # Extract source URLs from SourceItem objects
+        source_urls = [source.url for source in result['sources'] if source.url]
+        
+        return {
+            "sources": source_urls,
+            "source_count": len(source_urls),
+            "mode": mode.value,
+            "sources_generated_automatically": True,
+            "character_analysis": result.get('character_analysis'),
+            "validation_summary": result.get('validation_summary')
+        }
+    
+    elif mode == GenerationMode.HYBRID:
+        # Hybrid mode: Mix user sources with automatic generation
+        generator = HybridSourceGenerator()
+        request = HybridSourceGenerationRequest(
+            character_name=character,
+            user_sources=user_sources or [],
+            auto_complete=True,
+            target_count=min_sources,
+            check_accessibility=True,
+            min_relevance=quality_threshold,
+            min_credibility=quality_threshold * 100,
+            provide_suggestions=True
+        )
+        
+        result = generator.generate_hybrid_sources(request)
+        
+        # Extract source URLs from SourceItem objects
+        source_urls = [source.url for source in result['sources'] if source.url]
+        
+        return {
+            "sources": source_urls,
+            "source_count": len(source_urls),
+            "mode": mode.value,
+            "sources_generated_automatically": True,
+            "user_source_count": result.get('user_source_count', 0),
+            "auto_generated_count": result.get('auto_generated_count', 0),
+            "validation_summary": result.get('validation_summary')
+        }
+    
+    else:
+        raise ValueError(f"Unknown generation mode: {mode}")
 
 
 def run_biography_generation(job_id: str, request: BiographyGenerateRequest):
@@ -114,9 +212,30 @@ async def generate_biography(
     
     Creates a new job to generate a biography based on the provided parameters.
     The generation runs in the background and can be monitored via the status endpoint.
+    
+    Supports three modes:
+    - manual: User provides all sources
+    - automatic: System generates sources automatically
+    - hybrid: Mix of user sources + automatic generation
     """
     # Generate unique job ID
     job_id = str(uuid.uuid4())
+    
+    # Generate or validate sources based on mode
+    try:
+        source_result = generate_sources_for_biography(
+            character=request.character,
+            mode=request.mode,
+            user_sources=request.sources,
+            min_sources=request.min_sources or 40,
+            quality_threshold=request.quality_threshold or 0.8
+        )
+    except Exception as e:
+        logger.error(f"Source generation failed for '{request.character}': {e}")
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=f"Source generation failed: {str(e)}"
+        )
     
     # Create job record
     jobs[job_id] = {
@@ -127,6 +246,15 @@ async def generate_biography(
         "total_words": request.total_words,
         "model": request.model or os.getenv("OPENROUTER_MODEL", "qwen/qwen2.5-vl-72b-instruct:free"),
         "temperature": request.temperature,
+        "mode": request.mode.value,
+        "sources": source_result["sources"],
+        "source_count": source_result["source_count"],
+        "sources_generated_automatically": source_result.get("sources_generated_automatically", False),
+        "source_metadata": {
+            "user_source_count": source_result.get("user_source_count"),
+            "auto_generated_count": source_result.get("auto_generated_count"),
+            "validation_summary": source_result.get("validation_summary")
+        },
         "created_at": datetime.now(timezone.utc),
         "started_at": None,
         "completed_at": None,
@@ -140,7 +268,8 @@ async def generate_biography(
     background_tasks.add_task(run_biography_generation, job_id, request)
     
     logger.info(
-        f"Created biography generation job {job_id} for character '{request.character}'"
+        f"Created biography generation job {job_id} for character '{request.character}' "
+        f"in {request.mode.value} mode with {source_result['source_count']} sources"
     )
     
     return BiographyGenerateResponse(
@@ -150,7 +279,10 @@ async def generate_biography(
         character=request.character,
         chapters=request.chapters,
         created_at=jobs[job_id]["created_at"],
-        estimated_completion_time=f"{request.chapters * 30} seconds"  # Rough estimate
+        estimated_completion_time=f"{request.chapters * 30} seconds",  # Rough estimate
+        mode=request.mode,
+        sources_generated_automatically=source_result.get("sources_generated_automatically"),
+        source_count=source_result["source_count"]
     )
 
 

@@ -39,17 +39,41 @@ curl http://localhost:8000/health
 BookGen is a production-ready system that automates the entire biography writing process:
 
 - **🤖 AI-Powered Generation**: Uses state-of-the-art LLMs via OpenRouter
+- **🎯 Three Generation Modes**: Automatic, Hybrid, or Manual source discovery
 - **📊 Quality Assured**: Advanced validation for sources, length, and content quality
 - **⚡ Fast & Scalable**: Generates 20-chapter biographies (50,000+ words) in hours
 - **🔄 Fully Automated**: From character selection to Word document export
 - **📧 Smart Notifications**: Real-time updates via WebSocket, Webhook, and Email
 - **🔒 Production Ready**: Containerized, monitored, and deployment-ready
 
+### Three Ways to Generate Biographies
+
+BookGen offers flexibility in how you provide sources:
+
+| Mode | Description | Best For |
+|------|-------------|----------|
+| **🤖 Automatic** | AI generates all sources automatically | Quick generation, unfamiliar subjects |
+| **🔗 Hybrid** | Mix of your sources + AI completion | Key sources + auto-completion to 40-60 |
+| **📝 Manual** | You provide all sources | Complete control, specialized sources |
+
+**Quick Example - Automatic Mode:**
+```bash
+curl -X POST http://localhost:8000/api/v1/biographies/generate \
+  -H "Content-Type: application/json" \
+  -d '{
+    "character": "Marie Curie",
+    "mode": "automatic"
+  }'
+```
+
+→ See [Quick Start Guide](docs/getting-started/quick-start.md) and [Auto-Generation Guide](docs/guides/AUTO_GENERATION_GUIDE.md) for details
+
 ### Key Features
 
 | Feature | Description |
 |---------|-------------|
-| **Automated Research** | Validates 40-60 sources per biography |
+| **Automated Source Discovery** | AI-powered search across Wikipedia, academic databases, and archives |
+| **Smart Validation** | Relevance scoring, credibility assessment, and accessibility checks |
 | **Structured Content** | 20 chapters + prologue, epilogue, glossary, timeline |
 | **Quality Control** | Length validation, coherence checking, plagiarism detection |
 | **Multiple Formats** | Markdown and Word (.docx) export with professional formatting |
@@ -65,12 +89,13 @@ BookGen is a production-ready system that automates the entire biography writing
 - **[Installation Guide](docs/getting-started/installation.md)** - Complete setup instructions
 - **[Configuration](docs/getting-started/configuration.md)** - Environment variables and settings
 - **[Quick Start Tutorial](docs/getting-started/quick-start.md)** - Generate your first biography
+- **[Automatic Generation Guide](docs/guides/AUTO_GENERATION_GUIDE.md)** - Using AI-powered source discovery
 
 ### 🔌 API Documentation
 - **[API Overview](docs/api/overview.md)** - REST API introduction
 - **[Endpoints Reference](docs/api/endpoints.md)** - Complete endpoint documentation
 - **[WebSocket Guide](docs/api/websocket.md)** - Real-time communication
-- **[API Examples](docs/examples/api-usage.md)** - Practical code examples
+- **[API Examples](docs/examples/automatic_generation_examples.py)** - Practical code examples
 
 ### 👥 User Guide
 - **[Creating Biographies](docs/user-guide/creating-biographies.md)** - Step-by-step guide

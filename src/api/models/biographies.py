@@ -2,7 +2,7 @@
 Pydantic models for biography generation endpoints
 """
 from pydantic import BaseModel, Field, field_validator
-from typing import Optional, Dict, Any
+from typing import Optional, Dict, Any, List
 from datetime import datetime
 from enum import Enum
 
@@ -13,6 +13,13 @@ class JobStatus(str, Enum):
     IN_PROGRESS = "in_progress"
     COMPLETED = "completed"
     FAILED = "failed"
+
+
+class GenerationMode(str, Enum):
+    """Mode of source generation for biography"""
+    MANUAL = "manual"  # User provides sources manually
+    AUTOMATIC = "automatic"  # System generates sources automatically
+    HYBRID = "hybrid"  # Mix of user sources + automatic generation
 
 
 class BiographyGenerateRequest(BaseModel):
@@ -46,6 +53,28 @@ class BiographyGenerateRequest(BaseModel):
         description="Temperature for text generation"
     )
     
+    # Source generation mode (new feature)
+    mode: GenerationMode = Field(
+        default=GenerationMode.MANUAL,
+        description="Source generation mode: 'manual' (user provides sources), 'automatic' (system generates sources), or 'hybrid' (mix of both)"
+    )
+    sources: Optional[List[str]] = Field(
+        default=None,
+        description="Source URLs for manual or hybrid mode"
+    )
+    min_sources: Optional[int] = Field(
+        default=40,
+        ge=10,
+        le=100,
+        description="Minimum sources for automatic/hybrid mode"
+    )
+    quality_threshold: Optional[float] = Field(
+        default=0.8,
+        ge=0.0,
+        le=1.0,
+        description="Quality threshold for automatic source generation (0-1)"
+    )
+    
     @field_validator("character")
     @classmethod
     def validate_character(cls, v: str) -> str:
@@ -53,6 +82,20 @@ class BiographyGenerateRequest(BaseModel):
         if not v.strip():
             raise ValueError("Character name cannot be empty")
         return v.strip()
+    
+    @field_validator("sources")
+    @classmethod
+    def validate_sources(cls, v: Optional[List[str]], info) -> Optional[List[str]]:
+        """Validate sources based on mode"""
+        if v is None:
+            return v
+        
+        # Validate URLs
+        for url in v:
+            if not url.startswith(('http://', 'https://')):
+                raise ValueError(f"Invalid URL format: {url}")
+        
+        return v
 
 
 class BiographyGenerateResponse(BaseModel):
@@ -66,6 +109,15 @@ class BiographyGenerateResponse(BaseModel):
     estimated_completion_time: Optional[str] = Field(
         default=None,
         description="Estimated time to completion"
+    )
+    mode: GenerationMode = Field(..., description="Source generation mode used")
+    sources_generated_automatically: Optional[bool] = Field(
+        default=None,
+        description="Whether sources were generated automatically"
+    )
+    source_count: Optional[int] = Field(
+        default=None,
+        description="Number of sources being used"
     )
 
 
