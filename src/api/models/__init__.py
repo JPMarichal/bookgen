@@ -8,6 +8,14 @@ from .biographies import (
     JobStatus
 )
 from .sources import SourceValidationRequest, SourceValidationResponse
+from .content_analysis import (
+    BiographicalDepthAnalysis,
+    FactualAccuracyAnalysis,
+    BiasAnalysis,
+    ContentQualityScore,
+    ContentAnalysisRequest,
+    ContentAnalysisResponse
+)
 
 __all__ = [
     "BiographyGenerateRequest",
@@ -16,4 +24,10 @@ __all__ = [
     "JobStatus",
     "SourceValidationRequest",
     "SourceValidationResponse",
+    "BiographicalDepthAnalysis",
+    "FactualAccuracyAnalysis",
+    "BiasAnalysis",
+    "ContentQualityScore",
+    "ContentAnalysisRequest",
+    "ContentAnalysisResponse",
 ]
