@@ -96,7 +96,7 @@ echo ""
 
 # 4. Check documentation files
 echo "📚 Checking documentation..."
-for doc in DEPLOYMENT.md VPS_SETUP.md VERIFICATION_COMMANDS.md; do
+for doc in docs/technical/deployment/DEPLOYMENT.md docs/technical/deployment/VPS_SETUP.md docs/technical/testing/VERIFICATION_COMMANDS.md; do
     if [ -f "$doc" ]; then
         echo "  ✅ $doc: Found"
     else

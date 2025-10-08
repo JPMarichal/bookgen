@@ -12,7 +12,7 @@ Complete navigation guide for BookGen documentation.
 ### For Developers
 - 🔌 **[API Overview](api/overview.md)** - REST API introduction
 - 🏗️ **[Architecture](architecture/system-overview.md)** - System design
-- 🧪 **[Testing Guide](../TESTING_STRATEGY.md)** - Testing infrastructure
+- 🧪 **[Testing Guide](technical/testing/TESTING_STRATEGY.md)** - Testing infrastructure
 
 ### For Operations
 - 🚀 **[Deployment](operations/deployment.md)** - Production deployment
