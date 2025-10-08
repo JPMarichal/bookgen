@@ -17,7 +17,12 @@ from ..models.sources import (
     AdvancedSourceValidationRequest,
     AdvancedSourceValidationResponse
 )
+from ..models.source_generation import (
+    AutomaticSourceGenerationRequest,
+    AutomaticSourceGenerationResponse
+)
 from ...services.source_validator import SourceValidationService
+from ...services.source_generator import AutomaticSourceGenerator
 
 logger = logging.getLogger(__name__)
 
@@ -251,3 +256,65 @@ async def validate_sources_advanced(request: AdvancedSourceValidationRequest):
         recommendations=result["recommendations"],
         summary=summary
     )
+
+
+@router.post(
+    "/generate-automatic",
+    response_model=AutomaticSourceGenerationResponse,
+    status_code=status.HTTP_200_OK
+)
+async def generate_sources_automatically(request: AutomaticSourceGenerationRequest):
+    """
+    Generate sources automatically for a character using AI
+    
+    This endpoint implements the original functionality from .windsurf rules:
+    - Automatically generates high-quality sources (40-60 by default)
+    - Uses AI to analyze the character and context
+    - Applies multiple search strategies (Wikipedia, academic databases, etc.)
+    - Validates sources for quality and relevance
+    - Guarantees diversity and accessibility
+    
+    The system uses:
+    - OpenRouter AI for character analysis
+    - Wikipedia API for biographical sources
+    - Advanced validation with TF-IDF relevance scoring
+    - Domain credibility checking
+    
+    Example:
+        POST /api/v1/sources/generate-automatic
+        {
+            "character_name": "Albert Einstein",
+            "min_sources": 40,
+            "max_sources": 60,
+            "check_accessibility": true,
+            "min_relevance": 0.7,
+            "min_credibility": 80.0
+        }
+    """
+    logger.info(
+        f"Automatic source generation request for '{request.character_name}' "
+        f"(min={request.min_sources}, max={request.max_sources})"
+    )
+    
+    # Create generator
+    generator = AutomaticSourceGenerator()
+    
+    # Generate sources
+    result = generator.generate_sources_for_character(request)
+    
+    # Build response
+    response = AutomaticSourceGenerationResponse(
+        character_name=result['character_name'],
+        sources=result['sources'],
+        character_analysis=result['character_analysis'],
+        validation_summary=result['validation_summary'],
+        strategies_used=result['strategies_used'],
+        generation_metadata=result['generation_metadata']
+    )
+    
+    logger.info(
+        f"Generation complete: {len(response.sources)} sources generated "
+        f"(avg_relevance={result['validation_summary'].get('average_relevance', 0):.2f})"
+    )
+    
+    return response
