@@ -21,8 +21,13 @@ from ..models.source_generation import (
     AutomaticSourceGenerationRequest,
     AutomaticSourceGenerationResponse
 )
+from ..models.hybrid_generation import (
+    HybridSourceGenerationRequest,
+    HybridSourceGenerationResponse
+)
 from ...services.source_validator import SourceValidationService
 from ...services.source_generator import AutomaticSourceGenerator
+from ...services.hybrid_generator import HybridSourceGenerator
 
 logger = logging.getLogger(__name__)
 
@@ -315,6 +320,73 @@ async def generate_sources_automatically(request: AutomaticSourceGenerationReque
     logger.info(
         f"Generation complete: {len(response.sources)} sources generated "
         f"(avg_relevance={result['validation_summary'].get('average_relevance', 0):.2f})"
+    )
+    
+    return response
+
+
+@router.post(
+    "/generate-hybrid",
+    response_model=HybridSourceGenerationResponse,
+    status_code=status.HTTP_200_OK
+)
+async def generate_sources_hybrid(request: HybridSourceGenerationRequest):
+    """
+    Generate sources in hybrid mode (automatic + manual)
+    
+    This endpoint combines user-provided sources with automatic generation:
+    - Accepts user-provided source URLs
+    - Validates user sources
+    - Auto-completes with AI-generated sources (if enabled)
+    - Ensures target count is met
+    - Provides intelligent suggestions for improvement
+    - Validates all sources (user + auto) for quality
+    
+    The system offers maximum flexibility:
+    - Full control: Provide all sources manually (auto_complete=false)
+    - Full automation: Provide no sources (auto_complete=true)
+    - Hybrid: Start with some sources, auto-complete the rest
+    
+    Example:
+        POST /api/v1/sources/generate-hybrid
+        {
+            "character_name": "Albert Einstein",
+            "user_sources": ["https://example.com/manual-source"],
+            "auto_complete": true,
+            "target_count": 50,
+            "min_relevance": 0.7,
+            "min_credibility": 80.0,
+            "provide_suggestions": true
+        }
+    """
+    logger.info(
+        f"Hybrid source generation request for '{request.character_name}' "
+        f"with {len(request.user_sources)} user sources, target={request.target_count}, "
+        f"auto_complete={request.auto_complete}"
+    )
+    
+    # Create hybrid generator
+    generator = HybridSourceGenerator()
+    
+    # Generate sources in hybrid mode
+    result = generator.generate_hybrid_sources(request)
+    
+    # Build response
+    response = HybridSourceGenerationResponse(
+        character_name=result['character_name'],
+        sources=result['sources'],
+        user_source_count=result['user_source_count'],
+        auto_generated_count=result['auto_generated_count'],
+        suggestions=result['suggestions'],
+        validation_summary=result['validation_summary'],
+        configuration=result['configuration'],
+        metadata=result['metadata']
+    )
+    
+    logger.info(
+        f"Hybrid generation complete: {len(response.sources)} total sources "
+        f"({response.user_source_count} user + {response.auto_generated_count} auto), "
+        f"{len(response.suggestions)} suggestions"
     )
     
     return response
