@@ -85,6 +85,16 @@ class PremiumDomainRegistry:
             'specialty': ['us_history', 'government_records'],
             'editorial_process': 'government_curated'
         },
+        'archives.gov': {
+            'authority': 96,
+            'specialty': ['us_history', 'government_records', 'military_records'],
+            'editorial_process': 'government_curated'
+        },
+        'presidency.ucsb.edu': {
+            'authority': 95,
+            'specialty': ['us_presidents', 'presidential_documents'],
+            'editorial_process': 'academic_curated'
+        },
         
         # International organizations
         'unesco.org': {
@@ -142,6 +152,127 @@ class PremiumDomainRegistry:
         },
     }
     
+    # Scientific and Research Institutions
+    TIER_1_SCIENTIFIC = {
+        'arxiv.org': {
+            'authority': 94,
+            'specialty': ['physics', 'mathematics', 'computer_science', 'preprints'],
+            'editorial_process': 'peer_reviewed'
+        },
+        'nature.com': {
+            'authority': 96,
+            'specialty': ['science', 'research', 'peer_reviewed_journals'],
+            'editorial_process': 'peer_reviewed'
+        },
+        'science.org': {
+            'authority': 96,
+            'specialty': ['science', 'research', 'peer_reviewed_journals'],
+            'editorial_process': 'peer_reviewed'
+        },
+        'nsf.gov': {
+            'authority': 95,
+            'specialty': ['science_funding', 'research', 'grants'],
+            'editorial_process': 'government_curated'
+        },
+        'pubmed.ncbi.nlm.nih.gov': {
+            'authority': 96,
+            'specialty': ['medicine', 'biology', 'health_sciences'],
+            'editorial_process': 'peer_reviewed'
+        },
+        'ieeexplore.ieee.org': {
+            'authority': 94,
+            'specialty': ['engineering', 'technology', 'computer_science'],
+            'editorial_process': 'peer_reviewed'
+        },
+        'aps.org': {
+            'authority': 93,
+            'specialty': ['physics'],
+            'editorial_process': 'peer_reviewed'
+        },
+        'acs.org': {
+            'authority': 93,
+            'specialty': ['chemistry'],
+            'editorial_process': 'peer_reviewed'
+        },
+    }
+    
+    # Arts and Cultural Institutions
+    TIER_1_CULTURAL = {
+        'metmuseum.org': {
+            'authority': 95,
+            'specialty': ['art', 'culture', 'museum'],
+            'editorial_process': 'curatorial_review'
+        },
+        'moma.org': {
+            'authority': 94,
+            'specialty': ['modern_art', 'contemporary_art', 'museum'],
+            'editorial_process': 'curatorial_review'
+        },
+        'nga.gov': {
+            'authority': 95,
+            'specialty': ['art', 'national_gallery', 'museum'],
+            'editorial_process': 'curatorial_review'
+        },
+        'getty.edu': {
+            'authority': 94,
+            'specialty': ['art', 'museum', 'research'],
+            'editorial_process': 'curatorial_review'
+        },
+        'britishmuseum.org': {
+            'authority': 95,
+            'specialty': ['art', 'history', 'museum'],
+            'editorial_process': 'curatorial_review'
+        },
+        'louvre.fr': {
+            'authority': 96,
+            'specialty': ['art', 'museum', 'european_art'],
+            'editorial_process': 'curatorial_review'
+        },
+    }
+    
+    # Literary and Publishing Institutions
+    TIER_1_LITERARY = {
+        'gutenberg.org': {
+            'authority': 92,
+            'specialty': ['literature', 'public_domain', 'digital_library'],
+            'editorial_process': 'curated'
+        },
+        'poetryfoundation.org': {
+            'authority': 90,
+            'specialty': ['poetry', 'literature'],
+            'editorial_process': 'editorial_review'
+        },
+        'folger.edu': {
+            'authority': 93,
+            'specialty': ['shakespeare', 'renaissance_literature'],
+            'editorial_process': 'scholarly_review'
+        },
+    }
+    
+    # Military History Institutions
+    TIER_1_MILITARY = {
+        'history.army.mil': {
+            'authority': 94,
+            'specialty': ['military_history', 'us_army'],
+            'editorial_process': 'government_curated'
+        },
+        'navy.mil': {
+            'authority': 93,
+            'specialty': ['naval_history', 'us_navy'],
+            'editorial_process': 'government_curated'
+        },
+        'usni.org': {
+            'authority': 91,
+            'specialty': ['naval_history', 'maritime_affairs'],
+            'editorial_process': 'editorial_review'
+        },
+        'iwm.org.uk': {
+            'authority': 93,
+            'specialty': ['military_history', 'world_wars'],
+            'editorial_process': 'curatorial_review'
+        },
+    }
+    
     # News Archives (Premium)
     TIER_1_NEWS_ARCHIVES = {
         'nytimes.com': {
@@ -195,6 +326,10 @@ class PremiumDomainRegistry:
             cls.GOVERNMENT_ARCHIVES,
             cls.TIER_1_ENCYCLOPEDIC,
             cls.TIER_1_BIOGRAPHICAL,
+            cls.TIER_1_SCIENTIFIC,
+            cls.TIER_1_CULTURAL,
+            cls.TIER_1_LITERARY,
+            cls.TIER_1_MILITARY,
             cls.TIER_1_NEWS_ARCHIVES
         ]:
             # Check exact match
@@ -254,6 +389,22 @@ class PremiumDomainRegistry:
             return "biographical"
         
         if any(domain_lower.endswith(d) or d in domain_lower 
+               for d in cls.TIER_1_SCIENTIFIC.keys()):
+            return "scientific"
+        
+        if any(domain_lower.endswith(d) or d in domain_lower 
+               for d in cls.TIER_1_CULTURAL.keys()):
+            return "cultural"
+        
+        if any(domain_lower.endswith(d) or d in domain_lower 
+               for d in cls.TIER_1_LITERARY.keys()):
+            return "literary"
+        
+        if any(domain_lower.endswith(d) or d in domain_lower 
+               for d in cls.TIER_1_MILITARY.keys()):
+            return "military"
+        
+        if any(domain_lower.endswith(d) or d in domain_lower 
                for d in cls.TIER_1_NEWS_ARCHIVES.keys()):
             return "news"
         
@@ -288,6 +439,10 @@ class PremiumDomainRegistry:
             'government': cls.GOVERNMENT_ARCHIVES,
             'encyclopedic': cls.TIER_1_ENCYCLOPEDIC,
             'biographical': cls.TIER_1_BIOGRAPHICAL,
+            'scientific': cls.TIER_1_SCIENTIFIC,
+            'cultural': cls.TIER_1_CULTURAL,
+            'literary': cls.TIER_1_LITERARY,
+            'military': cls.TIER_1_MILITARY,
             'news': cls.TIER_1_NEWS_ARCHIVES,
         }
         
