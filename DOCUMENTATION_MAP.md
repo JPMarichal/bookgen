@@ -24,16 +24,22 @@ docs/
 ├── getting-started/            # For new users
 ├── api/                        # For developers
 ├── user-guide/                 # For end users
+├── guides/                     # How-to guides
 ├── architecture/               # For architects
 ├── operations/                 # For DevOps
-└── emergency/                  # For on-call
+├── emergency/                  # For on-call
+├── archive/                    # Historical implementation docs
+└── project/                    # Project planning docs (Spanish)
 ```
 
 ### Technical Documentation (Root)
 
-**Purpose**: Detailed implementation guides and reference material
+**Purpose**: Quick-reference technical guides and component documentation
 
-Located in repository root for easy access during development.
+Located in repository root for easy access during development:
+- **Quick Start Guides**: Component-specific getting started docs
+- **Component Documentation**: Deep-dive technical references
+- **Deployment Guides**: Production deployment specifics
 
 ---
 
@@ -54,8 +60,7 @@ Located in repository root for easy access during development.
 | Topic | User Guide | Technical Reference |
 |-------|------------|---------------------|
 | **API Overview** | [docs/api/overview.md](docs/api/overview.md) | [API_DOCUMENTATION.md](API_DOCUMENTATION.md) |
-| **FastAPI** | [docs/api/overview.md](docs/api/overview.md) | [FASTAPI_IMPLEMENTATION_SUMMARY.md](FASTAPI_IMPLEMENTATION_SUMMARY.md) |
-| **Architecture** | [docs/architecture/system-overview.md](docs/architecture/system-overview.md) | Various implementation docs |
+| **Architecture** | [docs/architecture/system-overview.md](docs/architecture/system-overview.md) | Component-specific docs |
 | **Testing** | [docs/INDEX.md](docs/INDEX.md) | [TESTING_STRATEGY.md](TESTING_STRATEGY.md) |
 
 ### Core Features
@@ -76,7 +81,6 @@ Located in repository root for easy access during development.
 | **Runbooks** | [docs/operations/runbooks.md](docs/operations/runbooks.md) | [VERIFICATION_COMMANDS.md](VERIFICATION_COMMANDS.md) |
 | **Troubleshooting** | [docs/operations/troubleshooting.md](docs/operations/troubleshooting.md) | [VPS_SETUP.md](VPS_SETUP.md) |
 | **CI/CD** | [docs/operations/deployment.md](docs/operations/deployment.md) | [CI_CD_IMPLEMENTATION.md](CI_CD_IMPLEMENTATION.md) |
-| **Monitoring** | [docs/operations/runbooks.md](docs/operations/runbooks.md) | [IMPLEMENTATION_SUMMARY_ISSUE_15.md](IMPLEMENTATION_SUMMARY_ISSUE_15.md) |
 
 ---
 
@@ -92,6 +96,12 @@ Fast-track guides for specific components:
 - [QUICK_START_CICD.md](QUICK_START_CICD.md) - CI/CD setup
 - [QUICK_START_LENGTH_VALIDATION.md](QUICK_START_LENGTH_VALIDATION.md) - Length validation
 - [QUICK_START_SOURCE_VALIDATION.md](QUICK_START_SOURCE_VALIDATION.md) - Source validation
+- [QUICK_START_CONTENT_ANALYZER.md](QUICK_START_CONTENT_ANALYZER.md) - Content analysis
+- [QUICK_START_CROSS_VALIDATION.md](QUICK_START_CROSS_VALIDATION.md) - Cross validation
+- [QUICK_START_FEEDBACK_SYSTEM.md](QUICK_START_FEEDBACK_SYSTEM.md) - Feedback system
+- [QUICK_START_HYBRID_GENERATION.md](QUICK_START_HYBRID_GENERATION.md) - Hybrid generation
+- [QUICK_START_PERSONALIZED_STRATEGIES.md](QUICK_START_PERSONALIZED_STRATEGIES.md) - Personalized strategies
+- [QUICK_START_SOURCE_STRATEGIES.md](QUICK_START_SOURCE_STRATEGIES.md) - Source strategies
 - [WORD_EXPORT_QUICKSTART.md](WORD_EXPORT_QUICKSTART.md) - Document export
 - [NOTIFICATION_QUICKSTART.md](NOTIFICATION_QUICKSTART.md) - Notifications
 
@@ -99,6 +109,7 @@ Fast-track guides for specific components:
 
 Deep-dive technical documentation:
 
+- [API_DOCUMENTATION.md](API_DOCUMENTATION.md) - Complete API reference
 - [CELERY_TASK_QUEUE.md](CELERY_TASK_QUEUE.md) - Celery implementation
 - [DATABASE_README.md](DATABASE_README.md) - Database design
 - [DOCKER_README.md](DOCKER_README.md) - Docker configuration
@@ -106,39 +117,41 @@ Deep-dive technical documentation:
 - [NOTIFICATION_SYSTEM.md](NOTIFICATION_SYSTEM.md) - Notification architecture
 - [OPENROUTER_INTEGRATION.md](OPENROUTER_INTEGRATION.md) - LLM integration
 - [ADVANCED_SOURCE_VALIDATION.md](ADVANCED_SOURCE_VALIDATION.md) - Source validation
+- [AUTOMATIC_SOURCE_GENERATION.md](AUTOMATIC_SOURCE_GENERATION.md) - Automatic source generation
+- [CROSS_VALIDATION_IMPLEMENTATION.md](CROSS_VALIDATION_IMPLEMENTATION.md) - Cross validation
 - [LENGTH_VALIDATION_README.md](LENGTH_VALIDATION_README.md) - Length validation
 - [CONCATENATION_SERVICE_README.md](CONCATENATION_SERVICE_README.md) - Document concatenation
-
-### Implementation Summaries (Root)
-
-Track completed work and implementation details:
-
-- [IMPLEMENTATION_SUMMARY.md](IMPLEMENTATION_SUMMARY.md) - Overall summary
-- [IMPLEMENTATION_DATABASE.md](IMPLEMENTATION_DATABASE.md) - Database implementation
-- [FASTAPI_IMPLEMENTATION_SUMMARY.md](FASTAPI_IMPLEMENTATION_SUMMARY.md) - API implementation
-- [IMPLEMENTATION_SUMMARY_ISSUE_7.md](IMPLEMENTATION_SUMMARY_ISSUE_7.md) - Length validation
-- [IMPLEMENTATION_SUMMARY_ISSUE_8.md](IMPLEMENTATION_SUMMARY_ISSUE_8.md) - Source validation
-- [IMPLEMENTATION_SUMMARY_ISSUE_9.md](IMPLEMENTATION_SUMMARY_ISSUE_9.md) - Notifications
-- [IMPLEMENTATION_SUMMARY_ISSUE_10.md](IMPLEMENTATION_SUMMARY_ISSUE_10.md) - State machine
-- [IMPLEMENTATION_SUMMARY_ISSUE_11.md](IMPLEMENTATION_SUMMARY_ISSUE_11.md) - Integration
-- [IMPLEMENTATION_SUMMARY_ISSUE_12.md](IMPLEMENTATION_SUMMARY_ISSUE_12.md) - Docker
-- [IMPLEMENTATION_SUMMARY_ISSUE_13.md](IMPLEMENTATION_SUMMARY_ISSUE_13.md) - CI/CD
-- [IMPLEMENTATION_SUMMARY_ISSUE_14.md](IMPLEMENTATION_SUMMARY_ISSUE_14.md) - Testing
-- [IMPLEMENTATION_SUMMARY_ISSUE_15.md](IMPLEMENTATION_SUMMARY_ISSUE_15.md) - Monitoring
+- [PERFORMANCE_OPTIMIZATION.md](PERFORMANCE_OPTIMIZATION.md) - Performance tuning
+- [TESTING_STRATEGY.md](TESTING_STRATEGY.md) - Testing approach
 
 ### Deployment Documentation (Root)
 
 Production deployment guides:
 
-- [DEPLOYMENT.md](DEPLOYMENT.md) - General deployment guide
+- [DEPLOYMENT.md](DEPLOYMENT.md) - IONOS VPS deployment (Spanish)
 - [VPS_SETUP.md](VPS_SETUP.md) - VPS Ubuntu IONOS setup
 - [CI_CD_IMPLEMENTATION.md](CI_CD_IMPLEMENTATION.md) - CI/CD pipeline
 - [VERIFICATION_COMMANDS.md](VERIFICATION_COMMANDS.md) - Verification procedures
 
-### Project Documentation (Root)
+### Historical Documentation (Archive)
 
-- [PLAN_TRABAJO.md](PLAN_TRABAJO.md) - Work plan (Spanish)
-- [REQUERIMIENTOS_SISTEMA_AUTOMATIZADO.md](REQUERIMIENTOS_SISTEMA_AUTOMATIZADO.md) - System requirements
+Implementation summaries and historical records moved to [docs/archive/](docs/archive/):
+
+- Implementation summaries from completed issues
+- Historical completion reports
+- Verification reports
+
+See [docs/archive/README.md](docs/archive/README.md) for details.
+
+### Project Planning Documentation
+
+Planning documents and proposals moved to [docs/project/](docs/project/):
+
+- Work plans (Spanish)
+- System requirements (Spanish)
+- Feature proposals (Spanish)
+
+See [docs/project/README.md](docs/project/README.md) for details.
 
 ---
 
@@ -164,11 +177,11 @@ Production deployment guides:
 - Keep runbooks handy
 
 ### For Contributors
-→ **Use root documentation**
-- Implementation summaries
-- Technical deep-dives
-- Component architecture
-- Development guides
+→ **Use root documentation + archives**
+- Component documentation for technical details
+- Quick starts for component setup
+- docs/archive/ for historical context
+- docs/project/ for planning background
 
 ---
 
@@ -187,8 +200,7 @@ Production deployment guides:
 ```
 1. docs/api/overview.md
 2. API_DOCUMENTATION.md (technical details)
-3. FASTAPI_IMPLEMENTATION_SUMMARY.md (implementation)
-4. Interactive docs at /docs endpoint
+3. Interactive docs at /docs endpoint
 ```
 
 ### Goal: Deploy to Production
@@ -204,9 +216,8 @@ Production deployment guides:
 
 ```
 1. docs/architecture/system-overview.md (high-level)
-2. IMPLEMENTATION_SUMMARY.md (overall)
-3. Component-specific docs (detailed)
-4. Implementation summaries (issues 7-15)
+2. Component-specific docs (detailed)
+3. docs/archive/ (historical implementation details)
 ```
 
 ### Goal: Troubleshoot Issues
@@ -223,7 +234,7 @@ Production deployment guides:
 ```
 1. README.md (project overview)
 2. TESTING_STRATEGY.md (testing approach)
-3. Implementation summaries (completed work)
+3. docs/archive/ (historical implementations)
 4. Component documentation (architecture)
 ```
 
@@ -293,7 +304,13 @@ Production deployment guides:
 ---
 
 **Last Updated**: January 2025  
-**Documentation Version**: 1.0.0
+**Documentation Version**: 1.1.0 (Root documentation cleanup completed)
+
+**Recent Changes:**
+- Moved 20 implementation summaries to docs/archive/
+- Moved 4 project planning docs to docs/project/
+- Updated references and navigation
+- Cleaned root directory from 59 to 34 documentation files
 
 ---
 

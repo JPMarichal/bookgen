@@ -284,11 +284,11 @@ Complete navigation guide for BookGen documentation.
 
 Located in root directory:
 
+- **[API Documentation](../API_DOCUMENTATION.md)** - Complete API reference
 - **[Celery Task Queue](../CELERY_TASK_QUEUE.md)** - Task queue implementation
 - **[Database](../DATABASE_README.md)** - Database setup and migrations
 - **[Docker](../DOCKER_README.md)** - Docker configuration
 - **[Engine Quick Start](../ENGINE_QUICK_START.md)** - State machine engine
-- **[FastAPI Implementation](../FASTAPI_IMPLEMENTATION_SUMMARY.md)** - API summary
 - **[Length Validation](../LENGTH_VALIDATION_README.md)** - Content validation
 - **[Notification System](../NOTIFICATION_SYSTEM.md)** - Notifications deep dive
 - **[OpenRouter Integration](../OPENROUTER_INTEGRATION.md)** - LLM integration
@@ -309,19 +309,21 @@ Located in root directory:
 - **[Length Validation Quick Start](../QUICK_START_LENGTH_VALIDATION.md)**
 - **[Source Validation Quick Start](../QUICK_START_SOURCE_VALIDATION.md)**
 
-### Implementation Summaries
+### Implementation Summaries (Historical)
 
-Track completed work:
+Historical records of completed work in [archive/](archive/):
 
-- [Issue #7: Length Validation](../IMPLEMENTATION_SUMMARY_ISSUE_7.md)
-- [Issue #8: Advanced Source Validation](../IMPLEMENTATION_SUMMARY_ISSUE_8.md)
-- [Issue #9: Notification System](../IMPLEMENTATION_SUMMARY_ISSUE_9.md)
-- [Issue #10: State Machine](../IMPLEMENTATION_SUMMARY_ISSUE_10.md)
-- [Issue #11: Integration](../IMPLEMENTATION_SUMMARY_ISSUE_11.md)
-- [Issue #12: Docker](../IMPLEMENTATION_SUMMARY_ISSUE_12.md)
-- [Issue #13: CI/CD](../IMPLEMENTATION_SUMMARY_ISSUE_13.md)
-- [Issue #14: Testing](../IMPLEMENTATION_SUMMARY_ISSUE_14.md)
-- [Issue #15: Monitoring](../IMPLEMENTATION_SUMMARY_ISSUE_15.md)
+- [Issue #7: Length Validation](archive/IMPLEMENTATION_SUMMARY_ISSUE_7.md)
+- [Issue #8: Advanced Source Validation](archive/IMPLEMENTATION_SUMMARY_ISSUE_8.md)
+- [Issue #9: Notification System](archive/IMPLEMENTATION_SUMMARY_ISSUE_9.md)
+- [Issue #10: State Machine](archive/IMPLEMENTATION_SUMMARY_ISSUE_10.md)
+- [Issue #11: Integration](archive/IMPLEMENTATION_SUMMARY_ISSUE_11.md)
+- [Issue #12: Docker](archive/IMPLEMENTATION_SUMMARY_ISSUE_12.md)
+- [Issue #13: CI/CD](archive/IMPLEMENTATION_SUMMARY_ISSUE_13.md)
+- [Issue #14: Testing](archive/IMPLEMENTATION_SUMMARY_ISSUE_14.md)
+- [Issue #15: Monitoring](archive/IMPLEMENTATION_SUMMARY_ISSUE_15.md)
+
+See [archive/README.md](archive/README.md) for complete list.
 
 ---
 
