@@ -212,7 +212,7 @@ python -m pytest tests/test_engine.py -v
 python -m pytest tests/ -v
 
 # Run demonstration
-python demo_engine.py
+python examples/demo_engine.py
 ```
 
 ## Database Schema

@@ -249,7 +249,7 @@ result = validate_and_report(chapter_text, target_length=5000)
 Try the interactive demo to see all features:
 
 ```bash
-python demo_length_validation.py
+python examples/demo_length_validation.py
 ```
 
 This demonstrates:

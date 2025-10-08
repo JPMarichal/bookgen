@@ -177,12 +177,12 @@ for rec in result.recommendations:
 
 ### Run the Demo
 ```bash
-python3 demo_cross_validation.py
+python3 examples/demo_cross_validation.py
 ```
 
 ### Verify Acceptance Criteria
 ```bash
-python3 verify_cross_validation.py
+python3 scripts/verification/verify_cross_validation.py
 ```
 
 ### Run Tests
@@ -249,7 +249,7 @@ This implementation addresses:
 
 Run the verification script to confirm all acceptance criteria:
 ```bash
-python3 verify_cross_validation.py
+python3 scripts/verification/verify_cross_validation.py
 ```
 
 Expected output:
