@@ -191,7 +191,7 @@ Complete navigation guide for BookGen documentation.
    - Data flow
    - Scalability
 
-3. **[Testing Strategy](../TESTING_STRATEGY.md)**
+3. **[Testing Strategy](technical/testing/TESTING_STRATEGY.md)**
    - Test infrastructure
    - Running tests
    - Coverage goals
@@ -280,34 +280,38 @@ Complete navigation guide for BookGen documentation.
 
 ## 📂 Additional Resources
 
-### Implementation Guides
+### Technical Documentation
 
-Located in root directory:
+For detailed technical documentation, see **[technical/](technical/)** directory:
 
-- **[API Documentation](../API_DOCUMENTATION.md)** - Complete API reference
-- **[Celery Task Queue](../CELERY_TASK_QUEUE.md)** - Task queue implementation
-- **[Database](../DATABASE_README.md)** - Database setup and migrations
-- **[Docker](../DOCKER_README.md)** - Docker configuration
-- **[Engine Quick Start](../ENGINE_QUICK_START.md)** - State machine engine
-- **[Length Validation](../LENGTH_VALIDATION_README.md)** - Content validation
-- **[Notification System](../NOTIFICATION_SYSTEM.md)** - Notifications deep dive
-- **[OpenRouter Integration](../OPENROUTER_INTEGRATION.md)** - LLM integration
-- **[Source Validation](../ADVANCED_SOURCE_VALIDATION.md)** - Source validation
-- **[Word Export](../WORD_EXPORT_QUICKSTART.md)** - Document export
+#### Component Documentation
+- **[API Documentation](technical/components/API_DOCUMENTATION.md)** - Complete API reference
+- **[Celery Task Queue](technical/components/CELERY_TASK_QUEUE.md)** - Task queue implementation
+- **[Database](technical/components/DATABASE_README.md)** - Database setup and migrations
+- **[Docker](technical/components/DOCKER_README.md)** - Docker configuration
+- **[Length Validation](technical/components/LENGTH_VALIDATION_README.md)** - Content validation
+- **[Notification System](technical/components/NOTIFICATION_SYSTEM.md)** - Notifications deep dive
+- **[OpenRouter Integration](technical/components/OPENROUTER_INTEGRATION.md)** - LLM integration
+- **[Source Validation](technical/components/ADVANCED_SOURCE_VALIDATION.md)** - Source validation
 
-### Deployment Resources
+#### Quick Start Guides
+- **[API Quick Start](technical/quickstart/QUICKSTART_API.md)**
+- **[Database Quick Start](technical/quickstart/QUICKSTART_DATABASE.md)**
+- **[Engine Quick Start](technical/quickstart/ENGINE_QUICK_START.md)** - State machine engine
+- **[CI/CD Quick Start](technical/quickstart/QUICK_START_CICD.md)**
+- **[Length Validation Quick Start](technical/quickstart/QUICK_START_LENGTH_VALIDATION.md)**
+- **[Source Validation Quick Start](technical/quickstart/QUICK_START_SOURCE_VALIDATION.md)**
+- **[Word Export Quick Start](technical/quickstart/WORD_EXPORT_QUICKSTART.md)** - Document export
 
-- **[VPS Setup](../VPS_SETUP.md)** - Detailed VPS configuration
-- **[CI/CD](../CI_CD_IMPLEMENTATION.md)** - Continuous deployment
-- **[Docker Optimization](../DOCKER_OPTIMIZATION.md)** - Docker best practices
+#### Deployment Resources
+- **[VPS Setup](technical/deployment/VPS_SETUP.md)** - Detailed VPS configuration
+- **[CI/CD Implementation](technical/deployment/CI_CD_IMPLEMENTATION.md)** - Continuous deployment
+- **[Docker Optimization](technical/components/DOCKER_OPTIMIZATION.md)** - Docker best practices
+- **[Deployment Guide](technical/deployment/DEPLOYMENT.md)** - Production deployment
 
-### Quick Start Guides
-
-- **[API Quick Start](../QUICKSTART_API.md)**
-- **[Database Quick Start](../QUICKSTART_DATABASE.md)**
-- **[CI/CD Quick Start](../QUICK_START_CICD.md)**
-- **[Length Validation Quick Start](../QUICK_START_LENGTH_VALIDATION.md)**
-- **[Source Validation Quick Start](../QUICK_START_SOURCE_VALIDATION.md)**
+#### Testing & Verification
+- **[Testing Strategy](technical/testing/TESTING_STRATEGY.md)** - Testing approach
+- **[Verification Commands](technical/testing/VERIFICATION_COMMANDS.md)** - Verification procedures
 
 ### Implementation Summaries (Historical)
 
