@@ -196,3 +196,24 @@ class TestBiographyEndpoints:
         # Should fail because job is not completed
         assert download_response.status_code == 400
         assert "not completed" in download_response.json()["detail"].lower()
+
+
+class TestDownloadOutputEndpoint:
+    """Tests for download-output endpoint"""
+    
+    def test_download_output_character_not_found(self):
+        """Test downloading output for non-existent character"""
+        response = client.get("/api/v1/biographies/nonexistent_character_xyz/download-output")
+        
+        assert response.status_code == 404
+        data = response.json()
+        assert "detail" in data
+        assert "not found" in data["detail"].lower() or "no publication files" in data["detail"].lower()
+    
+    def test_download_output_invalid_character_name(self):
+        """Test downloading output with empty character name"""
+        # Empty or whitespace-only character name
+        response = client.get("/api/v1/biographies/ /download-output")
+        
+        # Should return 400 or 404 depending on routing
+        assert response.status_code in [400, 404]

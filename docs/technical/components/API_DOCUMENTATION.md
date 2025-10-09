@@ -157,6 +157,50 @@ Download completed biography.
 - `404`: Job not found
 - `400`: Job not completed yet
 
+#### GET `/api/v1/biographies/{character}/download-output`
+Download all publication output files for a character as a ZIP archive.
+
+Downloads the complete output directory (markdown/, word/, kdp/) containing all publication-ready files for the specified character.
+
+**Parameters:**
+- `character` (required): Normalized character name (e.g., `harry_s_truman`)
+
+**Response (200 OK):**
+- Content-Type: `application/zip`
+- Content-Disposition: `attachment; filename="{character}_publicacion.zip"`
+- Downloads ZIP file containing:
+  - `markdown/` - Markdown files, concatenation logs, quality metrics
+  - `word/` - Word documents and export metadata
+  - `kdp/` - KDP-formatted files, cover images, metadata
+
+**Example Request:**
+```bash
+curl -O http://localhost:8000/api/v1/biographies/harry_s_truman/download-output
+```
+
+**ZIP Structure:**
+```
+harry_s_truman_publicacion.zip
+├── markdown/
+│   ├── La biografia de Harry S. Truman.md
+│   ├── concatenation-log.txt
+│   └── quality-metrics.json
+├── word/
+│   ├── La biografia de Harry S. Truman.docx
+│   └── export-metadata.json
+└── kdp/
+    ├── cover-image.jpg
+    ├── formatted-manuscript.docx
+    └── kdp-metadata.json
+```
+
+**Errors:**
+- `400`: Invalid character name (empty or invalid format)
+- `404`: Character not found or no publication files available
+- `403`: Permission denied accessing files
+- `500`: Internal server error
+- `507`: Insufficient disk space
+
 ### Source Validation
 
 #### POST `/api/v1/sources/validate`
