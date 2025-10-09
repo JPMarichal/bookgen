@@ -294,8 +294,8 @@ class TestWordExporter:
         """Test extracting character name from path"""
         exporter = WordExporter()
         
-        # Test with standard path structure
-        name = exporter._extract_character_name("/app/bios/winston_churchill/biography.md")
+        # Test with new path structure (bios/character/output/markdown/...)
+        name = exporter._extract_character_name("/app/bios/winston_churchill/output/markdown/biography.md")
         assert name == "winston_churchill"
         
         # Test with different structure

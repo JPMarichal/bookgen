@@ -234,19 +234,24 @@ class TestConcatenationService:
     
     def test_concatenate_biography_with_files(self):
         """Test biography concatenation with actual files"""
-        # Create test files
+        # Create test files with new structure
         character_dir = os.path.join(self.temp_dir, "test_character")
-        os.makedirs(character_dir, exist_ok=True)
+        sections_dir = os.path.join(character_dir, "sections")
+        chapters_dir = os.path.join(character_dir, "chapters")
+        output_dir = os.path.join(character_dir, "output", "markdown")
+        
+        os.makedirs(sections_dir, exist_ok=True)
+        os.makedirs(chapters_dir, exist_ok=True)
+        os.makedirs(output_dir, exist_ok=True)
         
         test_files = {
-            "prologo.md": "# Prólogo\n\nThis is the prologue about our subject.",
-            "capitulo-01.md": "# Capítulo 1\n\nIn 1950, our subject was born.",
-            "capitulo-02.md": "# Capítulo 2\n\nIn 1970, our subject achieved greatness.",
-            "epilogo.md": "# Epílogo\n\nThe legacy continues."
+            os.path.join(sections_dir, "prologo.md"): "# Prólogo\n\nThis is the prologue about our subject.",
+            os.path.join(chapters_dir, "capitulo-01.md"): "# Capítulo 1\n\nIn 1950, our subject was born.",
+            os.path.join(chapters_dir, "capitulo-02.md"): "# Capítulo 2\n\nIn 1970, our subject achieved greatness.",
+            os.path.join(sections_dir, "epilogo.md"): "# Epílogo\n\nThe legacy continues."
         }
         
-        for filename, content in test_files.items():
-            filepath = os.path.join(character_dir, filename)
+        for filepath, content in test_files.items():
             with open(filepath, 'w', encoding='utf-8') as f:
                 f.write(content)
         
@@ -266,12 +271,18 @@ class TestConcatenationService:
     
     def test_missing_files_handling(self):
         """Test handling of missing files"""
-        # Create directory but don't create all files
+        # Create directory with new structure but don't create all files
         character_dir = os.path.join(self.temp_dir, "incomplete_character")
-        os.makedirs(character_dir, exist_ok=True)
+        sections_dir = os.path.join(character_dir, "sections")
+        chapters_dir = os.path.join(character_dir, "chapters")
+        output_dir = os.path.join(character_dir, "output", "markdown")
+        
+        os.makedirs(sections_dir, exist_ok=True)
+        os.makedirs(chapters_dir, exist_ok=True)
+        os.makedirs(output_dir, exist_ok=True)
         
         # Only create one file
-        filepath = os.path.join(character_dir, "prologo.md")
+        filepath = os.path.join(sections_dir, "prologo.md")
         with open(filepath, 'w', encoding='utf-8') as f:
             f.write("# Prólogo\n\nTest content.")
         
