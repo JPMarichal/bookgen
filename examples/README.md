@@ -19,6 +19,7 @@ Demo scripts show how to use various features and services:
 - `demo_source_strategies.py` - Different source search strategies
 - `demo_source_validation.py` - Source validation examples
 - `demo_word_export.py` - Word document export functionality
+- `demo_zip_export.py` - ZIP export of publication output files
 
 ## Example Scripts
 
