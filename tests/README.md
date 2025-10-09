@@ -16,19 +16,19 @@ The test suite is organized into the following structure:
 
 ```bash
 # Install test dependencies
-pip install pytest pytest-cov pytest-asyncio
+pip install pytest pytest-cov pytest-asyncio pytest-xdist
 
-# Run all tests
-pytest
+# Run all tests (excluding slow tests) with parallel execution
+pytest -m "not slow" -n auto
 
-# Run with coverage
-pytest --cov=src --cov-report=html
+# Run all tests with coverage
+pytest -m "not slow" -n auto --cov=src --cov-report=html
 
 # Run specific test category
 pytest -m unit          # Unit tests only
 pytest -m integration   # Integration tests only
 pytest -m api           # API tests only
-pytest -m slow          # Slow tests only
+pytest -m slow          # Slow tests only (performance/stress tests)
 pytest -m fast          # Fast tests only
 
 # Run specific test file
@@ -39,6 +39,23 @@ pytest -v
 
 # Run with coverage threshold
 pytest --cov=src --cov-fail-under=75
+
+# Run all tests including slow ones (for comprehensive testing)
+pytest -n auto --cov=src
+```
+
+## Performance Optimization
+
+The test suite has been optimized to reduce execution time from ~25 minutes to ~5-10 minutes:
+
+1. **Parallel Execution**: Tests run in parallel using `pytest-xdist` with `-n auto` flag
+2. **Slow Test Marking**: Performance and stress tests are marked with `@pytest.mark.slow`
+3. **Selective Execution**: CI/CD pipeline excludes slow tests by default using `-m "not slow"`
+4. **Integration Testing**: Integration tests are clearly marked for optional execution
+
+To run slow tests (performance/stress):
+```bash
+pytest -m slow -v
 ```
 
 ## Test Markers

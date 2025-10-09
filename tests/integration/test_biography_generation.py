@@ -11,6 +11,9 @@ from src.main import app
 
 client = TestClient(app)
 
+# Mark all tests in this module as integration tests
+pytestmark = pytest.mark.integration
+
 
 class TestBiographyGenerationIntegration:
     """Integration tests for biography generation"""
