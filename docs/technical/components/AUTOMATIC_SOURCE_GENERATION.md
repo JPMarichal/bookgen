@@ -2,7 +2,7 @@
 
 ## Overview
 
-The Automatic Source Generation system implements the original functionality specified in `.windsurf/rules/research.md` - automatically generating 40-60 high-quality sources for biographical research using AI and multiple search strategies.
+The Automatic Source Generation system implements the original functionality specified in the legacy research rules (now archived in `docs/archive/windsurf-legacy/research.md`) - automatically generating 40-60 high-quality sources for biographical research using AI and multiple search strategies.
 
 ## Key Features
 
@@ -228,7 +228,7 @@ assert response.json()["validation_summary"]["average_relevance"] >= 0.7  # ✅
 - [Advanced Source Validation](QUICK_START_SOURCE_VALIDATION.md)
 - [OpenRouter Integration](OPENROUTER_INTEGRATION.md)
 - [API Documentation](API_DOCUMENTATION.md)
-- [Research Standards](.windsurf/rules/research.md)
+- [Legacy Research Standards](../../archive/windsurf-legacy/research.md)
 
 ## Support
 

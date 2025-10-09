@@ -69,7 +69,7 @@ The following files were updated to work with the new structure:
 - `src/tasks/export_tasks.py` - Updated PDF output path
 - `tests/test_concatenation.py` - Updated test file creation
 - `tests/test_word_export.py` - Updated path test
-- `.windsurf/rules/kdpData-rules.md` - Updated KDP documentation
+- KDP documentation (legacy rules now archived in `docs/archive/windsurf-legacy/`)
 
 ## Benefits
 
