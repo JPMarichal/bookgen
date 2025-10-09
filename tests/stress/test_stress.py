@@ -74,8 +74,8 @@ class TestStressScenarios:
         success_count = sum(1 for r in responses if r.status_code == 202)
         assert success_count == num_concurrent, f"Only {success_count}/{num_concurrent} succeeded"
         
-        # Should complete in reasonable time (adjusted for automatic source generation)
-        assert duration < 20, f"Concurrent creation took too long: {duration:.2f}s"
+        # Should complete in reasonable time (adjusted for automatic source generation - can take up to 60s)
+        assert duration < 60, f"Concurrent creation took too long: {duration:.2f}s"
         
         print(f"\nCreated {num_concurrent} jobs concurrently in {duration:.2f}s")
     

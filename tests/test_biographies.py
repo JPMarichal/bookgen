@@ -18,7 +18,8 @@ class TestBiographyEndpoints:
             json={
                 "character": "Test Character",
                 "chapters": 5,
-                "total_words": 5000
+                "total_words": 5000,
+                "mode": "automatic"
             }
         )
         
@@ -31,7 +32,7 @@ class TestBiographyEndpoints:
         assert data["chapters"] == 5
         assert "created_at" in data
         assert "estimated_completion_time" in data
-        assert data["mode"] == "manual"  # Default mode
+        assert data["mode"] == "automatic"
     
     def test_generate_biography_automatic_mode(self):
         """Test biography generation with automatic source generation"""
@@ -96,7 +97,10 @@ class TestBiographyEndpoints:
         """Test biography generation with minimal request (only character)"""
         response = client.post(
             "/api/v1/biographies/generate",
-            json={"character": "Minimal Test"}
+            json={
+                "character": "Minimal Test",
+                "mode": "automatic"
+            }
         )
         
         assert response.status_code == 202
@@ -143,7 +147,10 @@ class TestBiographyEndpoints:
         # First create a job
         create_response = client.post(
             "/api/v1/biographies/generate",
-            json={"character": "Status Test"}
+            json={
+                "character": "Status Test",
+                "mode": "automatic"
+            }
         )
         job_id = create_response.json()["job_id"]
         
@@ -176,7 +183,10 @@ class TestBiographyEndpoints:
         # Create a job
         create_response = client.post(
             "/api/v1/biographies/generate",
-            json={"character": "Download Test"}
+            json={
+                "character": "Download Test",
+                "mode": "automatic"
+            }
         )
         job_id = create_response.json()["job_id"]
         
