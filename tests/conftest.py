@@ -10,16 +10,21 @@ from fastapi.testclient import TestClient
 
 from src.database.base import Base
 
+# Set test environment variables at import time (before app is loaded)
+os.environ["ENV"] = "test"
+os.environ["DEBUG"] = "false"
+os.environ["OPENROUTER_API_KEY"] = "test-key-12345"
+os.environ["OPENROUTER_BASE_URL"] = "https://api.test.openrouter.ai"
+os.environ["OPENROUTER_MODEL"] = "test-model"
+os.environ["REDIS_URL"] = "redis://localhost:6379/1"
+# Set high rate limit for tests to avoid rate limiting during benchmarks
+os.environ["RATE_LIMIT_PER_MINUTE"] = "10000"
+
 
 @pytest.fixture(autouse=True)
 def setup_test_env():
-    """Setup test environment variables"""
-    os.environ["ENV"] = "test"
-    os.environ["DEBUG"] = "false"
-    os.environ["OPENROUTER_API_KEY"] = "test-key-12345"
-    os.environ["OPENROUTER_BASE_URL"] = "https://api.test.openrouter.ai"
-    os.environ["OPENROUTER_MODEL"] = "test-model"
-    os.environ["REDIS_URL"] = "redis://localhost:6379/1"
+    """Ensure test environment variables are set (redundant but safe)"""
+    # Variables already set at module import time
     yield
     # Cleanup after tests
 

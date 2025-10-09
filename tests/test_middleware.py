@@ -19,7 +19,8 @@ class TestRateLimiting:
         assert response.status_code == 200
         assert "X-RateLimit-Limit" in response.headers
         assert "X-RateLimit-Remaining" in response.headers
-        assert int(response.headers["X-RateLimit-Limit"]) == 60
+        # Rate limit is set to 10000 in test environment (see conftest.py)
+        assert int(response.headers["X-RateLimit-Limit"]) == 10000
     
     def test_exempt_paths_no_rate_limit(self):
         """Test that health and docs paths are exempt from rate limiting"""

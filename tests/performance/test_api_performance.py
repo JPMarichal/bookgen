@@ -68,7 +68,8 @@ class TestAPIPerformance:
                 json={
                     "character": "Performance Test",
                     "chapters": 5,
-                    "total_words": 5000
+                    "total_words": 5000,
+                    "mode": "automatic"
                 }
             )
             assert response.status_code == 202
@@ -85,7 +86,10 @@ class TestAPIPerformance:
         # Create a job first
         create_response = client.post(
             "/api/v1/biographies/generate",
-            json={"character": "Status Performance Test"}
+            json={
+                "character": "Status Performance Test",
+                "mode": "automatic"
+            }
         )
         job_id = create_response.json()["job_id"]
         
@@ -169,7 +173,10 @@ class TestConcurrentRequests:
                     executor.submit(
                         client.post,
                         "/api/v1/biographies/generate",
-                        json={"character": f"Concurrent Test {i}"}
+                        json={
+                            "character": f"Concurrent Test {i}",
+                            "mode": "automatic"
+                        }
                     )
                     for i in range(10)
                 ]
@@ -193,7 +200,7 @@ class TestAPILatency:
         def cold_request():
             return client.get("/api/v1/status")
         
-        result = benchmark.rounds(1)(cold_request)
+        result = benchmark(cold_request)
     
     def test_warm_cache_latency(self, benchmark):
         """Measure warm cache latency"""
