@@ -110,18 +110,33 @@ class WordExporter:
                 # New structure: bios/{character}/output/word/
                 # Extract character from path to avoid nesting issues
                 path_parts = Path(markdown_file).parts
+                
                 if 'bios' in path_parts:
                     bios_idx = path_parts.index('bios')
                     if len(path_parts) > bios_idx + 1:
                         character_name = path_parts[bios_idx + 1]
-                
-                output_file = os.path.join(
-                    '/app/bios',
-                    character_name,
-                    'output',
-                    'word',
-                    f"La biografia de {character_name}.docx"
-                )
+                    # Derive the bios base directory from the input file path
+                    bios_base = os.path.join(*path_parts[:bios_idx+1])
+                    if not os.path.isabs(bios_base):
+                        # Make it absolute if it's relative
+                        bios_base = os.path.join('/', bios_base)
+                    
+                    output_file = os.path.join(
+                        bios_base,
+                        character_name,
+                        'output',
+                        'word',
+                        f"La biografia de {character_name}.docx"
+                    )
+                else:
+                    # Fallback: create output relative to input file's directory
+                    input_dir = os.path.dirname(os.path.abspath(markdown_file))
+                    output_file = os.path.join(
+                        input_dir,
+                        'output',
+                        'word',
+                        f"La biografia de {character_name}.docx"
+                    )
             
             # Create output directory
             os.makedirs(os.path.dirname(output_file), exist_ok=True)

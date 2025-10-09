@@ -58,16 +58,6 @@ class TestDownloadOutputEndpoint:
     
     def test_download_output_success(self, monkeypatch):
         """Test successful download of output files"""
-        # Monkeypatch ZipExportService to use test directory
-        from src.services.zip_export_service import ZipExportService
-        original_init = ZipExportService.__init__
-        
-        def custom_init(self, base_bios_dir="bios"):
-            self.base_bios_dir = self.bios_dir
-        
-        monkeypatch.setattr(ZipExportService, "__init__", 
-                           lambda self, base_bios_dir="bios": setattr(self, 'base_bios_dir', self.bios_dir))
-        
         response = client.get(f"/api/v1/biographies/{self.test_character}/download-output")
         
         assert response.status_code == 200
@@ -108,17 +98,12 @@ class TestDownloadOutputEndpoint:
     
     def test_download_output_normalizes_character_name(self, monkeypatch):
         """Test that character name is normalized (spaces to underscores)"""
-        from src.services.zip_export_service import ZipExportService
-        
         # Create character with spaces in directory name (after normalization)
         bios_dir = Path(self.bios_dir)
         output_dir = bios_dir / "test_with_spaces" / "output"
         markdown_dir = output_dir / "markdown"
         markdown_dir.mkdir(parents=True)
         (markdown_dir / "test.md").write_text("Test")
-        
-        monkeypatch.setattr(ZipExportService, "__init__", 
-                           lambda self, base_bios_dir="bios": setattr(self, 'base_bios_dir', self.bios_dir))
         
         # Request with spaces should be normalized to underscores
         response = client.get("/api/v1/biographies/test with spaces/download-output")
@@ -128,11 +113,6 @@ class TestDownloadOutputEndpoint:
     
     def test_download_output_filename_format(self, monkeypatch):
         """Test that ZIP filename follows correct format"""
-        from src.services.zip_export_service import ZipExportService
-        
-        monkeypatch.setattr(ZipExportService, "__init__", 
-                           lambda self, base_bios_dir="bios": setattr(self, 'base_bios_dir', self.bios_dir))
-        
         response = client.get(f"/api/v1/biographies/{self.test_character}/download-output")
         
         assert response.status_code == 200
@@ -143,11 +123,6 @@ class TestDownloadOutputEndpoint:
     
     def test_download_output_zip_contains_all_directories(self, monkeypatch):
         """Test that ZIP contains all expected directories"""
-        from src.services.zip_export_service import ZipExportService
-        
-        monkeypatch.setattr(ZipExportService, "__init__", 
-                           lambda self, base_bios_dir="bios": setattr(self, 'base_bios_dir', self.bios_dir))
-        
         response = client.get(f"/api/v1/biographies/{self.test_character}/download-output")
         
         assert response.status_code == 200
@@ -174,11 +149,6 @@ class TestDownloadOutputEndpoint:
     
     def test_download_output_valid_zip_file(self, monkeypatch):
         """Test that downloaded file is a valid ZIP archive"""
-        from src.services.zip_export_service import ZipExportService
-        
-        monkeypatch.setattr(ZipExportService, "__init__", 
-                           lambda self, base_bios_dir="bios": setattr(self, 'base_bios_dir', self.bios_dir))
-        
         response = client.get(f"/api/v1/biographies/{self.test_character}/download-output")
         
         assert response.status_code == 200
