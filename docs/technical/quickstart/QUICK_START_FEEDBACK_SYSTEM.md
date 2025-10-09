@@ -254,13 +254,13 @@ pytest tests/test_feedback_system.py -v
 Run the demo:
 
 ```bash
-python examples/demo_feedback_system.py
+python development/examples/demo_feedback_system.py
 ```
 
 Verify acceptance criteria:
 
 ```bash
-python scripts/verification/verify_feedback_system.py
+python development/scripts/verification/verify_feedback_system.py
 ```
 
 ## Performance Considerations

@@ -41,13 +41,13 @@ Milestone: Phase 1 - Infrastructure
 Assignee: AI Assistant
 
 Descripción:
-- Crear Dockerfile optimizado con multi-stage build
-- Configurar docker-compose.yml para desarrollo local
-- Configurar docker-compose.prod.yml para VPS Ubuntu
+- Crear infrastructure/Dockerfile optimizado con multi-stage build
+- Configurar infrastructure/docker-compose.yml para desarrollo local
+- Configurar infrastructure/docker-compose.prod.yml para VPS Ubuntu
 - Implementar health checks y resource limits
 
 Criterios de Aceptación:
-- [ ] Dockerfile construye imagen < 500MB
+- [ ] infrastructure/Dockerfile construye imagen < 500MB
 - [ ] Contenedor inicia en < 30 segundos
 - [ ] Health check responde en /health endpoint
 - [ ] Variables de entorno cargadas correctamente
@@ -617,7 +617,7 @@ Criterios de Aceptación:
 Comandos de Verificación:
 ```bash
 curl http://localhost:8000/metrics
-docker-compose -f monitoring/docker-compose.yml up -d
+docker-compose -f monitoring/infrastructure/docker-compose.yml up -d
 curl http://localhost:3000  # Grafana
 ```
 

@@ -261,7 +261,7 @@ python examples/demo_word_export.py
 
 ```bash
 # Verify all acceptance criteria
-python scripts/verification/verify_word_export.py
+python development/scripts/verification/verify_word_export.py
 ```
 
 ## Troubleshooting

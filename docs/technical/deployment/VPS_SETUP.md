@@ -7,7 +7,7 @@ Este documento describe la configuración completa del VPS Ubuntu IONOS para el 
 - [x] **VPS accesible via SSH con clave** - Configuración de acceso SSH seguro
 - [x] **Docker y docker-compose instalados** - Instalación automática via deploy-vps.sh
 - [x] **Certificado SSL configurado y válido** - Integración con Let's Encrypt via Certbot
-- [x] **Nginx proxy funcional con rate limiting** - Reverse proxy en docker-compose.prod.yml
+- [x] **Nginx proxy funcional con rate limiting** - Reverse proxy en infrastructure/docker-compose.prod.yml
 - [x] **Backups diarios programados** - Script backup.sh ejecutado via cron
 - [x] **Monitoreo cada 5 minutos activo** - Script monitor.sh ejecutado via cron
 - [x] **Firewall configurado (puertos 22, 80, 443)** - UFW configurado automáticamente
@@ -108,7 +108,7 @@ sudo systemctl start bookgen
 sudo systemctl status bookgen
 
 # Ver logs en tiempo real
-docker-compose -f /opt/bookgen/docker-compose.prod.yml logs -f
+docker-compose -f /opt/bookgen/infrastructure/docker-compose.prod.yml logs -f
 ```
 
 ## 🔍 Verificación del Deployment
@@ -276,14 +276,14 @@ cd /opt/bookgen
 docker ps
 
 # Ver logs
-docker-compose -f docker-compose.prod.yml logs -f
+docker-compose -f infrastructure/docker-compose.prod.yml logs -f
 
 # Reiniciar contenedor específico
-docker-compose -f docker-compose.prod.yml restart bookgen-api
+docker-compose -f infrastructure/docker-compose.prod.yml restart bookgen-api
 
 # Actualizar imágenes
-docker-compose -f docker-compose.prod.yml pull
-docker-compose -f docker-compose.prod.yml up -d
+docker-compose -f infrastructure/docker-compose.prod.yml pull
+docker-compose -f infrastructure/docker-compose.prod.yml up -d
 ```
 
 ### Gestión de Backups
@@ -348,7 +348,7 @@ sudo docker ps -a
 
 # Verificar configuración
 cd /opt/bookgen
-sudo docker-compose -f docker-compose.prod.yml config
+sudo docker-compose -f infrastructure/docker-compose.prod.yml config
 ```
 
 ### API no responde
@@ -410,13 +410,13 @@ Para soporte adicional:
 cd /opt/bookgen
 
 # Detener servicios
-sudo docker-compose -f docker-compose.prod.yml down
+sudo docker-compose -f infrastructure/docker-compose.prod.yml down
 
 # Actualizar imagen
 sudo docker pull ghcr.io/jpmarichal/bookgen:latest
 
 # Iniciar servicios
-sudo docker-compose -f docker-compose.prod.yml up -d
+sudo docker-compose -f infrastructure/docker-compose.prod.yml up -d
 
 # Verificar
 curl -f http://localhost:8000/health

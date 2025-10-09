@@ -277,14 +277,14 @@ rate(bookgen_biography_generation_total{status="success"}[1h]) * 3600
 ## 8. Docker Compose Stack
 
 ```bash
-$ docker-compose -f monitoring/docker-compose.yml ps
+$ docker-compose -f infrastructure/monitoring/docker-compose.yml ps
 
 NAME                    STATUS    PORTS
 bookgen-prometheus      Up        0.0.0.0:9090->9090/tcp
 bookgen-grafana         Up        0.0.0.0:3000->3000/tcp
 bookgen-alertmanager    Up        0.0.0.0:9093->9093/tcp
 
-$ docker-compose -f monitoring/docker-compose.yml logs -f grafana
+$ docker-compose -f infrastructure/monitoring/docker-compose.yml logs -f grafana
 grafana_1      | t=2025-01-15T10:30:00+0000 lvl=info msg="HTTP Server Listen"
 grafana_1      | t=2025-01-15T10:30:01+0000 lvl=info msg="Initializing provisioning"
 grafana_1      | t=2025-01-15T10:30:02+0000 lvl=info msg="Dashboard provisioned" dashboard="BookGen Monitoring Dashboard"

@@ -177,7 +177,7 @@ All personalized strategies guarantee:
 Run the verification script to test all strategies:
 
 ```bash
-python scripts/verification/verify_personalized_strategies.py
+python development/scripts/verification/verify_personalized_strategies.py
 ```
 
 Or run the comprehensive test suite:

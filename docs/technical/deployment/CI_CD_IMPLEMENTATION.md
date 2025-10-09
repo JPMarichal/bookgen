@@ -97,7 +97,7 @@ Configure these in: `Settings → Secrets and variables → Actions → New repo
    └─ Run pytest with coverage
 3. Build Docker image (only if tests pass)
    ├─ Login to ghcr.io
-   ├─ Build image with multi-stage Dockerfile
+   ├─ Build image with multi-stage infrastructure/Dockerfile
    └─ Push to GitHub Container Registry
 4. Deploy to production (only on main)
    ├─ SSH to VPS
@@ -166,10 +166,10 @@ cat ~/.ssh/bookgen_deploy
 ```bash
 # On VPS
 cd /opt/bookgen
-wget https://raw.githubusercontent.com/JPMarichal/bookgen/main/docker-compose.prod.yml
+wget https://raw.githubusercontent.com/JPMarichal/bookgen/main/infrastructure/docker-compose.prod.yml
 
 # Or copy manually via SCP
-scp docker-compose.prod.yml bookgen@your-vps.com:/opt/bookgen/
+scp infrastructure/docker-compose.prod.yml bookgen@your-vps.com:/opt/bookgen/
 ```
 
 ### 5. Trigger First Deployment
@@ -227,7 +227,7 @@ ssh bookgen@your-vps.com "curl -f http://localhost:8000/health"
 ssh bookgen@your-vps.com "docker ps"
 
 # View logs
-ssh bookgen@your-vps.com "docker-compose -f /opt/bookgen/docker-compose.prod.yml logs -f"
+ssh bookgen@your-vps.com "docker-compose -f /opt/bookgen/infrastructure/docker-compose.prod.yml logs -f"
 ```
 
 ## 📊 Test Results

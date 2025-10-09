@@ -98,10 +98,10 @@ NOTIFICATION_RATE_LIMIT_PER_HOUR=500
 pytest tests/test_notifications.py -v
 
 # Verify system
-python scripts/verification/verify_notifications.py
+python development/scripts/verification/verify_notifications.py
 
 # Demo commands
-python examples/demo_notifications.py
+python development/examples/demo_notifications.py
 ```
 
 ## 🔍 Notification Types

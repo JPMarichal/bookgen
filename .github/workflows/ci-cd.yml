@@ -112,6 +112,7 @@ jobs:
       uses: docker/build-push-action@v5
       with:
         context: .
+        file: infrastructure/Dockerfile
         push: true
         tags: ${{ steps.meta.outputs.tags }}
         labels: ${{ steps.meta.outputs.labels }}
@@ -149,7 +150,7 @@ jobs:
           # Backup current deployment state
           echo "📦 Creating backup..."
           BACKUP_NAME="bookgen_backup_$(date +%Y%m%d_%H%M%S)"
-          docker-compose -f docker-compose.prod.yml down || true
+          docker-compose -f infrastructure/docker-compose.prod.yml down || true
           
           # Pull latest image
           echo "⬇️  Pulling latest image..."
@@ -179,7 +180,7 @@ jobs:
           
           # Start new deployment
           echo "🚢 Starting services..."
-          docker-compose -f docker-compose.prod.yml up -d
+          docker-compose -f infrastructure/docker-compose.prod.yml up -d
           
           # Wait for services to be ready
           echo "⏳ Waiting for services to start (30s)..."
@@ -202,7 +203,7 @@ jobs:
               else
                 echo "❌ Health check failed after $MAX_RETRIES attempts"
                 echo "🔄 Rolling back to previous deployment..."
-                docker-compose -f docker-compose.prod.yml down
+                docker-compose -f infrastructure/docker-compose.prod.yml down
                 # Restore would happen here if we had the previous image tagged
                 exit 1
               fi

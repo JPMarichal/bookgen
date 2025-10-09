@@ -144,13 +144,13 @@ Automate the first draft phase of biography writing projects.
 
 ```bash
 # Production mode
-docker-compose -f docker-compose.prod.yml up -d
+docker-compose -f infrastructure/docker-compose.prod.yml up -d
 
 # Development mode
-docker-compose up -d
+docker-compose -f infrastructure/docker-compose.yml up -d
 
 # View logs
-docker-compose logs -f api
+docker-compose -f infrastructure/docker-compose.yml logs -f api
 ```
 
 ### Manual Setup
@@ -337,7 +337,7 @@ while True:
 
 ```bash
 # Download deployment script
-curl -fsSL https://raw.githubusercontent.com/JPMarichal/bookgen/main/deploy-vps.sh -o deploy-vps.sh
+curl -fsSL https://raw.githubusercontent.com/JPMarichal/bookgen/main/development/scripts/deploy-vps.sh -o deploy-vps.sh
 
 # Make executable and run
 chmod +x deploy-vps.sh

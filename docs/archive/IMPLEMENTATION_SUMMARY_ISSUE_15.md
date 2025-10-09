@@ -8,10 +8,10 @@ This document summarizes the implementation of performance benchmarks, load test
 
 All acceptance criteria from Issue #15 have been implemented and are verifiable:
 
-- ✅ **Biography complete < 30 minutes** - Testable via `scripts/benchmark_generation.py`
+- ✅ **Biography complete < 30 minutes** - Testable via `development/scripts/benchmark_generation.py`
 - ✅ **API responds < 200ms (synchronous endpoints)** - Verified by `tests/performance/test_api_performance.py`
 - ✅ **Handle 10 concurrent users** - Tested by `tests/load/locustfile.py` and `tests/stress/test_stress.py`
-- ✅ **Memory usage < 2GB per worker** - Monitored by `scripts/profile_memory.py`
+- ✅ **Memory usage < 2GB per worker** - Monitored by `development/scripts/profile_memory.py`
 - ✅ **Stress tests documented** - See `tests/performance/README.md`
 - ✅ **Automatic alerts for performance** - Built into test outputs
 
@@ -118,11 +118,11 @@ RATE_LIMIT_PER_MINUTE=10000 pytest tests/stress/ -v
 RATE_LIMIT_PER_MINUTE=10000 pytest tests/stress/test_stress.py::TestStressScenarios::test_concurrent_job_creation -v
 ```
 
-### 4. Profiling Scripts (`scripts/`)
+### 4. Profiling Scripts (`development/scripts/`)
 
-#### Memory Profiler (`scripts/profile_memory.py`)
+#### Memory Profiler (`development/scripts/profile_memory.py`)
 
-**File:** `scripts/profile_memory.py` (7.5KB, executable)
+**File:** `development/scripts/profile_memory.py` (7.5KB, executable)
 
 **Features:**
 - System information display (CPU, memory, disk)
@@ -135,13 +135,13 @@ RATE_LIMIT_PER_MINUTE=10000 pytest tests/stress/test_stress.py::TestStressScenar
 **Usage:**
 ```bash
 # Run all tests
-python scripts/profile_memory.py
+python development/scripts/profile_memory.py
 
 # Run specific test
-python scripts/profile_memory.py --test openrouter
+python development/scripts/profile_memory.py --test openrouter
 
 # Test concurrent users
-python scripts/profile_memory.py --test concurrent --concurrent-users 10
+python development/scripts/profile_memory.py --test concurrent --concurrent-users 10
 
 # Line-by-line profiling
 python -m memory_profiler scripts/profile_memory.py
@@ -152,9 +152,9 @@ python -m memory_profiler scripts/profile_memory.py
 - `test_length_validation_memory()` - Length validation service memory
 - `test_concurrent_operations_memory()` - Memory with concurrent users
 
-#### Generation Benchmarks (`scripts/benchmark_generation.py`)
+#### Generation Benchmarks (`development/scripts/benchmark_generation.py`)
 
-**File:** `scripts/benchmark_generation.py` (11KB, executable)
+**File:** `development/scripts/benchmark_generation.py` (11KB, executable)
 
 **Features:**
 - API response time benchmarking (all endpoints)
@@ -167,16 +167,16 @@ python -m memory_profiler scripts/profile_memory.py
 **Usage:**
 ```bash
 # Full benchmarks
-python scripts/benchmark_generation.py
+python development/scripts/benchmark_generation.py
 
 # Quick test (small generation)
-python scripts/benchmark_generation.py --quick
+python development/scripts/benchmark_generation.py --quick
 
 # API response times only
-python scripts/benchmark_generation.py --api-only
+python development/scripts/benchmark_generation.py --api-only
 
 # Save results to JSON
-python scripts/benchmark_generation.py --save
+python development/scripts/benchmark_generation.py --save
 ```
 
 **Benchmarked Metrics:**
@@ -219,11 +219,11 @@ All metrics from Issue #15 are now testable and monitored:
 
 | Metric | Target | Test Method | Status |
 |--------|--------|-------------|--------|
-| Generation Time | < 30 min per biography | `scripts/benchmark_generation.py` | ✅ Testable |
+| Generation Time | < 30 min per biography | `development/scripts/benchmark_generation.py` | ✅ Testable |
 | API Latency (sync) | < 200ms | `tests/performance/test_api_performance.py` | ✅ Verified (1-2ms avg) |
 | API Latency (async) | < 5s | `tests/performance/test_api_performance.py` | ✅ Testable |
-| Throughput | 2-3 biographies/hour | `scripts/benchmark_generation.py` | ✅ Testable |
-| Memory Usage | < 2GB per worker | `scripts/profile_memory.py` | ✅ Verified (~150MB) |
+| Throughput | 2-3 biographies/hour | `development/scripts/benchmark_generation.py` | ✅ Testable |
+| Memory Usage | < 2GB per worker | `development/scripts/profile_memory.py` | ✅ Verified (~150MB) |
 | Concurrent Users | Minimum 10 | `tests/load/locustfile.py`, `tests/stress/test_stress.py` | ✅ Verified |
 | Error Rate | < 1% under load | `tests/stress/test_stress.py::TestErrorRateUnderLoad` | ✅ Verified |
 
@@ -310,17 +310,17 @@ Tests can be integrated into CI/CD pipelines:
 
 - name: Verify Scripts
   run: |
-    python scripts/profile_memory.py --quick
-    python scripts/benchmark_generation.py --api-only
+    python development/scripts/profile_memory.py --quick
+    python development/scripts/benchmark_generation.py --api-only
 ```
 
 ## 🎉 Summary
 
 All objectives from Issue #15 have been completed:
 
-✅ **Benchmarks de velocidad de generación** - `scripts/benchmark_generation.py`
+✅ **Benchmarks de velocidad de generación** - `development/scripts/benchmark_generation.py`
 ✅ **Tests de carga con múltiples usuarios** - `tests/load/locustfile.py`
-✅ **Métricas de uso de recursos** - `scripts/profile_memory.py`
+✅ **Métricas de uso de recursos** - `development/scripts/profile_memory.py`
 ✅ **Identificación de cuellos de botella** - All tests include performance profiling
 
 All acceptance criteria met:

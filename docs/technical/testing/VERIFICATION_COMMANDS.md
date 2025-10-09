@@ -76,7 +76,7 @@ tail -f /var/log/bookgen/monitor.log
 | VPS accesible via SSH con clave | ✅ | deploy-vps.sh configura usuario y permisos |
 | Docker y docker-compose instalados | ✅ | deploy-vps.sh - Sección 1 |
 | Certificado SSL configurado y válido | ✅ | Certbot instalado, proceso documentado |
-| Nginx proxy funcional con rate limiting | ✅ | docker-compose.prod.yml + nginx/nginx.conf |
+| Nginx proxy funcional con rate limiting | ✅ | infrastructure/docker-compose.prod.yml + nginx/nginx.conf |
 | Backups diarios programados | ✅ | backup.sh + cron job (2:00 AM) |
 | Monitoreo cada 5 minutos activo | ✅ | monitor.sh + cron job (*/5) |
 | Firewall configurado (22, 80, 443) | ✅ | UFW en deploy-vps.sh - Sección 10 |
@@ -127,7 +127,7 @@ tail -f /var/log/bookgen/monitor.log
    - Troubleshooting
    - Checklist de deployment
 
-4. **docker-compose.prod.yml** (Mejorado)
+4. **infrastructure/docker-compose.prod.yml** (Mejorado)
    - Servicio nginx-proxy agregado
    - Health checks configurados
    - Volúmenes con rutas absolutas

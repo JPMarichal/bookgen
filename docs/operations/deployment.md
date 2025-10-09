@@ -235,13 +235,13 @@ sudo fail2ban-client status bookgen-api
 ```bash
 # Start Docker containers
 cd /opt/bookgen
-docker-compose -f docker-compose.prod.yml up -d
+docker-compose -f infrastructure/docker-compose.prod.yml up -d
 
 # Verify all running
-docker-compose -f docker-compose.prod.yml ps
+docker-compose -f infrastructure/docker-compose.prod.yml ps
 
 # Check logs
-docker-compose -f docker-compose.prod.yml logs -f --tail=50
+docker-compose -f infrastructure/docker-compose.prod.yml logs -f --tail=50
 ```
 
 ### Step 9: Create Systemd Service
@@ -258,8 +258,8 @@ Requires=docker.service
 Type=oneshot
 RemainAfterExit=yes
 WorkingDirectory=/opt/bookgen
-ExecStart=/usr/bin/docker-compose -f docker-compose.prod.yml up -d
-ExecStop=/usr/bin/docker-compose -f docker-compose.prod.yml down
+ExecStart=/usr/bin/docker-compose -f infrastructure/docker-compose.prod.yml up -d
+ExecStop=/usr/bin/docker-compose -f infrastructure/docker-compose.prod.yml down
 User=root
 
 [Install]
@@ -321,7 +321,7 @@ curl https://yourdomain.com/health
 curl https://yourdomain.com/api/v1/status
 
 # Check all services
-docker-compose -f docker-compose.prod.yml ps
+docker-compose -f infrastructure/docker-compose.prod.yml ps
 sudo systemctl status bookgen
 sudo systemctl status nginx
 sudo ufw status
@@ -434,7 +434,7 @@ az container create \
 ### Production Docker Compose
 
 ```yaml
-# docker-compose.prod.yml
+# infrastructure/docker-compose.prod.yml
 version: '3.8'
 
 services:
@@ -453,7 +453,7 @@ services:
   api:
     build:
       context: .
-      dockerfile: Dockerfile
+      dockerfile: infrastructure/Dockerfile
     env_file:
       - .env.production
     depends_on:
@@ -469,7 +469,7 @@ services:
   worker:
     build:
       context: .
-      dockerfile: Dockerfile
+      dockerfile: infrastructure/Dockerfile
     command: celery -A src.worker worker --loglevel=info --concurrency=4
     env_file:
       - .env.production
@@ -619,13 +619,13 @@ git fetch origin
 git checkout v1.1.0  # or main for latest
 
 # 3. Rebuild containers
-docker-compose -f docker-compose.prod.yml build
+docker-compose -f infrastructure/docker-compose.prod.yml build
 
 # 4. Run migrations
-docker-compose -f docker-compose.prod.yml run --rm api alembic upgrade head
+docker-compose -f infrastructure/docker-compose.prod.yml run --rm api alembic upgrade head
 
 # 5. Restart services
-docker-compose -f docker-compose.prod.yml up -d
+docker-compose -f infrastructure/docker-compose.prod.yml up -d
 
 # 6. Verify
 ./verify-vps-deployment.sh

@@ -88,7 +88,7 @@ This implementation provides comprehensive monitoring and observability for the 
 
 ```
 monitoring/
-├── docker-compose.yml              # Monitoring stack deployment
+├── infrastructure/docker-compose.yml              # Monitoring stack deployment
 ├── .env.example                    # Environment configuration template
 ├── README.md                       # Comprehensive documentation
 ├── QUICKSTART.md                   # Quick start guide
@@ -127,7 +127,7 @@ tests/
 docker network create bookgen-network
 
 # 2. Start monitoring stack
-docker-compose -f monitoring/docker-compose.yml up -d
+docker-compose -f monitoring/infrastructure/docker-compose.yml up -d
 
 # 3. Access dashboards
 # Grafana: http://localhost:3000 (admin/admin)
@@ -135,7 +135,7 @@ docker-compose -f monitoring/docker-compose.yml up -d
 # Alertmanager: http://localhost:9093
 
 # 4. Verify setup
-python scripts/test_alerts.py
+python development/scripts/test_alerts.py
 ```
 
 ### Using Metrics in Code
@@ -193,7 +193,7 @@ python -m pytest tests/test_monitoring.py -v
 curl http://localhost:8000/metrics
 
 # Test alert system
-python scripts/test_alerts.py
+python development/scripts/test_alerts.py
 
 # Verify Prometheus targets
 curl http://localhost:9090/api/v1/targets
@@ -220,7 +220,7 @@ curl http://localhost:9090/api/v1/alerts
 
 - **Main README**: `monitoring/README.md` (350+ lines)
 - **Quick Start**: `monitoring/QUICKSTART.md`
-- **Alert Testing**: `scripts/test_alerts.py` with built-in help
+- **Alert Testing**: `development/scripts/test_alerts.py` with built-in help
 
 ## 🎓 Best Practices Implemented
 
@@ -266,7 +266,7 @@ All commands from the issue work as specified:
 curl http://localhost:8000/metrics
 
 # Start monitoring stack
-docker-compose -f monitoring/docker-compose.yml up -d
+docker-compose -f monitoring/infrastructure/docker-compose.yml up -d
 
 # Access Grafana dashboard
 curl http://localhost:3000  # Grafana
@@ -275,7 +275,7 @@ curl http://localhost:3000  # Grafana
 curl http://localhost:9090  # Prometheus
 
 # Test alerting
-python scripts/test_alerts.py
+python development/scripts/test_alerts.py
 ```
 
 ## 🎉 Summary

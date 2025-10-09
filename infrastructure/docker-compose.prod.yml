@@ -117,7 +117,7 @@ services:
       - "80:80"
       - "443:443"
     volumes:
-      - /opt/bookgen/nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - /opt/bookgen/infrastructure/nginx/nginx.conf:/etc/nginx/nginx.conf:ro
       - /etc/letsencrypt:/etc/letsencrypt:ro
       - /var/log/nginx:/var/log/nginx
     networks:

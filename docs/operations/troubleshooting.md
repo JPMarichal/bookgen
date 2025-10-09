@@ -67,7 +67,7 @@ docker-compose up -d --build api
 sudo lsof -i :8000
 sudo kill -9 <PID>
 
-# Or change port in docker-compose.yml
+# Or change port in infrastructure/docker-compose.yml
 # Then restart
 docker-compose down
 docker-compose up -d
@@ -198,7 +198,7 @@ docker exec -it bookgen-db psql -U bookgen -d bookgen -c "\dt"
 # Check DATABASE_URL in .env
 cat .env | grep DATABASE_URL
 
-# Should match docker-compose.yml database settings
+# Should match infrastructure/docker-compose.yml database settings
 # Example: postgresql://bookgen:bookgen@db:5432/bookgen
 
 # Fix and restart
@@ -478,7 +478,7 @@ docker-compose restart
 
 **Solution 2: Limit Docker memory**
 ```bash
-# In docker-compose.yml, add:
+# In infrastructure/docker-compose.yml, add:
 services:
   api:
     mem_limit: 2g
