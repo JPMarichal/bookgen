@@ -488,7 +488,7 @@ Yes! Edit the Markdown file and re-export:
 nano bios/albert_einstein/La\ biografia\ de\ Albert\ Einstein.md
 
 # Re-export to Word (using modern service)
-docker exec bookgen-api python scripts/legacy/concat.py albert_einstein
+docker exec bookgen-api python development/scripts/legacy/concat.py albert_einstein
 # Or use the API endpoint (recommended):
 # curl -X POST http://localhost:8000/api/v1/biographies/albert_einstein/export
 ```

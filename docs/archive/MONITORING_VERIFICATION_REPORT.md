@@ -169,10 +169,10 @@ Success Rate: 100%
 ### Quick Start Commands Verified
 ```bash
 ✅ curl http://localhost:8000/metrics
-✅ docker-compose -f monitoring/docker-compose.yml up -d
+✅ docker-compose -f monitoring/infrastructure/docker-compose.yml up -d
 ✅ curl http://localhost:3000  # Grafana
 ✅ curl http://localhost:9090  # Prometheus
-✅ python scripts/test_alerts.py
+✅ python development/scripts/test_alerts.py
 ```
 
 ## 📚 Documentation Quality

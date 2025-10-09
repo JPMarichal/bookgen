@@ -28,7 +28,7 @@ nano .env
 
 ```bash
 # From the project root
-docker-compose -f monitoring/docker-compose.yml up -d
+docker-compose -f infrastructure/monitoring/docker-compose.yml up -d
 ```
 
 Wait a few seconds for services to start.
@@ -37,7 +37,7 @@ Wait a few seconds for services to start.
 
 ```bash
 # Check service status
-docker-compose -f monitoring/docker-compose.yml ps
+docker-compose -f infrastructure/monitoring/docker-compose.yml ps
 
 # Should show:
 # - bookgen-prometheus   (port 9090)
@@ -73,7 +73,7 @@ curl http://localhost:8000/metrics
 
 ```bash
 # From the project root
-python scripts/test_alerts.py
+python development/scripts/test_alerts.py
 ```
 
 Expected output should show:
@@ -89,10 +89,10 @@ Expected output should show:
 
 ```bash
 # Check logs
-docker-compose -f monitoring/docker-compose.yml logs
+docker-compose -f infrastructure/monitoring/docker-compose.yml logs
 
 # Restart services
-docker-compose -f monitoring/docker-compose.yml restart
+docker-compose -f infrastructure/monitoring/docker-compose.yml restart
 ```
 
 ### Grafana shows "No Data"
@@ -151,21 +151,21 @@ To test that alerts work, you can:
 ## Stopping the Stack
 
 ```bash
-docker-compose -f monitoring/docker-compose.yml down
+docker-compose -f infrastructure/monitoring/docker-compose.yml down
 
 # To remove volumes as well (will delete historical data):
-docker-compose -f monitoring/docker-compose.yml down -v
+docker-compose -f infrastructure/monitoring/docker-compose.yml down -v
 ```
 
 ## Useful Commands
 
 ```bash
 # View logs
-docker-compose -f monitoring/docker-compose.yml logs -f prometheus
-docker-compose -f monitoring/docker-compose.yml logs -f grafana
+docker-compose -f infrastructure/monitoring/docker-compose.yml logs -f prometheus
+docker-compose -f infrastructure/monitoring/docker-compose.yml logs -f grafana
 
 # Restart a specific service
-docker-compose -f monitoring/docker-compose.yml restart prometheus
+docker-compose -f infrastructure/monitoring/docker-compose.yml restart prometheus
 
 # Check resource usage
 docker stats bookgen-prometheus bookgen-grafana bookgen-alertmanager

@@ -141,14 +141,14 @@ sources = strategy.search("Nelson Mandela", context)
 
 ### Demo Script
 ```bash
-python examples/demo_source_strategies.py
+python development/examples/demo_source_strategies.py
 ```
 
 Shows comprehensive examples of all strategies with different historical figures.
 
 ### Verification Script
 ```bash
-python scripts/verification/verify_source_strategies.py
+python development/scripts/verification/verify_source_strategies.py
 ```
 
 Verifies all acceptance criteria and displays test results.

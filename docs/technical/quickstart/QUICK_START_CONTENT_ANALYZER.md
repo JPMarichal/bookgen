@@ -109,13 +109,13 @@ python -m pytest tests/test_content_analyzer.py --cov=src.services.content_analy
 ### Run Demo
 
 ```bash
-python examples/demo_content_analyzer.py
+python development/examples/demo_content_analyzer.py
 ```
 
 ### Verify Implementation
 
 ```bash
-python scripts/verification/verify_issue_62.py
+python development/scripts/verification/verify_issue_62.py
 ```
 
 ## Data Models
@@ -251,4 +251,4 @@ See the following files for examples:
 For issues or questions:
 1. Check the implementation summary: `IMPLEMENTATION_SUMMARY_ISSUE_62.md`
 2. Review tests: `tests/test_content_analyzer.py`
-3. Run verification: `python scripts/verification/verify_issue_62.py`
+3. Run verification: `python development/scripts/verification/verify_issue_62.py`

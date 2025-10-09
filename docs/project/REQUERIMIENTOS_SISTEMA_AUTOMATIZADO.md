@@ -400,7 +400,7 @@ pre-commit install
 #### 5.3.2 Arquitectura de Contenedores
 
 ```dockerfile
-# Dockerfile
+# infrastructure/Dockerfile
 FROM python:3.11-slim
 
 # Instalar dependencias del sistema
@@ -426,7 +426,7 @@ COPY --chown=bookgen:bookgen . .
 RUN mkdir -p data/logs config/prompts
 
 # Verificar dependencias
-RUN python scripts/check_dependencies.py
+RUN python development/scripts/check_dependencies.py
 
 EXPOSE 8000
 CMD ["uvicorn", "src.main:app", "--host", "0.0.0.0", "--port", "8000"]
@@ -435,7 +435,7 @@ CMD ["uvicorn", "src.main:app", "--host", "0.0.0.0", "--port", "8000"]
 #### 5.3.3 Docker Compose para Desarrollo
 
 ```yaml
-# docker-compose.yml
+# infrastructure/docker-compose.yml
 version: '3.8'
 
 services:
@@ -493,7 +493,7 @@ volumes:
 #### 5.3.4 Optimización de Imagen
 
 ```dockerfile
-# Dockerfile.optimized - Imagen optimizada para producción
+# infrastructure/Dockerfile.optimized - Imagen optimizada para producción
 FROM python:3.11-slim as base
 
 # Etapa de construcción
@@ -536,10 +536,10 @@ CMD ["uvicorn", "src.main:app", "--host", "0.0.0.0", "--port", "8000"]
 ### 5.4 Estructura de Directorios del Sistema
 ```
 bookgen_system/
-├── Dockerfile                 # Imagen principal
-├── Dockerfile.optimized       # Imagen optimizada para producción
-├── docker-compose.yml         # Orquestación desarrollo
-├── docker-compose.prod.yml    # Orquestación producción
+├── infrastructure/Dockerfile                 # Imagen principal
+├── infrastructure/Dockerfile.optimized       # Imagen optimizada para producción
+├── infrastructure/docker-compose.yml         # Orquestación desarrollo
+├── infrastructure/docker-compose.prod.yml    # Orquestación producción
 ├── .dockerignore             # Archivos a ignorar en build
 ├── requirements.txt           # Dependencias de producción
 ├── requirements-dev.txt       # Dependencias de desarrollo
@@ -1733,7 +1733,7 @@ docker-compose up -d
 #### 13.4.2 Configuración para VPS Ubuntu (Producción)
 
 ```yaml
-# docker-compose.prod.yml - Para VPS Ubuntu IONOS
+# infrastructure/docker-compose.prod.yml - Para VPS Ubuntu IONOS
 version: '3.8'
 
 services:
@@ -1949,7 +1949,7 @@ jobs:
           cd /opt/bookgen
           
           # Backup current deployment
-          docker-compose -f docker-compose.prod.yml down
+          docker-compose -f infrastructure/docker-compose.prod.yml down
           
           # Pull latest image
           docker pull ghcr.io/jpmarichal/bookgen:latest
@@ -1960,7 +1960,7 @@ jobs:
           echo "SITE_TITLE=${{ secrets.SITE_TITLE }}" >> .env.production
           
           # Start new deployment
-          docker-compose -f docker-compose.prod.yml up -d
+          docker-compose -f infrastructure/docker-compose.prod.yml up -d
           
           # Cleanup old images
           docker image prune -f

@@ -100,7 +100,7 @@ echo ""
 
 # 3. Verificar archivos de configuración
 print_header "3. Verificando Archivos de Configuración"
-for file in "$BOOKGEN_DIR/.env.production" "$BOOKGEN_DIR/docker-compose.prod.yml" "$BOOKGEN_DIR/nginx/nginx.conf"; do
+for file in "$BOOKGEN_DIR/.env.production" "$BOOKGEN_DIR/docker-compose.prod.yml" "$BOOKGEN_DIR/infrastructure/nginx/nginx.conf"; do
     if [ -f "$file" ]; then
         print_success "Archivo $file existe"
     else
@@ -212,7 +212,7 @@ echo ""
 
 # 12. Verificar SSL (opcional)
 print_header "12. Verificando SSL (Opcional)"
-DOMAIN=$(grep -oP '(?<=server_name ).*(?=;)' $BOOKGEN_DIR/nginx/nginx.conf 2>/dev/null | head -1 || echo "_")
+DOMAIN=$(grep -oP '(?<=server_name ).*(?=;)' $BOOKGEN_DIR/infrastructure/nginx/nginx.conf 2>/dev/null | head -1 || echo "_")
 if [ "$DOMAIN" != "_" ]; then
     if [ -d "/etc/letsencrypt/live/$DOMAIN" ]; then
         print_success "Certificado SSL encontrado para $DOMAIN"

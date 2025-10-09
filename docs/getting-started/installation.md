@@ -348,7 +348,7 @@ docker-compose up -d
 # Find process using port
 lsof -i :8000
 
-# Kill process or change port in docker-compose.yml
+# Kill process or change port in infrastructure/docker-compose.yml
 ```
 
 ### Database Issues

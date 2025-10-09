@@ -123,7 +123,7 @@ sudo systemctl status bookgen
 
 # Ver logs
 cd /opt/bookgen
-docker-compose -f docker-compose.prod.yml logs -f
+docker-compose -f infrastructure/docker-compose.prod.yml logs -f
 ```
 
 ### 6. Verificación Post-Despliegue
@@ -193,7 +193,7 @@ systemctl status fail2ban
 docker ps
 
 # Verify all containers are running
-docker-compose -f /opt/bookgen/docker-compose.prod.yml ps
+docker-compose -f /opt/bookgen/infrastructure/docker-compose.prod.yml ps
 ```
 
 #### Verificar backups
@@ -241,7 +241,7 @@ sudo systemctl status bookgen
 
 # Ver logs en tiempo real
 cd /opt/bookgen
-docker-compose -f docker-compose.prod.yml logs -f bookgen-api
+docker-compose -f infrastructure/docker-compose.prod.yml logs -f bookgen-api
 
 # Reiniciar servicios
 sudo systemctl restart bookgen
@@ -302,7 +302,7 @@ sudo docker ps -a
 
 # Verificar configuración
 cd /opt/bookgen
-sudo docker-compose -f docker-compose.prod.yml config
+sudo docker-compose -f infrastructure/docker-compose.prod.yml config
 ```
 
 ### API no responde
@@ -350,13 +350,13 @@ sudo docker system prune -f
 cd /opt/bookgen
 
 # Detener servicios
-sudo docker-compose -f docker-compose.prod.yml down
+sudo docker-compose -f infrastructure/docker-compose.prod.yml down
 
 # Actualizar imagen
 sudo docker pull ghcr.io/tu-usuario/bookgen:latest
 
 # Iniciar servicios
-sudo docker-compose -f docker-compose.prod.yml up -d
+sudo docker-compose -f infrastructure/docker-compose.prod.yml up -d
 
 # Verificar
 curl -f http://localhost:8000/health

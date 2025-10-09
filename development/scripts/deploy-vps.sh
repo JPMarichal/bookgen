@@ -88,9 +88,9 @@ if [ ! -f "docker-compose.prod.yml" ]; then
     # wget https://raw.githubusercontent.com/tuusuario/bookgen/main/docker-compose.prod.yml
 fi
 
-if [ ! -f "nginx/nginx.conf" ]; then
+if [ ! -f "infrastructure/nginx/nginx.conf" ]; then
     print_warning "Descarga nginx.conf desde tu repositorio"
-    # wget -O nginx/nginx.conf https://raw.githubusercontent.com/tuusuario/bookgen/main/nginx/nginx.conf
+    # wget -O infrastructure/nginx/nginx.conf https://raw.githubusercontent.com/tuusuario/bookgen/main/infrastructure/nginx/nginx.conf
 fi
 
 # 6. Configurar variables de entorno
@@ -302,7 +302,7 @@ print_status "¡Despliegue inicial completado!"
 echo ""
 echo "📋 Pasos siguientes:"
 echo "1. Edita $BOOKGEN_DIR/.env.production con tus configuraciones reales"
-echo "2. Actualiza el dominio en nginx/nginx.conf"
+echo "2. Actualiza el dominio en infrastructure/nginx/nginx.conf"
 echo "3. Configura el certificado SSL: certbot certonly --standalone -d $DOMAIN"
 echo "4. Inicia el servicio: systemctl start bookgen"
 echo "5. Verifica el estado: systemctl status bookgen"

@@ -55,18 +55,18 @@ echo ""
 
 # 3. Validate Nginx configuration
 echo "🌐 Checking Nginx configuration..."
-if [ -f "nginx/nginx.conf" ]; then
+if [ -f "infrastructure/nginx/nginx.conf" ]; then
     # Check for balanced braces
-    BRACES=$(grep -E "^[^#]*\{[^}]*$|^[^#]*\}[^{]*$" nginx/nginx.conf | awk 'BEGIN{count=0} /{/{count++} /}/{count--} END{print count}')
+    BRACES=$(grep -E "^[^#]*\{[^}]*$|^[^#]*\}[^{]*$" infrastructure/nginx/nginx.conf | awk 'BEGIN{count=0} /{/{count++} /}/{count--} END{print count}')
     if [ "$BRACES" -eq 0 ]; then
-        echo "  ✅ nginx/nginx.conf: Balanced braces"
+        echo "  ✅ infrastructure/nginx/nginx.conf: Balanced braces"
     else
-        echo "  ❌ nginx/nginx.conf: Unbalanced braces"
+        echo "  ❌ infrastructure/nginx/nginx.conf: Unbalanced braces"
         ERRORS=$((ERRORS + 1))
     fi
     
     # Check for upstream definition
-    if grep -q "upstream bookgen_backend" nginx/nginx.conf; then
+    if grep -q "upstream bookgen_backend" infrastructure/nginx/nginx.conf; then
         echo "  ✅ Upstream 'bookgen_backend' defined"
     else
         echo "  ❌ Upstream 'bookgen_backend' missing"
@@ -74,7 +74,7 @@ if [ -f "nginx/nginx.conf" ]; then
     fi
     
     # Check for rate limiting
-    if grep -q "limit_req_zone" nginx/nginx.conf; then
+    if grep -q "limit_req_zone" infrastructure/nginx/nginx.conf; then
         echo "  ✅ Rate limiting configured"
     else
         echo "  ⚠️  Rate limiting not found"
@@ -82,14 +82,14 @@ if [ -f "nginx/nginx.conf" ]; then
     fi
     
     # Check for SSL configuration
-    if grep -q "ssl_protocols" nginx/nginx.conf; then
+    if grep -q "ssl_protocols" infrastructure/nginx/nginx.conf; then
         echo "  ✅ SSL protocols configured"
     else
         echo "  ⚠️  SSL protocols not configured"
         WARNINGS=$((WARNINGS + 1))
     fi
 else
-    echo "  ❌ nginx/nginx.conf: Not found"
+    echo "  ❌ infrastructure/nginx/nginx.conf: Not found"
     ERRORS=$((ERRORS + 1))
 fi
 echo ""

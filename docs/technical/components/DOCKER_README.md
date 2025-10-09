@@ -95,10 +95,10 @@ sudo docker pull ghcr.io/jpmarichal/bookgen:latest
 sudo docker build -t ghcr.io/jpmarichal/bookgen:latest .
 
 # Start production services
-sudo docker compose -f docker-compose.prod.yml up -d
+sudo docker compose -f infrastructure/docker-compose.prod.yml up -d
 
 # Check status
-sudo docker compose -f docker-compose.prod.yml ps
+sudo docker compose -f infrastructure/docker-compose.prod.yml ps
 ```
 
 ### 4. Setup Auto-Start (systemd)
@@ -114,9 +114,9 @@ sudo systemctl start docker
 
 ```
 bookgen/
-├── Dockerfile                  # Multi-stage production build
-├── docker-compose.yml          # Development configuration
-├── docker-compose.prod.yml     # Production configuration
+├── infrastructure/Dockerfile                  # Multi-stage production build
+├── infrastructure/docker-compose.yml          # Development configuration
+├── infrastructure/docker-compose.prod.yml     # Production configuration
 ├── .dockerignore              # Build context exclusions
 ├── test-docker-setup.sh       # Automated verification tests
 ├── DOCKER_OPTIMIZATION.md     # Size optimization notes
@@ -155,12 +155,12 @@ WORKER_POOL_SIZE=2
 
 ### Docker Compose Services
 
-#### Development (`docker-compose.yml`)
+#### Development (`infrastructure/docker-compose.yml`)
 - **bookgen-api**: Main FastAPI application (port 8000)
 - **bookgen-worker**: Background content generator
 - **bookgen-storage**: Persistent data container
 
-#### Production (`docker-compose.prod.yml`)
+#### Production (`infrastructure/docker-compose.prod.yml`)
 - **bookgen-api**: Main API with resource limits (4G RAM, 2 CPUs)
 - **bookgen-worker-1**: Content generator worker
 - **bookgen-worker-2**: Source validator worker
@@ -190,7 +190,7 @@ WORKER_POOL_SIZE=2
 
 ### Multi-Stage Build
 
-The Dockerfile uses a 2-stage build process:
+The infrastructure/Dockerfile uses a 2-stage build process:
 
 1. **Builder Stage**: Compiles dependencies with build tools
    - Base: `python:3.11-slim`
@@ -284,7 +284,7 @@ docker exec bookgen-api ps aux | grep uvicorn
 ### Port Already in Use
 
 ```bash
-# Change port in docker-compose.yml
+# Change port in infrastructure/docker-compose.yml
 ports:
   - "8080:8000"  # Use 8080 instead of 8000
 ```
@@ -295,7 +295,7 @@ ports:
 # Check container stats
 docker stats
 
-# Reduce worker count in docker-compose.yml
+# Reduce worker count in infrastructure/docker-compose.yml
 # or increase VPS RAM
 ```
 
@@ -334,7 +334,7 @@ See `DOCKER_OPTIMIZATION.md` for detailed analysis.
 For issues or questions:
 1. Check logs: `docker compose logs -f`
 2. Run tests: `./test-docker-setup.sh`
-3. Review configuration: `.env` and `docker-compose.yml`
+3. Review configuration: `.env` and `infrastructure/docker-compose.yml`
 4. Open an issue on GitHub
 
 ## 📝 License
