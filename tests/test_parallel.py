@@ -181,7 +181,7 @@ class TestValidationParallelizer:
         assert summary['success_rate'] == 2/3
         # Use approximate comparison for floating point
         assert abs(summary['total_time'] - 0.45) < 0.0001
-        assert summary['average_time'] == 0.15
+        assert abs(summary['average_time'] - 0.15) < 0.0001
         assert len(summary['errors']) == 1
 
 
