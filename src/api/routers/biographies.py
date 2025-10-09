@@ -21,6 +21,7 @@ from ..models.hybrid_generation import HybridSourceGenerationRequest
 from ...services.openrouter_client import OpenRouterClient
 from ...services.source_generator import AutomaticSourceGenerator
 from ...services.hybrid_generator import HybridSourceGenerator
+from ...services.zip_export_service import ZipExportService
 
 logger = logging.getLogger(__name__)
 
@@ -369,4 +370,99 @@ async def download_biography(job_id: str):
         filename=f"biography_{job['character'].replace(' ', '_')}.txt",
         media_type="text/plain",
         background=BackgroundTasks()  # Will clean up temp file after sending
+    )
+
+
+@router.get("/{character}/download-output")
+async def download_biography_output(
+    character: str,
+    background_tasks: BackgroundTasks
+):
+    """
+    Download all publication output files for a character as a ZIP archive
+    
+    Downloads the complete output directory (markdown/, word/, kdp/) as a compressed ZIP file.
+    
+    Args:
+        character: Normalized character name (e.g., 'harry_s_truman')
+        background_tasks: FastAPI background tasks for cleanup
+        
+    Returns:
+        FileResponse with ZIP archive
+        
+    Raises:
+        HTTPException 400: Invalid character name format
+        HTTPException 404: Character not found or no output files available
+        HTTPException 403: Permission denied accessing files
+        HTTPException 507: Insufficient disk space
+        HTTPException 500: Internal server error
+    """
+    # Validate character name format (basic validation)
+    if not character or not character.strip():
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Invalid character name: cannot be empty"
+        )
+    
+    # Normalize character name (remove spaces, convert to lowercase)
+    character_normalized = character.strip().lower().replace(' ', '_')
+    
+    # Initialize ZIP export service
+    zip_service = ZipExportService()
+    
+    # Create ZIP archive
+    result = zip_service.create_publication_zip(character_normalized)
+    
+    if not result.success:
+        # Determine appropriate error code based on error message
+        if "not found" in result.error_message.lower() or "no publication files" in result.error_message.lower():
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail=result.error_message
+            )
+        elif "permission denied" in result.error_message.lower():
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail=result.error_message
+            )
+        elif "disk" in result.error_message.lower() or "space" in result.error_message.lower():
+            raise HTTPException(
+                status_code=status.HTTP_507_INSUFFICIENT_STORAGE,
+                detail=result.error_message
+            )
+        else:
+            raise HTTPException(
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                detail=result.error_message
+            )
+    
+    # Get the ZIP filename
+    zip_filename = zip_service.get_zip_filename(character_normalized)
+    
+    # Log successful download
+    logger.info(
+        f"ZIP download initiated for character: {character_normalized}, "
+        f"file: {zip_filename}, size: {result.zip_size} bytes, "
+        f"files included: {len(result.included_files)}"
+    )
+    
+    # Schedule cleanup of temporary ZIP file after download
+    def cleanup_temp_file():
+        try:
+            if result.zip_path and os.path.exists(result.zip_path):
+                os.remove(result.zip_path)
+                logger.debug(f"Cleaned up temporary ZIP file: {result.zip_path}")
+        except Exception as e:
+            logger.error(f"Failed to cleanup temporary ZIP file: {e}")
+    
+    background_tasks.add_task(cleanup_temp_file)
+    
+    # Return ZIP file as download
+    return FileResponse(
+        path=result.zip_path,
+        filename=zip_filename,
+        media_type="application/zip",
+        headers={
+            "Content-Disposition": f'attachment; filename="{zip_filename}"'
+        }
     )

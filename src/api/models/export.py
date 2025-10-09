@@ -2,7 +2,7 @@
 Data models for Word export service
 """
 from dataclasses import dataclass, field
-from typing import Optional, Dict, Any
+from typing import Optional, Dict, Any, List
 from datetime import datetime
 
 
@@ -145,3 +145,34 @@ class WordExportError(Exception):
         if self.details:
             return f"{self.message}: {self.details}"
         return self.message
+
+
+@dataclass
+class ZipExportResult:
+    """Result of ZIP export operation for publication files"""
+    success: bool
+    zip_path: Optional[str] = None
+    zip_size: Optional[int] = None
+    included_files: List[str] = field(default_factory=list)
+    error_message: Optional[str] = None
+    timestamp: datetime = field(default_factory=datetime.now)
+    
+    @property
+    def zip_size_mb(self) -> float:
+        """Get ZIP size in megabytes"""
+        if self.zip_size is None:
+            return 0.0
+        return self.zip_size / (1024 * 1024)
+    
+    def to_dict(self) -> Dict[str, Any]:
+        """Convert to dictionary for serialization"""
+        return {
+            'success': self.success,
+            'zip_path': self.zip_path,
+            'zip_size': self.zip_size,
+            'zip_size_mb': round(self.zip_size_mb, 2),
+            'included_files': self.included_files,
+            'file_count': len(self.included_files),
+            'error_message': self.error_message,
+            'timestamp': self.timestamp.isoformat(),
+        }
