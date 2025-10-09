@@ -83,9 +83,9 @@ print_status "Permisos configurados"
 # 5. Descargar archivos de configuración si no existen
 cd $BOOKGEN_DIR
 
-if [ ! -f "infrastructure/docker-compose.prod.yml" ]; then
+if [ ! -f "docker-compose.prod.yml" ]; then
     print_warning "Descarga docker-compose.prod.yml desde tu repositorio"
-    # wget https://raw.githubusercontent.com/tuusuario/bookgen/main/infrastructure/docker-compose.prod.yml
+    # wget https://raw.githubusercontent.com/tuusuario/bookgen/main/docker-compose.prod.yml
 fi
 
 if [ ! -f "infrastructure/nginx/nginx.conf" ]; then
@@ -202,8 +202,8 @@ After=docker.service
 Type=oneshot
 RemainAfterExit=yes
 WorkingDirectory=$BOOKGEN_DIR
-ExecStart=/usr/local/bin/docker-compose -f infrastructure/docker-compose.prod.yml up -d
-ExecStop=/usr/local/bin/docker-compose -f infrastructure/docker-compose.prod.yml down
+ExecStart=/usr/local/bin/docker-compose -f docker-compose.prod.yml up -d
+ExecStop=/usr/local/bin/docker-compose -f docker-compose.prod.yml down
 TimeoutStartSec=0
 User=$SERVICE_USER
 Group=$SERVICE_USER
@@ -227,7 +227,7 @@ cat > /etc/logrotate.d/bookgen << EOF
     notifempty
     create 644 $SERVICE_USER $SERVICE_USER
     postrotate
-        docker-compose -f $BOOKGEN_DIR/infrastructure/docker-compose.prod.yml restart bookgen-api
+        docker-compose -f $BOOKGEN_DIR/docker-compose.prod.yml restart bookgen-api
     endscript
 }
 EOF
@@ -279,7 +279,7 @@ if curl -f -s $HEALTH_URL > /dev/null; then
 else
     echo "$(date): ❌ BookGen API no responde, reiniciando..." >> $LOG_FILE
     cd /opt/bookgen
-    docker-compose -f infrastructure/docker-compose.prod.yml restart bookgen-api
+    docker-compose -f docker-compose.prod.yml restart bookgen-api
 fi
 
 # Verificar uso de disco
@@ -308,7 +308,7 @@ echo "4. Inicia el servicio: systemctl start bookgen"
 echo "5. Verifica el estado: systemctl status bookgen"
 echo ""
 echo "🔧 Comandos útiles:"
-echo "- Ver logs: docker-compose -f $BOOKGEN_DIR/infrastructure/docker-compose.prod.yml logs -f"
+echo "- Ver logs: docker-compose -f $BOOKGEN_DIR/docker-compose.prod.yml logs -f"
 echo "- Reiniciar: systemctl restart bookgen"
 echo "- Backup manual: $BOOKGEN_DIR/backup.sh"
 echo "- Monitor manual: $BOOKGEN_DIR/monitor.sh"

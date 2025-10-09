@@ -97,26 +97,50 @@ New README files have been added:
 
 ## Migration Notes
 
+### Backward Compatibility
+
+**Symbolic links** have been created in the project root to maintain backward compatibility:
+- `docker-compose.yml` → `infrastructure/docker-compose.yml`
+- `docker-compose.prod.yml` → `infrastructure/docker-compose.prod.yml`
+- `Dockerfile` → `infrastructure/Dockerfile`
+
+This means **existing Docker commands continue to work** without modification!
+
 ### For Developers
 
-**Old commands:**
+**Docker commands (unchanged):**
 ```bash
-python examples/demo_openrouter.py
-docker-compose up -d
-bash scripts/deploy-vps.sh
+docker-compose up -d                           # Still works!
+docker-compose -f docker-compose.prod.yml up -d # Still works!
+docker build -t bookgen:latest .               # Still works!
 ```
 
-**New commands:**
+**Example scripts (updated paths):**
 ```bash
+# Old
+python examples/demo_openrouter.py
+
+# New
 python development/examples/demo_openrouter.py
-docker-compose -f infrastructure/docker-compose.yml up -d
+```
+
+**Deployment scripts (updated paths):**
+```bash
+# Old
+bash scripts/deploy-vps.sh
+
+# New
 bash development/scripts/deploy-vps.sh
 ```
 
 ### For Deployment
 
-**Production deployments** now reference:
+**Production deployments** can use either style:
 ```bash
+# Short form (via symlink)
+docker-compose -f docker-compose.prod.yml up -d
+
+# Full path
 docker-compose -f infrastructure/docker-compose.prod.yml up -d
 ```
 
@@ -132,12 +156,17 @@ docker-compose -f infrastructure/monitoring/docker-compose.yml up -d
 
 ## Backward Compatibility
 
-This is a **breaking change** for:
-- Existing deployment scripts that hardcode paths
-- Local development setups with cached paths
-- CI/CD pipelines (already updated in this PR)
+**Docker commands:** ✅ Fully backward compatible via symbolic links
+- `docker-compose up -d` still works
+- `docker-compose -f docker-compose.prod.yml up -d` still works
+- `docker build -t bookgen .` still works
 
-**Action Required:** Users will need to update their local scripts and aliases to reference the new paths.
+**Breaking changes only for:**
+- Example scripts: `examples/` → `development/examples/`
+- Deployment scripts: `scripts/` → `development/scripts/`
+- Postman collections: `postman/` → `development/postman/`
+
+**No action required** for Docker-based workflows. Scripts and examples need path updates.
 
 ## Testing
 

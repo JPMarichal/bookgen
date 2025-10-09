@@ -144,13 +144,13 @@ Automate the first draft phase of biography writing projects.
 
 ```bash
 # Production mode
-docker-compose -f infrastructure/docker-compose.prod.yml up -d
+docker-compose -f docker-compose.prod.yml up -d
 
 # Development mode
-docker-compose -f infrastructure/docker-compose.yml up -d
+docker-compose up -d
 
 # View logs
-docker-compose -f infrastructure/docker-compose.yml logs -f api
+docker-compose logs -f api
 ```
 
 ### Manual Setup

@@ -2,6 +2,8 @@
 
 This directory contains all infrastructure-related configuration files for deploying and running BookGen.
 
+**Note:** Symbolic links exist in the project root (`docker-compose.yml`, `docker-compose.prod.yml`, `Dockerfile`) that point to files in this directory. This allows using standard Docker commands without specifying the full path.
+
 ## Contents
 
 ### 🐳 Docker Configuration
@@ -13,7 +15,12 @@ Development Docker Compose configuration for local development:
 - PostgreSQL database
 - Redis cache
 
-Usage:
+Usage (from project root):
+```bash
+docker-compose up -d
+```
+
+Or with explicit path:
 ```bash
 docker-compose -f infrastructure/docker-compose.yml up -d
 ```
@@ -25,7 +32,12 @@ Production Docker Compose configuration for VPS deployment:
 - Nginx reverse proxy with SSL support
 - Production volume mappings
 
-Usage:
+Usage (from project root):
+```bash
+docker-compose -f docker-compose.prod.yml up -d
+```
+
+Or with explicit path:
 ```bash
 docker-compose -f infrastructure/docker-compose.prod.yml up -d
 ```
@@ -37,7 +49,12 @@ Multi-stage Docker image build configuration:
 - Application code
 - Health checks
 
-Build:
+Build (from project root):
+```bash
+docker build -t bookgen:latest .
+```
+
+Or with explicit path:
 ```bash
 docker build -f infrastructure/Dockerfile -t bookgen:latest .
 ```
@@ -81,23 +98,23 @@ infrastructure/
 
 ### Development
 ```bash
-# Start development environment
-docker-compose -f infrastructure/docker-compose.yml up -d
+# Start development environment (using symlink)
+docker-compose up -d
 
 # View logs
-docker-compose -f infrastructure/docker-compose.yml logs -f
+docker-compose logs -f
 ```
 
 ### Production
 ```bash
-# Deploy to production
-docker-compose -f infrastructure/docker-compose.prod.yml up -d
+# Deploy to production (using symlink)
+docker-compose -f docker-compose.prod.yml up -d
 
 # Check status
-docker-compose -f infrastructure/docker-compose.prod.yml ps
+docker-compose -f docker-compose.prod.yml ps
 
 # View logs
-docker-compose -f infrastructure/docker-compose.prod.yml logs -f
+docker-compose -f docker-compose.prod.yml logs -f
 ```
 
 ### Monitoring
