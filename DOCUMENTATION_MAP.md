@@ -78,6 +78,7 @@ Located in `/docs/technical/` for organized access:
 | **Source Validation** | [docs/user-guide/creating-biographies.md](docs/user-guide/creating-biographies.md) | [docs/technical/components/ADVANCED_SOURCE_VALIDATION.md](docs/technical/components/ADVANCED_SOURCE_VALIDATION.md) |
 | **Length Validation** | In API docs | [docs/technical/components/LENGTH_VALIDATION_README.md](docs/technical/components/LENGTH_VALIDATION_README.md) |
 | **Word Export** | In user guide | [docs/technical/quickstart/WORD_EXPORT_QUICKSTART.md](docs/technical/quickstart/WORD_EXPORT_QUICKSTART.md) |
+| **Project Structure** | N/A | [docs/technical/components/DIRECTORY_MIGRATION.md](docs/technical/components/DIRECTORY_MIGRATION.md) |
 
 ### Operations
 
