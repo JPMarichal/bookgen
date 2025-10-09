@@ -55,8 +55,8 @@
 ### Phase 3: Documentation
 - [x] Created `development/README.md`
 - [x] Created `infrastructure/README.md`
-- [x] Created `DIRECTORY_STRUCTURE_CHANGES.md`
-- [x] Created `VERIFICATION_RESULTS.md`
+- [x] Created [DIRECTORY_STRUCTURE_CHANGES.md](DIRECTORY_STRUCTURE_CHANGES.md) (now in docs/archive/)
+- [x] Created [VERIFICATION_RESULTS.md](VERIFICATION_RESULTS.md) (now in docs/archive/)
 
 ### Phase 4: Verification
 - [x] Validated shell script syntax

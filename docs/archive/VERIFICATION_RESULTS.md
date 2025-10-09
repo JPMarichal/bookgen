@@ -79,7 +79,7 @@ Users updating from previous versions need to:
 2. Update docker-compose commands to use `infrastructure/` prefix
 3. Update any custom deployment scripts with new paths
 
-See `DIRECTORY_STRUCTURE_CHANGES.md` for complete migration guide.
+See [DIRECTORY_STRUCTURE_CHANGES.md](DIRECTORY_STRUCTURE_CHANGES.md) for complete migration guide.
 
 ## Conclusion
 
