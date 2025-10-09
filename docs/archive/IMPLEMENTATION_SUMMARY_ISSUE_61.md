@@ -2,7 +2,7 @@
 
 ## Overview
 
-This implementation delivers the **Automatic Source Generator Base System** as specified in Issue #61, restoring the original functionality from `.windsurf/rules/research.md` to automatically generate 40-60 high-quality sources for biographical research.
+This implementation delivers the **Automatic Source Generator Base System** as specified in Issue #61, restoring the original functionality from the legacy research rules (archived in `docs/archive/windsurf-legacy/research.md`) to automatically generate 40-60 high-quality sources for biographical research.
 
 ## What Was Implemented
 
