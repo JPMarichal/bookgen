@@ -75,27 +75,42 @@ def concatenate_files(personaje, coleccion_path):
     
     # Create output filename
     file_safe_name = remove_diacritics(f"La biografia de {personaje}").replace('  ', ' ').strip()
-    outfile = os.path.join(base_dir, f"{file_safe_name}.md")
+    # Output goes to output/markdown/ subdirectory
+    output_dir = os.path.join(base_dir, "output", "markdown")
+    os.makedirs(output_dir, exist_ok=True)
+    outfile = os.path.join(output_dir, f"{file_safe_name}.md")
     
-    # Files in fixed order
+    # Files in fixed order - now from subdirectories
+    sections_dir = os.path.join(base_dir, "sections")
+    chapters_dir = os.path.join(base_dir, "chapters")
+    
     files = [
-        "prologo.md",
-        "introduccion.md",
-        "cronologia.md",
-        "capitulo-01.md", "capitulo-02.md", "capitulo-03.md", "capitulo-04.md", "capitulo-05.md",
-        "capitulo-06.md", "capitulo-07.md", "capitulo-08.md", "capitulo-09.md", "capitulo-10.md",
-        "capitulo-11.md", "capitulo-12.md", "capitulo-13.md", "capitulo-14.md", "capitulo-15.md",
-        "capitulo-16.md", "capitulo-17.md", "capitulo-18.md", "capitulo-19.md", "capitulo-20.md",
-        "epilogo.md",
-        "glosario.md",
-        "dramatis-personae.md",
-        "fuentes.md"
+        # Sections
+        (sections_dir, "prologo.md"),
+        (sections_dir, "introduccion.md"),
+        (sections_dir, "cronologia.md"),
+        # Chapters
+        (chapters_dir, "capitulo-01.md"), (chapters_dir, "capitulo-02.md"),
+        (chapters_dir, "capitulo-03.md"), (chapters_dir, "capitulo-04.md"),
+        (chapters_dir, "capitulo-05.md"), (chapters_dir, "capitulo-06.md"),
+        (chapters_dir, "capitulo-07.md"), (chapters_dir, "capitulo-08.md"),
+        (chapters_dir, "capitulo-09.md"), (chapters_dir, "capitulo-10.md"),
+        (chapters_dir, "capitulo-11.md"), (chapters_dir, "capitulo-12.md"),
+        (chapters_dir, "capitulo-13.md"), (chapters_dir, "capitulo-14.md"),
+        (chapters_dir, "capitulo-15.md"), (chapters_dir, "capitulo-16.md"),
+        (chapters_dir, "capitulo-17.md"), (chapters_dir, "capitulo-18.md"),
+        (chapters_dir, "capitulo-19.md"), (chapters_dir, "capitulo-20.md"),
+        # More sections
+        (sections_dir, "epilogo.md"),
+        (sections_dir, "glosario.md"),
+        (sections_dir, "dramatis-personae.md"),
+        (sections_dir, "fuentes.md")
     ]
     
     # Concatenate files
     content_parts = []
-    for file in files:
-        file_path = os.path.join(base_dir, file)
+    for subdir, file in files:
+        file_path = os.path.join(subdir, file)
         if os.path.exists(file_path):
             with open(file_path, 'r', encoding='utf-8') as f:
                 contenido = f.read()

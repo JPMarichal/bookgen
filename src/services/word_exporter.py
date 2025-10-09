@@ -107,10 +107,20 @@ class WordExporter:
             # Generate output file name if not provided
             if output_file is None:
                 character_name = self._extract_character_name(markdown_file)
+                # New structure: bios/{character}/output/word/
+                # Extract character from path to avoid nesting issues
+                path_parts = Path(markdown_file).parts
+                if 'bios' in path_parts:
+                    bios_idx = path_parts.index('bios')
+                    if len(path_parts) > bios_idx + 1:
+                        character_name = path_parts[bios_idx + 1]
+                
                 output_file = os.path.join(
-                    self.config.output_directory,
+                    '/app/bios',
                     character_name,
-                    f"La biografía de {character_name}.docx"
+                    'output',
+                    'word',
+                    f"La biografia de {character_name}.docx"
                 )
             
             # Create output directory
@@ -268,13 +278,22 @@ class WordExporter:
         # Try to extract from directory structure (bios/character_name/...)
         path_parts = Path(file_path).parts
         
+        # Look for bios directory and get the next part as character name
+        if 'bios' in path_parts:
+            bios_idx = path_parts.index('bios')
+            if len(path_parts) > bios_idx + 1:
+                character_dir = path_parts[bios_idx + 1]
+                # Clean up the name
+                if character_dir not in ['bios', 'docx', 'app', 'output', 'markdown', 'word', 'kdp']:
+                    return character_dir
+        
         # Look for the parent directory of the markdown file
         if len(path_parts) >= 2:
             # Get the directory containing the file
             character_dir = path_parts[-2]
             
             # Clean up the name
-            if character_dir not in ['bios', 'docx', 'app']:
+            if character_dir not in ['bios', 'docx', 'app', 'output', 'markdown', 'word', 'kdp']:
                 return character_dir
         
         # Fallback: use filename without extension
