@@ -13,6 +13,7 @@ from .api.routers.biographies import router as biographies_router
 from .api.routers.sources import router as sources_router
 from .api.routers.metrics import router as metrics_router
 from .api.routers.websocket import router as websocket_router
+from .api.routers.collections import router as collections_router
 
 # Import middleware
 from .api.middleware.rate_limiter import RateLimitMiddleware
@@ -61,6 +62,7 @@ app.include_router(biographies_router)
 app.include_router(sources_router)
 app.include_router(metrics_router)
 app.include_router(websocket_router)
+app.include_router(collections_router)
 
 logger.info("BookGen API server initialized")
 
