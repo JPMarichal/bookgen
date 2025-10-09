@@ -29,6 +29,10 @@ class CollectionGenerateRequest(BaseModel):
         le=200000,
         description="Target total word count for the biography"
     )
+    sources: Optional[list[str]] = Field(
+        default=None,
+        description="Source URLs for manual or hybrid mode"
+    )
     min_sources: Optional[int] = Field(
         default=40,
         ge=10,

@@ -90,7 +90,7 @@ async def generate_next_from_collection(
             total_words=request.total_words,
             min_sources=request.min_sources,
             quality_threshold=request.quality_threshold,
-            sources=None  # Will be generated based on mode
+            sources=request.sources  # Pass through user-provided sources
         )
         
         # Call existing biography generation endpoint
