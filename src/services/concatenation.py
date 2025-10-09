@@ -257,7 +257,7 @@ class ConcatenationService:
     
     def _get_ordered_files(self, base_dir: str) -> List[str]:
         """
-        Get list of files in correct order
+        Get list of files in correct order from new directory structure
         
         Args:
             base_dir: Base directory path
@@ -265,7 +265,20 @@ class ConcatenationService:
         Returns:
             List of file paths
         """
-        return [os.path.join(base_dir, filename) for filename in self.config.file_order]
+        file_paths = []
+        
+        for filename in self.config.file_order:
+            # Determine subdirectory based on file type
+            if filename.startswith('capitulo-') or filename.startswith('chapter-'):
+                # Chapters go in chapters/
+                file_path = os.path.join(base_dir, 'chapters', filename)
+            else:
+                # All other files (sections) go in sections/
+                file_path = os.path.join(base_dir, 'sections', filename)
+            
+            file_paths.append(file_path)
+        
+        return file_paths
     
     def _check_missing_files(self, file_paths: List[str]) -> List[str]:
         """
@@ -402,7 +415,7 @@ class ConcatenationService:
     
     def _generate_output_path(self, character: str, base_dir: str) -> str:
         """
-        Generate output file path
+        Generate output file path in output/markdown/ subdirectory
         
         Args:
             character: Character name
@@ -417,7 +430,8 @@ class ConcatenationService:
         # Remove diacritics for file safety
         filename = self._remove_diacritics(filename)
         
-        return os.path.join(base_dir, filename)
+        # Place in output/markdown/ subdirectory
+        return os.path.join(base_dir, 'output', 'markdown', filename)
     
     def _remove_diacritics(self, text: str) -> str:
         """Remove diacritics from text for safe filenames"""

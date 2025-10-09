@@ -1,6 +1,6 @@
 1. Joseph Stalin ✅
 2. Harry S. Truman ✅
-3. Winston Churchill
+3. Winston Churchill ✅
 4. Dwight D. Eisenhower
 5. Nikita Khrushchev
 6. John F. Kennedy

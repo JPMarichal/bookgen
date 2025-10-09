@@ -184,7 +184,8 @@ def export_to_pdf(
     try:
         # TODO: Implement actual PDF export
         
-        output_path = f"/app/docx/{character_name}_biography.pdf"
+        # Use new output structure: bios/{character}/output/word/
+        output_path = f"/app/bios/{character_name}/output/word/{character_name}_biography.pdf"
         
         result = {
             'success': True,

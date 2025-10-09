@@ -24,9 +24,10 @@ class ExportConfig:
     ))
     
     # Output configuration
+    # Note: This is now a template - actual output goes to bios/{character}/output/word/
     output_directory: str = field(default_factory=lambda: os.getenv(
         'EXPORT_OUTPUT_DIR',
-        '/app/docx'
+        '/app/bios/{character}/output/word'
     ))
     
     # TOC configuration
