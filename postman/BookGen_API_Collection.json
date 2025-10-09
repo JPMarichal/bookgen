@@ -1,0 +1,707 @@
+{
+	"info": {
+		"_postman_id": "bookgen-api-collection-v1",
+		"name": "BookGen API Collection",
+		"description": "Colección completa de Postman para la API de BookGen - Sistema Automatizado de Generación de Biografías con IA",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"version": "1.0.0"
+	},
+	"item": [
+		{
+			"name": "Health & Status",
+			"description": "Endpoints para verificar el estado y salud de la API",
+			"item": [
+				{
+					"name": "Health Check",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/health",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"health"
+							]
+						},
+						"description": "Endpoint de health check para verificar que la API esté funcionando correctamente.\n\nRetorna:\n- status: Estado de salud del sistema\n- timestamp: Marca de tiempo de la respuesta\n- environment: Entorno de ejecución\n- debug: Modo debug activado o no"
+					},
+					"response": [],
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Response has correct structure\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData).to.have.property('status');",
+									"    pm.expect(jsonData).to.have.property('timestamp');",
+									"    pm.expect(jsonData.status).to.eql('healthy');",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					]
+				},
+				{
+					"name": "API Status",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/{{api_version}}/status",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"{{api_version}}",
+								"status"
+							]
+						},
+						"description": "Obtiene el estado detallado de la API incluyendo:\n- Versión de la API\n- Estado de los servicios\n- Configuración actual (capítulos, palabras, modelo IA)"
+					},
+					"response": [],
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Response contains API version\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData).to.have.property('api_version');",
+									"    pm.expect(jsonData).to.have.property('status');",
+									"    pm.expect(jsonData.status).to.eql('operational');",
+									"});",
+									"",
+									"pm.test(\"Configuration is present\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.configuration).to.have.property('chapters');",
+									"    pm.expect(jsonData.configuration).to.have.property('total_words');",
+									"    pm.expect(jsonData.configuration).to.have.property('model');",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					]
+				},
+				{
+					"name": "Prometheus Metrics",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/metrics",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"metrics"
+							]
+						},
+						"description": "Endpoint de métricas en formato Prometheus.\n\nRetorna métricas del sistema:\n- Uptime de la aplicación\n- Uso de CPU y memoria\n- Uso de disco\n- Estadísticas de trabajos"
+					},
+					"response": [],
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Response is in Prometheus format\", function () {",
+									"    pm.expect(pm.response.text()).to.include('bookgen_uptime_seconds');",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "Biographies",
+			"description": "Endpoints para la generación y gestión de biografías",
+			"item": [
+				{
+					"name": "Generate Biography",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"character\": \"Albert Einstein\",\n  \"chapters\": 10,\n  \"total_words\": 10000,\n  \"mode\": \"automatic\",\n  \"min_sources\": 40,\n  \"quality_threshold\": 0.8,\n  \"temperature\": 0.7\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/{{api_version}}/biographies/generate",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"{{api_version}}",
+								"biographies",
+								"generate"
+							]
+						},
+						"description": "Inicia la generación de una biografía.\n\nModos disponibles:\n- **manual**: El usuario provee todas las fuentes\n- **automatic**: El sistema genera fuentes automáticamente\n- **hybrid**: Mezcla de fuentes del usuario + generación automática\n\nParámetros:\n- character: Nombre del personaje (requerido)\n- chapters: Número de capítulos (default: 20)\n- total_words: Total de palabras (default: 51000)\n- mode: Modo de generación (default: automatic)\n- min_sources: Mínimo de fuentes (default: 40)\n- quality_threshold: Umbral de calidad (default: 0.8)\n- temperature: Temperatura del modelo IA (default: 0.7)\n- sources: Lista de fuentes (requerido para modo manual/hybrid)"
+					},
+					"response": [],
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 202 (Accepted)\", function () {",
+									"    pm.response.to.have.status(202);",
+									"});",
+									"",
+									"pm.test(\"Response contains job_id\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData).to.have.property('job_id');",
+									"    pm.expect(jsonData).to.have.property('status');",
+									"    pm.expect(jsonData).to.have.property('character');",
+									"    ",
+									"    // Save job_id for next requests",
+									"    pm.environment.set('job_id', jsonData.job_id);",
+									"});",
+									"",
+									"pm.test(\"Job is in pending status\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.status).to.eql('pending');",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"// Generate timestamp for unique character names",
+									"pm.environment.set('timestamp', new Date().getTime());"
+								],
+								"type": "text/javascript"
+							}
+						}
+					]
+				},
+				{
+					"name": "Get Job Status",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/{{api_version}}/biographies/{{job_id}}/status",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"{{api_version}}",
+								"biographies",
+								"{{job_id}}",
+								"status"
+							]
+						},
+						"description": "Obtiene el estado de un trabajo de generación de biografía.\n\nEstados posibles:\n- **pending**: En espera de procesamiento\n- **in_progress**: Generación en progreso\n- **completed**: Generación completada\n- **failed**: Generación fallida\n\nRetorna:\n- job_id: ID del trabajo\n- status: Estado actual\n- character: Nombre del personaje\n- progress: Progreso de generación (si está en progreso)\n- error: Mensaje de error (si falló)\n- download_url: URL de descarga (si completó)"
+					},
+					"response": [],
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Response contains job information\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData).to.have.property('job_id');",
+									"    pm.expect(jsonData).to.have.property('status');",
+									"    pm.expect(jsonData).to.have.property('character');",
+									"});",
+									"",
+									"pm.test(\"Status is valid\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    var validStatuses = ['pending', 'in_progress', 'completed', 'failed'];",
+									"    pm.expect(validStatuses).to.include(jsonData.status);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"// Validate job_id is set",
+									"if (!pm.environment.get('job_id')) {",
+									"    console.warn('Variable job_id no definida. Por favor ejecuta \"Generate Biography\" primero.');",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					]
+				},
+				{
+					"name": "Download Biography",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/{{api_version}}/biographies/{{job_id}}/download",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"{{api_version}}",
+								"biographies",
+								"{{job_id}}",
+								"download"
+							]
+						},
+						"description": "Descarga la biografía generada.\n\nSolo disponible para trabajos completados.\nRetorna un archivo de texto con el contenido completo de la biografía."
+					},
+					"response": [],
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200 or 400\", function () {",
+									"    // 200 if completed, 400 if not ready yet",
+									"    pm.expect([200, 400]).to.include(pm.response.code);",
+									"});",
+									"",
+									"if (pm.response.code === 200) {",
+									"    pm.test(\"Content-Type is text/plain\", function () {",
+									"        pm.response.to.have.header('Content-Type');",
+									"        pm.expect(pm.response.headers.get('Content-Type')).to.include('text/plain');",
+									"    });",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"// Validate job_id is set",
+									"if (!pm.environment.get('job_id')) {",
+									"    console.warn('Variable job_id no definida. Por favor ejecuta \"Generate Biography\" primero.');",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					]
+				},
+				{
+					"name": "Download Output ZIP (New)",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/zip"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/{{api_version}}/biographies/{{character}}/download-output",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"{{api_version}}",
+								"biographies",
+								"{{character}}",
+								"download-output"
+							]
+						},
+						"description": "🆕 **Nuevo Endpoint (Issue #87)**\n\nDescarga toda la información de publicación de un personaje en formato ZIP.\n\n**Contenido del ZIP:**\n- markdown/: Biografía en Markdown + logs\n- word/: Documento Word final + metadatos  \n- kdp/: Assets preparados para Amazon KDP\n\n**Requiere:**\n- La biografía debe estar completada\n- Debe tener archivos en output/\n\n**Ejemplo de uso:**\n```\ncharacter = \"harry_s_truman\"\nGET /api/v1/biographies/harry_s_truman/download-output\n```"
+					},
+					"response": [],
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Content-Type is application/zip\", function () {",
+									"    pm.response.to.have.header('Content-Type');",
+									"    pm.expect(pm.response.headers.get('Content-Type')).to.include('application/zip');",
+									"});",
+									"",
+									"pm.test(\"Content-Disposition includes filename\", function () {",
+									"    const disposition = pm.response.headers.get('Content-Disposition');",
+									"    pm.expect(disposition).to.include('attachment');",
+									"    pm.expect(disposition).to.include('.zip');",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"// Validar que character esté definido",
+									"if (!pm.variables.get('character')) {",
+									"    console.warn('Variable \"character\" no definida. Usando ejemplo.');",
+									"    pm.variables.set('character', 'harry_s_truman');",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "Sources",
+			"description": "Endpoints para validación y generación de fuentes bibliográficas",
+			"item": [
+				{
+					"name": "Validate Sources",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"sources\": [\n    {\n      \"title\": \"Wikipedia: Albert Einstein\",\n      \"author\": \"Wikipedia Contributors\",\n      \"url\": \"https://en.wikipedia.org/wiki/Albert_Einstein\",\n      \"source_type\": \"url\",\n      \"publication_date\": \"2024\"\n    },\n    {\n      \"title\": \"Einstein Biography\",\n      \"author\": \"Nobelprize.org\",\n      \"url\": \"https://www.nobelprize.org/prizes/physics/1921/einstein/biographical/\",\n      \"source_type\": \"url\"\n    }\n  ],\n  \"check_accessibility\": true\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/{{api_version}}/sources/validate",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"{{api_version}}",
+								"sources",
+								"validate"
+							]
+						},
+						"description": "Valida una lista de fuentes bibliográficas.\n\n**Validaciones:**\n- Formato de campos requeridos\n- Formato de URLs\n- Accesibilidad de URLs (opcional)\n- Formato de fechas de publicación\n\n**Parámetros:**\n- sources: Lista de fuentes a validar\n- check_accessibility: Verificar accesibilidad de URLs (default: true)"
+					},
+					"response": [],
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Response contains validation results\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData).to.have.property('total_sources');",
+									"    pm.expect(jsonData).to.have.property('valid_sources');",
+									"    pm.expect(jsonData).to.have.property('results');",
+									"    pm.expect(jsonData.results).to.be.an('array');",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					]
+				},
+				{
+					"name": "Validate Sources (Advanced)",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"biography_topic\": \"Albert Einstein\",\n  \"sources\": [\n    {\n      \"title\": \"Wikipedia: Albert Einstein\",\n      \"author\": \"Wikipedia Contributors\",\n      \"url\": \"https://en.wikipedia.org/wiki/Albert_Einstein\",\n      \"source_type\": \"url\"\n    }\n  ],\n  \"check_accessibility\": true,\n  \"min_relevance\": 0.7,\n  \"min_credibility\": 80.0\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/{{api_version}}/sources/validate-advanced",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"{{api_version}}",
+								"sources",
+								"validate-advanced"
+							]
+						},
+						"description": "Validación avanzada de fuentes con análisis IA.\n\n**Características:**\n- Análisis TF-IDF de relevancia\n- Verificación de credibilidad del dominio\n- Scoring de recencia y completitud\n- Filtrado automático de fuentes\n- Recomendaciones de calidad\n\n**Parámetros:**\n- biography_topic: Tema de la biografía (requerido)\n- sources: Lista de fuentes\n- min_relevance: Relevancia mínima (0-1, default: 0.7)\n- min_credibility: Credibilidad mínima (0-100, default: 80)"
+					},
+					"response": [],
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Response contains advanced validation data\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData).to.have.property('average_relevance');",
+									"    pm.expect(jsonData).to.have.property('average_credibility');",
+									"    pm.expect(jsonData).to.have.property('recommendations');",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					]
+				},
+				{
+					"name": "Generate Sources (Automatic)",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"character_name\": \"Albert Einstein\",\n  \"min_sources\": 40,\n  \"max_sources\": 60,\n  \"check_accessibility\": true,\n  \"min_relevance\": 0.7,\n  \"min_credibility\": 80.0\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/{{api_version}}/sources/generate-automatic",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"{{api_version}}",
+								"sources",
+								"generate-automatic"
+							]
+						},
+						"description": "Genera fuentes automáticamente para un personaje usando IA.\n\n**Características:**\n- Generación de 40-60 fuentes de alta calidad\n- Análisis IA del personaje y contexto\n- Múltiples estrategias de búsqueda\n- Validación de calidad y relevancia\n- Garantía de diversidad y accesibilidad\n\n**Fuentes incluidas:**\n- Wikipedia y enciclopedias\n- Bases de datos académicas\n- Archivos históricos\n- Biografías publicadas\n\n**Parámetros:**\n- character_name: Nombre del personaje (requerido)\n- min_sources: Mínimo de fuentes (default: 40)\n- max_sources: Máximo de fuentes (default: 60)\n- check_accessibility: Verificar accesibilidad (default: true)\n- min_relevance: Relevancia mínima (default: 0.7)\n- min_credibility: Credibilidad mínima (default: 80)"
+					},
+					"response": [],
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Response contains generated sources\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData).to.have.property('sources');",
+									"    pm.expect(jsonData).to.have.property('character_analysis');",
+									"    pm.expect(jsonData).to.have.property('validation_summary');",
+									"    pm.expect(jsonData.sources).to.be.an('array');",
+									"});",
+									"",
+									"pm.test(\"Minimum sources generated\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.sources.length).to.be.at.least(40);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					]
+				},
+				{
+					"name": "Generate Sources (Hybrid)",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"character_name\": \"Albert Einstein\",\n  \"user_sources\": [\n    \"https://en.wikipedia.org/wiki/Albert_Einstein\",\n    \"https://www.nobelprize.org/prizes/physics/1921/einstein/biographical/\"\n  ],\n  \"auto_complete\": true,\n  \"target_count\": 50,\n  \"check_accessibility\": true,\n  \"min_relevance\": 0.7,\n  \"min_credibility\": 80.0,\n  \"provide_suggestions\": true\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/{{api_version}}/sources/generate-hybrid",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"{{api_version}}",
+								"sources",
+								"generate-hybrid"
+							]
+						},
+						"description": "Genera fuentes en modo híbrido (manual + automático).\n\n**Características:**\n- Combina fuentes del usuario con generación automática\n- Valida fuentes del usuario\n- Auto-completa hasta el objetivo (opcional)\n- Proporciona sugerencias inteligentes\n- Validación de calidad de todas las fuentes\n\n**Modos de uso:**\n- Control total: Proveer todas las fuentes manualmente\n- Automatización total: No proveer fuentes (auto_complete=true)\n- Híbrido: Comenzar con algunas fuentes y auto-completar\n\n**Parámetros:**\n- character_name: Nombre del personaje (requerido)\n- user_sources: URLs de fuentes del usuario\n- auto_complete: Auto-completar con IA (default: true)\n- target_count: Objetivo de fuentes totales (default: 50)\n- provide_suggestions: Incluir sugerencias (default: true)"
+					},
+					"response": [],
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Response contains hybrid sources\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData).to.have.property('sources');",
+									"    pm.expect(jsonData).to.have.property('user_source_count');",
+									"    pm.expect(jsonData).to.have.property('auto_generated_count');",
+									"    pm.expect(jsonData).to.have.property('suggestions');",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "WebSocket",
+			"description": "Endpoints relacionados con WebSocket para notificaciones en tiempo real",
+			"item": [
+				{
+					"name": "WebSocket Status",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/ws/status",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"ws",
+								"status"
+							]
+						},
+						"description": "Obtiene estadísticas de conexiones WebSocket activas.\n\nRetorna:\n- status: Estado del servicio WebSocket\n- connections: Número de conexiones activas"
+					},
+					"response": [],
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Response contains status\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData).to.have.property('status');",
+									"    pm.expect(jsonData).to.have.property('connections');",
+									"    pm.expect(jsonData.status).to.eql('operational');",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					]
+				},
+				{
+					"name": "WebSocket Notifications (Info)",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{websocket_url}}/ws/notifications?user_id=test_user&job_id={{job_id}}",
+							"host": [
+								"{{websocket_url}}"
+							],
+							"path": [
+								"ws",
+								"notifications"
+							],
+							"query": [
+								{
+									"key": "user_id",
+									"value": "test_user",
+									"description": "User identifier"
+								},
+								{
+									"key": "job_id",
+									"value": "{{job_id}}",
+									"description": "Job ID to watch"
+								}
+							]
+						},
+						"description": "**WebSocket Endpoint** - No se puede probar directamente desde Postman HTTP.\n\n**URL de conexión:**\n```\nws://localhost:8000/ws/notifications?user_id=test_user&job_id=<job_id>\n```\n\n**Parámetros de query:**\n- user_id: Identificador de usuario (opcional)\n- job_id: ID del trabajo a monitorear (opcional)\n\n**Formato de mensajes recibidos:**\n```json\n{\n  \"type\": \"progress_update|completion|error_alert\",\n  \"job_id\": \"123\",\n  \"progress\": 50.0,\n  \"phase\": \"Generating chapter 3\",\n  \"message\": \"Optional message\",\n  \"timestamp\": \"2024-01-01T12:00:00Z\"\n}\n```\n\n**Para probar WebSocket:**\n1. Usa un cliente WebSocket (ej: websocat, wscat)\n2. Conecta a: ws://localhost:8000/ws/notifications\n3. Envía \"ping\" para verificar conexión\n4. Recibe \"pong\" como respuesta\n\n**Ejemplo con wscat:**\n```bash\nnpm install -g wscat\nwscat -c \"ws://localhost:8000/ws/notifications?user_id=test\"\n```"
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"variable": [
+		{
+			"key": "base_url",
+			"value": "http://localhost:8000",
+			"type": "string"
+		},
+		{
+			"key": "api_version",
+			"value": "v1",
+			"type": "string"
+		},
+		{
+			"key": "job_id",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "character",
+			"value": "harry_s_truman",
+			"type": "string"
+		},
+		{
+			"key": "websocket_url",
+			"value": "ws://localhost:8000",
+			"type": "string"
+		}
+	]
+}
