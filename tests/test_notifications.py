@@ -9,7 +9,7 @@ from datetime import datetime, timezone
 from src.services.notifications import NotificationService, NotificationRateLimiter
 from src.websocket.manager import ConnectionManager
 from src.webhooks.client import WebhookClient
-from src.email.sender import EmailSender
+from src.mailer.sender import EmailSender
 
 
 class TestNotificationRateLimiter:
