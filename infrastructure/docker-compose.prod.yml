@@ -1,5 +1,3 @@
-version: '3.8'
-
 services:
   bookgen-api:
     image: ghcr.io/jpmarichal/bookgen:latest

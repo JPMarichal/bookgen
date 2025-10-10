@@ -157,9 +157,9 @@ jobs:
           fi
 
           if command -v docker-compose >/dev/null 2>&1; then
-            COMPOSE_COMMAND="docker-compose"
+            COMPOSE_COMMAND="sudo docker-compose"
           elif docker compose version >/dev/null 2>&1; then
-            COMPOSE_COMMAND="docker compose"
+            COMPOSE_COMMAND="sudo docker compose"
           else
             echo "❌ Neither docker-compose nor docker compose is available"
             exit 1
@@ -172,7 +172,7 @@ jobs:
           
           # Pull latest image
           echo "⬇️  Pulling latest image..."
-          docker pull ghcr.io/jpmarichal/bookgen:latest
+          sudo docker pull ghcr.io/jpmarichal/bookgen:latest
           
           # Update environment file (preserve existing secrets, only update structure)
           echo "🔧 Updating environment configuration..."
@@ -230,7 +230,7 @@ jobs:
           
           # Cleanup old images
           echo "🧹 Cleaning up old images..."
-          docker image prune -f
+          sudo docker image prune -f
           
           echo "✅ Deployment completed successfully!"
           echo "🌐 Application available at: http://localhost:8000"
