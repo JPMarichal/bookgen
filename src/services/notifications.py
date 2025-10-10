@@ -10,7 +10,7 @@ import time
 
 from src.websocket.manager import ConnectionManager, get_websocket_client
 from src.webhooks.client import WebhookClient
-from src.email.sender import EmailSender
+from src.mailer.sender import EmailSender
 from src.database.config import SessionLocal
 from src.models.notification import Notification
 
