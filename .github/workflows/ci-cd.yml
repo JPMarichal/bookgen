@@ -151,6 +151,11 @@ jobs:
           git fetch --all --prune
           git reset --hard origin/main
 
+          echo "🔌 Ensuring Docker daemon is running..."
+          if ! sudo systemctl is-active --quiet docker; then
+            sudo systemctl start docker
+          fi
+
           if command -v docker-compose >/dev/null 2>&1; then
             COMPOSE_COMMAND="docker-compose"
           elif docker compose version >/dev/null 2>&1; then
