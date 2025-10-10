@@ -146,6 +146,10 @@ jobs:
           echo "🚀 Starting deployment to production..."
           
           cd /opt/bookgen || { echo "❌ Directory /opt/bookgen not found"; exit 1; }
+
+          echo "📥 Updating repository..."
+          git fetch --all --prune
+          git reset --hard origin/main
           
           # Backup current deployment state
           echo "📦 Creating backup..."
