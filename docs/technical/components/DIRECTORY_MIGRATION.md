@@ -65,11 +65,11 @@ The following files were updated to work with the new structure:
 - `src/config/export_config.py` - Updated output directory configuration
 - `src/services/concatenation.py` - Updated to read from subdirectories
 - `src/services/word_exporter.py` - Updated character name extraction and output paths
-- `scripts/legacy/concat.py` - Updated to use new subdirectory structure
+- `development/scripts/legacy/concat.py` - Updated to use new subdirectory structure
 - `src/tasks/export_tasks.py` - Updated PDF output path
 - `tests/test_concatenation.py` - Updated test file creation
 - `tests/test_word_export.py` - Updated path test
-- `.windsurf/rules/kdpData-rules.md` - Updated KDP documentation
+- KDP documentation (legacy rules now archived in `docs/archive/windsurf-legacy/`)
 
 ## Benefits
 
@@ -98,7 +98,7 @@ The following files were updated to work with the new structure:
 ### Migration Script
 
 ```bash
-python scripts/migrate_structure.py
+python development/scripts/migrate_structure.py
 ```
 
 Migrates all characters from the old structure to the new one.
@@ -106,7 +106,7 @@ Migrates all characters from the old structure to the new one.
 ### Validation Script
 
 ```bash
-python scripts/validate_structure.py
+python development/scripts/validate_structure.py
 ```
 
 Validates that all character directories follow the new structure.
@@ -114,7 +114,7 @@ Validates that all character directories follow the new structure.
 ### Concatenation
 
 ```bash
-python scripts/legacy/concat.py -personaje "Character Name"
+python development/scripts/legacy/concat.py -personaje "Character Name"
 ```
 
 Concatenates files from the new structure into the output markdown file.

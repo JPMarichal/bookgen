@@ -337,7 +337,7 @@ while True:
 
 ```bash
 # Download deployment script
-curl -fsSL https://raw.githubusercontent.com/JPMarichal/bookgen/main/deploy-vps.sh -o deploy-vps.sh
+curl -fsSL https://raw.githubusercontent.com/JPMarichal/bookgen/main/development/scripts/deploy-vps.sh -o deploy-vps.sh
 
 # Make executable and run
 chmod +x deploy-vps.sh

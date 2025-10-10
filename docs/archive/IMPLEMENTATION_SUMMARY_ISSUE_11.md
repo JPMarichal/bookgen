@@ -94,7 +94,7 @@ Se implementaron 4 tipos de workers especializados:
 - `example_celery_usage.py` - Ejemplos de uso
 
 ### Docker
-- `docker-compose.yml` - Actualizado con Redis y 4 workers especializados
+- `infrastructure/docker-compose.yml` - Actualizado con Redis y 4 workers especializados
 
 ### Dependencias
 - `requirements.txt` - Actualizado con Celery, Redis, Flower
@@ -105,7 +105,7 @@ Se implementaron 4 tipos de workers especializados:
 
 | Criterio | Estado | Detalles |
 |----------|--------|----------|
-| Redis funcionando como message broker | ✅ | Configurado en docker-compose.yml |
+| Redis funcionando como message broker | ✅ | Configurado en infrastructure/docker-compose.yml |
 | Workers Celery especializados funcionando | ✅ | 4 workers configurados (18 tareas) |
 | Sistema de prioridades implementado | ✅ | 6 colas con prioridades 0-10 |
 | Monitoring de tareas en tiempo real | ✅ | Flower + CLI + monitoring tasks |

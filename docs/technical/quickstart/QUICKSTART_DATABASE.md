@@ -116,5 +116,5 @@ alembic current
 pytest tests/test_database.py -v
 
 # Run verification
-python scripts/verification/verify_database_implementation.py
+python development/scripts/verification/verify_database_implementation.py
 ```

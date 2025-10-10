@@ -1,0 +1,210 @@
+version: '3.8'
+
+services:
+  redis:
+    image: redis:7-alpine
+    container_name: bookgen-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    networks:
+      - bookgen-network
+    restart: unless-stopped
+    command: redis-server --appendonly yes --maxmemory 512mb --maxmemory-policy allkeys-lru
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  bookgen-api:
+    build: .
+    container_name: bookgen-api
+    ports:
+      - "8000:8000"
+    environment:
+      - ENV=development
+      - DEBUG=true
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - REDIS_DB=0
+    env_file:
+      - .env
+    volumes:
+      # Datos persistentes
+      - ./data:/app/data
+      - ./config:/app/config
+      
+      # Directorios de trabajo (para desarrollo)
+      - ./bios:/app/bios
+      - ./docx:/app/docx
+      - ./esquemas:/app/esquemas
+      - ./colecciones:/app/colecciones
+      - ./wordTemplate:/app/wordTemplate
+      
+      # Logs para debugging
+      - bookgen_logs:/app/data/logs
+    networks:
+      - bookgen-network
+    restart: unless-stopped
+    depends_on:
+      redis:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  bookgen-worker-content:
+    build: .
+    container_name: bookgen-worker-content
+    command: ["celery", "-A", "src.worker", "worker", "--loglevel=info", "--queues=content_generation,high_priority", "--concurrency=2", "--hostname=content@%h"]
+    environment:
+      - ENV=development
+      - WORKER_TYPE=content_generator
+      - WORKER_ID=content-worker-1
+      - DEBUG=true
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - REDIS_DB=0
+    env_file:
+      - .env
+    volumes:
+      - ./data:/app/data
+      - ./bios:/app/bios
+      - ./docx:/app/docx
+      - ./esquemas:/app/esquemas
+      - ./colecciones:/app/colecciones
+      - ./wordTemplate:/app/wordTemplate
+    networks:
+      - bookgen-network
+    restart: unless-stopped
+    depends_on:
+      redis:
+        condition: service_healthy
+
+  bookgen-worker-validation:
+    build: .
+    container_name: bookgen-worker-validation
+    command: ["celery", "-A", "src.worker", "worker", "--loglevel=info", "--queues=validation", "--concurrency=2", "--hostname=validation@%h"]
+    environment:
+      - ENV=development
+      - WORKER_TYPE=validator
+      - WORKER_ID=validation-worker-1
+      - DEBUG=true
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - REDIS_DB=0
+    env_file:
+      - .env
+    volumes:
+      - ./data:/app/data
+      - ./bios:/app/bios
+      - ./docx:/app/docx
+      - ./esquemas:/app/esquemas
+      - ./colecciones:/app/colecciones
+      - ./wordTemplate:/app/wordTemplate
+    networks:
+      - bookgen-network
+    restart: unless-stopped
+    depends_on:
+      redis:
+        condition: service_healthy
+
+  bookgen-worker-export:
+    build: .
+    container_name: bookgen-worker-export
+    command: ["celery", "-A", "src.worker", "worker", "--loglevel=info", "--queues=export", "--concurrency=1", "--hostname=export@%h"]
+    environment:
+      - ENV=development
+      - WORKER_TYPE=exporter
+      - WORKER_ID=export-worker-1
+      - DEBUG=true
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - REDIS_DB=0
+    env_file:
+      - .env
+    volumes:
+      - ./data:/app/data
+      - ./bios:/app/bios
+      - ./docx:/app/docx
+      - ./esquemas:/app/esquemas
+      - ./colecciones:/app/colecciones
+      - ./wordTemplate:/app/wordTemplate
+    networks:
+      - bookgen-network
+    restart: unless-stopped
+    depends_on:
+      redis:
+        condition: service_healthy
+
+  bookgen-worker-monitoring:
+    build: .
+    container_name: bookgen-worker-monitoring
+    command: ["celery", "-A", "src.worker", "worker", "--loglevel=info", "--queues=monitoring", "--concurrency=1", "--hostname=monitoring@%h"]
+    environment:
+      - ENV=development
+      - WORKER_TYPE=monitor
+      - WORKER_ID=monitor-worker-1
+      - DEBUG=true
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - REDIS_DB=0
+    env_file:
+      - .env
+    volumes:
+      - ./data:/app/data
+      - ./bios:/app/bios
+      - ./docx:/app/docx
+    networks:
+      - bookgen-network
+    restart: unless-stopped
+    depends_on:
+      redis:
+        condition: service_healthy
+
+  flower:
+    build: .
+    container_name: bookgen-flower
+    command: ["celery", "-A", "src.worker", "flower", "--port=5555"]
+    ports:
+      - "5555:5555"
+    environment:
+      - ENV=development
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - REDIS_DB=0
+    env_file:
+      - .env
+    networks:
+      - bookgen-network
+    restart: unless-stopped
+    depends_on:
+      redis:
+        condition: service_healthy
+
+  # Base de datos para desarrollo (SQLite en volumen)
+  bookgen-storage:
+    image: alpine:latest
+    container_name: bookgen-storage
+    command: tail -f /dev/null  # Mantener contenedor vivo
+    volumes:
+      - bookgen_db:/data
+    networks:
+      - bookgen-network
+
+volumes:
+  bookgen_db:
+    driver: local
+  bookgen_logs:
+    driver: local
+  redis_data:
+    driver: local
+
+networks:
+  bookgen-network:
+    driver: bridge

@@ -339,13 +339,13 @@ find /opt/bookgen/backups -name "biographies_backup_*.tar.gz" -mtime +30 -delete
 # Backup .env file (remove sensitive data first)
 cp .env .env.backup.$(date +%Y%m%d)
 
-# Backup docker-compose.yml
-cp docker-compose.yml docker-compose.yml.backup.$(date +%Y%m%d)
+# Backup infrastructure/docker-compose.yml
+cp infrastructure/docker-compose.yml infrastructure/docker-compose.yml.backup.$(date +%Y%m%d)
 
 # Store securely (encrypted)
-tar -czf config_backup_$(date +%Y%m%d).tar.gz .env.backup.* docker-compose.yml.backup.*
+tar -czf config_backup_$(date +%Y%m%d).tar.gz .env.backup.* infrastructure/docker-compose.yml.backup.*
 gpg -c config_backup_*.tar.gz
-rm config_backup_*.tar.gz .env.backup.* docker-compose.yml.backup.*
+rm config_backup_*.tar.gz .env.backup.* infrastructure/docker-compose.yml.backup.*
 ```
 
 ---
@@ -419,7 +419,7 @@ docker exec bookgen-redis redis-cli CONFIG SET maxmemory-policy allkeys-lru
 
 **Adjust Worker Concurrency:**
 ```bash
-# Update worker concurrency in docker-compose.yml
+# Update worker concurrency in infrastructure/docker-compose.yml
 services:
   worker:
     command: celery -A src.worker worker --loglevel=info --concurrency=4

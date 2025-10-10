@@ -21,10 +21,10 @@ The monitoring stack includes:
 docker network create bookgen-network 2>/dev/null || true
 
 # Start monitoring services
-docker-compose -f monitoring/docker-compose.yml up -d
+docker-compose -f infrastructure/monitoring/docker-compose.yml up -d
 
 # Verify services are running
-docker-compose -f monitoring/docker-compose.yml ps
+docker-compose -f infrastructure/monitoring/docker-compose.yml ps
 ```
 
 ### Access the Services
@@ -38,7 +38,7 @@ docker-compose -f monitoring/docker-compose.yml ps
 
 ```bash
 # Run alert tests
-python scripts/test_alerts.py
+python development/scripts/test_alerts.py
 
 # Check metrics endpoint
 curl http://localhost:8000/metrics
@@ -118,7 +118,7 @@ export SMTP_PASSWORD="your-smtp-password"
 Then restart Alertmanager:
 
 ```bash
-docker-compose -f monitoring/docker-compose.yml restart alertmanager
+docker-compose -f infrastructure/monitoring/docker-compose.yml restart alertmanager
 ```
 
 ## 📊 Grafana Dashboards
@@ -211,7 +211,7 @@ Structured logs are output in JSON format:
 
 ### Prometheus Configuration
 
-Edit `monitoring/prometheus/prometheus.yml` to:
+Edit `infrastructure/monitoring/prometheus/prometheus.yml` to:
 
 - Add new scrape targets
 - Adjust scrape intervals
@@ -219,7 +219,7 @@ Edit `monitoring/prometheus/prometheus.yml` to:
 
 ### Alert Rules
 
-Edit `monitoring/prometheus/alerts.yml` to:
+Edit `infrastructure/monitoring/prometheus/alerts.yml` to:
 
 - Add new alert rules
 - Modify thresholds
@@ -227,9 +227,9 @@ Edit `monitoring/prometheus/alerts.yml` to:
 
 ### Grafana Configuration
 
-Dashboards are provisioned from `monitoring/grafana/dashboards/`
+Dashboards are provisioned from `infrastructure/monitoring/grafana/dashboards/`
 
-Data sources are configured in `monitoring/grafana/provisioning/datasources/`
+Data sources are configured in `infrastructure/monitoring/grafana/provisioning/datasources/`
 
 ## 🐛 Troubleshooting
 
@@ -237,12 +237,12 @@ Data sources are configured in `monitoring/grafana/provisioning/datasources/`
 
 ```bash
 # Check logs
-docker-compose -f monitoring/docker-compose.yml logs prometheus
-docker-compose -f monitoring/docker-compose.yml logs grafana
-docker-compose -f monitoring/docker-compose.yml logs alertmanager
+docker-compose -f infrastructure/monitoring/docker-compose.yml logs prometheus
+docker-compose -f infrastructure/monitoring/docker-compose.yml logs grafana
+docker-compose -f infrastructure/monitoring/docker-compose.yml logs alertmanager
 
 # Restart services
-docker-compose -f monitoring/docker-compose.yml restart
+docker-compose -f infrastructure/monitoring/docker-compose.yml restart
 ```
 
 ### Metrics Not Appearing
@@ -257,7 +257,7 @@ docker-compose -f monitoring/docker-compose.yml restart
 1. Check alert rules are loaded: http://localhost:9090/alerts
 2. Verify Alertmanager is receiving alerts: http://localhost:9093
 3. Check Alertmanager configuration
-4. Test with: `python scripts/test_alerts.py`
+4. Test with: `python development/scripts/test_alerts.py`
 
 ### Grafana Dashboard Not Loading
 
@@ -279,14 +279,14 @@ docker-compose -f monitoring/docker-compose.yml restart
 curl http://localhost:8000/metrics
 
 # Start monitoring stack
-docker-compose -f monitoring/docker-compose.yml up -d
+docker-compose -f infrastructure/monitoring/docker-compose.yml up -d
 
 # Access Grafana dashboard
 curl http://localhost:3000  # Grafana (admin/admin)
 curl http://localhost:9090  # Prometheus
 
 # Test alerting
-python scripts/test_alerts.py
+python development/scripts/test_alerts.py
 
 # Check Prometheus targets
 curl http://localhost:9090/api/v1/targets | jq '.data.activeTargets[] | {job: .labels.job, health: .health}'

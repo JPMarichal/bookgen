@@ -25,7 +25,7 @@ Conversión del nombre del personaje a formato estándar (minúsculas, guiones b
 Workflow que requiere activación explícita del usuario, usado para procesos completos de inicio a fin. Ejemplo: iniciar una biografía nueva.
 
 ### Always_on
-Reglas que están siempre activas y proporcionan guías técnicas durante cualquier tarea. Ejemplo: `automation.md`, `structure.md`.
+Reglas que están siempre activas y proporcionan guías técnicas durante cualquier tarea. Ejemplo: `development.md`, `business-rules.md`.
 
 ### Auto_execution_mode
 Nivel de autonomía permitido para ejecución desatendida:

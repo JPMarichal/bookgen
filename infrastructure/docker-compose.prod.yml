@@ -1,0 +1,153 @@
+version: '3.8'
+
+services:
+  bookgen-api:
+    image: ghcr.io/jpmarichal/bookgen:latest
+    container_name: bookgen-api-prod
+    expose:
+      - "8000"
+    environment:
+      - ENV=production
+      - DEBUG=false
+    env_file:
+      - .env.production
+    volumes:
+      # Volúmenes persistentes en VPS
+      - /opt/bookgen/data:/app/data
+      - /opt/bookgen/output:/app/docx
+      - /opt/bookgen/sources:/app/esquemas
+      - /opt/bookgen/collections:/app/colecciones
+      - /opt/bookgen/templates:/app/wordTemplate
+      # Logs centralizados
+      - /var/log/bookgen:/app/data/logs
+    networks:
+      - bookgen-prod-network
+    restart: always
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 60s
+      timeout: 15s
+      retries: 3
+      start_period: 120s
+    deploy:
+      resources:
+        limits:
+          memory: 4G
+          cpus: '2.0'
+        reservations:
+          memory: 2G
+          cpus: '1.0'
+  nginx:
+    image: nginx:latest
+    container_name: bookgen-nginx-prod
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - /etc/letsencrypt:/etc/letsencrypt:ro
+      - /var/log/nginx:/var/log/nginx
+    depends_on:
+      - bookgen-api
+    networks:
+      - bookgen-prod-network
+    restart: always
+
+  bookgen-worker-1:
+    image: ghcr.io/jpmarichal/bookgen:latest
+    container_name: bookgen-worker-1-prod
+    command: ["python", "src/worker.py"]
+    environment:
+      - ENV=production
+      - WORKER_ID=worker-1
+      - WORKER_TYPE=content_generator
+    env_file:
+      - .env.production
+    volumes:
+      - /opt/bookgen/data:/app/data
+      - /opt/bookgen/output:/app/docx
+      - /opt/bookgen/sources:/app/esquemas
+      - /opt/bookgen/collections:/app/colecciones
+      - /opt/bookgen/templates:/app/wordTemplate
+    networks:
+      - bookgen-prod-network
+    restart: always
+    depends_on:
+      bookgen-api:
+        condition: service_healthy
+    deploy:
+      resources:
+        limits:
+          memory: 3G
+          cpus: '1.5'
+
+  bookgen-worker-2:
+    image: ghcr.io/jpmarichal/bookgen:latest
+    container_name: bookgen-worker-2-prod
+    command: ["python", "src/worker.py"]
+    environment:
+      - ENV=production
+      - WORKER_ID=worker-2
+      - WORKER_TYPE=source_validator
+    env_file:
+      - .env.production
+    volumes:
+      - /opt/bookgen/data:/app/data
+      - /opt/bookgen/output:/app/docx
+      - /opt/bookgen/sources:/app/esquemas
+      - /opt/bookgen/collections:/app/colecciones
+      - /opt/bookgen/templates:/app/wordTemplate
+    networks:
+      - bookgen-prod-network
+    restart: always
+    depends_on:
+      bookgen-api:
+        condition: service_healthy
+    deploy:
+      resources:
+        limits:
+          memory: 2G
+          cpus: '1.0'
+
+  # Nginx reverse proxy for HTTPS and rate limiting
+  nginx-proxy:
+    image: nginx:alpine
+    container_name: bookgen-nginx-prod
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - /opt/bookgen/infrastructure/nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - /etc/letsencrypt:/etc/letsencrypt:ro
+      - /var/log/nginx:/var/log/nginx
+    networks:
+      - bookgen-prod-network
+    restart: always
+    depends_on:
+      bookgen-api:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "nginx", "-t"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+volumes:
+  bookgen_prod_data:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: /opt/bookgen/data
+  # Volumen para certificados SSL (opcional, si se desea persistencia fuera del contenedor)
+  # ssl_certs:
+  #   driver: local
+  #   driver_opts:
+  #     type: none
+  #     o: bind
+  #     device: /etc/letsencrypt
+
+networks:
+  bookgen-prod-network:
+    driver: bridge
+    name: bookgen-prod

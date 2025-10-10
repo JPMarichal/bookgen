@@ -65,7 +65,7 @@ curl -X POST "http://localhost:8000/api/v1/sources/validate-advanced" \
 ## Running the Demo
 
 ```bash
-python examples/demo_source_validation.py
+python development/examples/demo_source_validation.py
 ```
 
 ## Running Tests

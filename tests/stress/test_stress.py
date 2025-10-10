@@ -14,6 +14,9 @@ import time
 
 client = TestClient(app)
 
+# Mark all tests in this module as slow
+pytestmark = pytest.mark.slow
+
 
 class TestStressScenarios:
     """Stress test scenarios for the API"""

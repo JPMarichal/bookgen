@@ -445,7 +445,7 @@ curl http://localhost:8000/health
    BATCH_SIZE_SPECIAL_SECTIONS=1
    MAX_CONCURRENT_JOBS=1
    
-   # Limit Docker memory in docker-compose.yml
+   # Limit Docker memory in infrastructure/docker-compose.yml
    services:
      api:
        mem_limit: 2g
