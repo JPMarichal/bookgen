@@ -33,15 +33,15 @@ services:
       - .env
     volumes:
       # Datos persistentes
-      - ./data:/app/data
-      - ./config:/app/config
+      - ../data:/app/data
+      - ../config:/app/config
       
       # Directorios de trabajo (para desarrollo)
-      - ./bios:/app/bios
-      - ./docx:/app/docx
-      - ./esquemas:/app/esquemas
-      - ./colecciones:/app/colecciones
-      - ./wordTemplate:/app/wordTemplate
+      - ../bios:/app/bios
+      - ../docx:/app/docx
+      - ../esquemas:/app/esquemas
+      - ../colecciones:/app/colecciones
+      - ../wordTemplate:/app/wordTemplate
       
       # Logs para debugging
       - bookgen_logs:/app/data/logs
@@ -73,12 +73,12 @@ services:
     env_file:
       - .env
     volumes:
-      - ./data:/app/data
-      - ./bios:/app/bios
-      - ./docx:/app/docx
-      - ./esquemas:/app/esquemas
-      - ./colecciones:/app/colecciones
-      - ./wordTemplate:/app/wordTemplate
+      - ../data:/app/data
+      - ../bios:/app/bios
+      - ../docx:/app/docx
+      - ../esquemas:/app/esquemas
+      - ../colecciones:/app/colecciones
+      - ../wordTemplate:/app/wordTemplate
     networks:
       - bookgen-network
     restart: unless-stopped
@@ -101,12 +101,12 @@ services:
     env_file:
       - .env
     volumes:
-      - ./data:/app/data
-      - ./bios:/app/bios
-      - ./docx:/app/docx
-      - ./esquemas:/app/esquemas
-      - ./colecciones:/app/colecciones
-      - ./wordTemplate:/app/wordTemplate
+      - ../data:/app/data
+      - ../bios:/app/bios
+      - ../docx:/app/docx
+      - ../esquemas:/app/esquemas
+      - ../colecciones:/app/colecciones
+      - ../wordTemplate:/app/wordTemplate
     networks:
       - bookgen-network
     restart: unless-stopped
