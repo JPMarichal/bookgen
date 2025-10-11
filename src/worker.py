@@ -51,7 +51,6 @@ if __name__ == '__main__':
     # Configure worker based on type
     worker_config = {
         'loglevel': 'INFO',
-        'traceback': True,
         'send_events': True,
         'without_gossip': False,
         'without_mingle': False,
@@ -74,9 +73,6 @@ if __name__ == '__main__':
 
     # Build CLI arguments with correct flag placement
     worker_args: list[str] = []
-
-    if worker_config.get('traceback'):
-        worker_args.append('--traceback')
 
     worker_args.extend([
         'worker',
