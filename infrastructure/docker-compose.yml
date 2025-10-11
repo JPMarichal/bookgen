@@ -129,12 +129,12 @@ services:
     env_file:
       - .env
     volumes:
-      - ./data:/app/data
-      - ./bios:/app/bios
-      - ./docx:/app/docx
-      - ./esquemas:/app/esquemas
-      - ./colecciones:/app/colecciones
-      - ./wordTemplate:/app/wordTemplate
+      - ../data:/app/data
+      - ../bios:/app/bios
+      - ../docx:/app/docx
+      - ../esquemas:/app/esquemas
+      - ../colecciones:/app/colecciones
+      - ../wordTemplate:/app/wordTemplate
     networks:
       - bookgen-network
     restart: unless-stopped
@@ -157,9 +157,9 @@ services:
     env_file:
       - .env
     volumes:
-      - ./data:/app/data
-      - ./bios:/app/bios
-      - ./docx:/app/docx
+      - ../data:/app/data
+      - ../bios:/app/bios
+      - ../docx:/app/docx
     networks:
       - bookgen-network
     restart: unless-stopped
