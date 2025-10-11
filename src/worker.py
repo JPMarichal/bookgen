@@ -52,7 +52,7 @@ if __name__ == '__main__':
     worker_config = {
         'loglevel': 'INFO',
         'traceback': True,
-        'task_events': True,
+        'send_events': True,
         'without_gossip': False,
         'without_mingle': False,
         'without_heartbeat': False,
@@ -71,8 +71,27 @@ if __name__ == '__main__':
         worker_config['queues'] = ['default']
     
     logger.info(f"Starting {worker_type} worker with queues: {worker_config['queues']}")
-    
-    # Start the worker
-    app.worker_main(['worker'] + [f'--{k}={v}' if not isinstance(v, list) else f'--{k}={",".join(v)}' 
-                                   for k, v in worker_config.items()])
+
+    # Build CLI arguments with correct flag placement
+    worker_args: list[str] = []
+
+    if worker_config.get('traceback'):
+        worker_args.append('--traceback')
+
+    worker_args.extend([
+        'worker',
+        f"--loglevel={worker_config['loglevel']}",
+        f"--queues={','.join(worker_config['queues'])}"
+    ])
+
+    if worker_config.get('send_events'):
+        worker_args.append('--events')
+    if worker_config.get('without_gossip'):
+        worker_args.append('--without-gossip')
+    if worker_config.get('without_mingle'):
+        worker_args.append('--without-mingle')
+    if worker_config.get('without_heartbeat'):
+        worker_args.append('--without-heartbeat')
+
+    app.worker_main(worker_args)
 
