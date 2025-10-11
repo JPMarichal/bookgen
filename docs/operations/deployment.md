@@ -117,6 +117,9 @@ DATABASE_URL=postgresql://bookgen:secure_password@db:5432/bookgen
 # Redis
 REDIS_HOST=redis
 REDIS_PORT=6379
+# Nuevas variables Celery/Redis (compose v2025-10)
+CELERY_BROKER_URL=redis://redis:6379/0
+CELERY_RESULT_BACKEND=redis://redis:6379/0
 ```
 
 ### Step 4: Configure Nginx
@@ -127,6 +130,9 @@ sudo tee /etc/nginx/sites-available/bookgen << 'EOF'
 server {
     listen 80;
     server_name yourdomain.com www.yourdomain.com;
+
+    # 👇 Temporal: redirección HTTP→HTTPS se puede habilitar cuando existan certificados válidos
+    # return 301 https://$host$request_uri;
 
     # Security headers
     add_header X-Frame-Options "SAMEORIGIN" always;
@@ -232,16 +238,17 @@ sudo fail2ban-client status bookgen-api
 
 ### Step 8: Start Services
 
-```bash
 # Start Docker containers
 cd /opt/bookgen
 docker-compose -f infrastructure/docker-compose.prod.yml up -d
 
-# Verify all running
+# Verifica que el servicio redis aparezca como healthy
 docker-compose -f infrastructure/docker-compose.prod.yml ps
 
-# Check logs
-docker-compose -f infrastructure/docker-compose.prod.yml logs -f --tail=50
+# Nota: El servicio Redis se ha agregado en docker-compose.prod.yml
+# para mejorar el rendimiento de la aplicacion. Se recomienda
+# configurar un servicio Redis externo en un entorno de produccion
+# real.
 ```
 
 ### Step 9: Create Systemd Service
