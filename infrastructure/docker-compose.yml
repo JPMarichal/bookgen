@@ -30,18 +30,18 @@ services:
       - REDIS_PORT=6379
       - REDIS_DB=0
     env_file:
-      - .env
+      - ${HOST_PROJECT_ROOT:-..}/.env
     volumes:
       # Datos persistentes
-      - ../data:/app/data
-      - ../config:/app/config
+      - ${HOST_PROJECT_ROOT:-..}/data:/app/data
+      - ${HOST_PROJECT_ROOT:-..}/config:/app/config
       
       # Directorios de trabajo (para desarrollo)
-      - ../bios:/app/bios
-      - ../docx:/app/docx
-      - ../esquemas:/app/esquemas
-      - ../colecciones:/app/colecciones
-      - ../wordTemplate:/app/wordTemplate
+      - ${HOST_PROJECT_ROOT:-..}/bios:/app/bios
+      - ${HOST_PROJECT_ROOT:-..}/docx:/app/docx
+      - ${HOST_PROJECT_ROOT:-..}/esquemas:/app/esquemas
+      - ${HOST_PROJECT_ROOT:-..}/colecciones:/app/colecciones
+      - ${HOST_PROJECT_ROOT:-..}/wordTemplate:/app/wordTemplate
       
       # Logs para debugging
       - bookgen_logs:/app/data/logs
@@ -71,14 +71,14 @@ services:
       - REDIS_PORT=6379
       - REDIS_DB=0
     env_file:
-      - .env
+      - ${HOST_PROJECT_ROOT:-..}/.env
     volumes:
-      - ../data:/app/data
-      - ../bios:/app/bios
-      - ../docx:/app/docx
-      - ../esquemas:/app/esquemas
-      - ../colecciones:/app/colecciones
-      - ../wordTemplate:/app/wordTemplate
+      - ${HOST_PROJECT_ROOT:-..}/data:/app/data
+      - ${HOST_PROJECT_ROOT:-..}/bios:/app/bios
+      - ${HOST_PROJECT_ROOT:-..}/docx:/app/docx
+      - ${HOST_PROJECT_ROOT:-..}/esquemas:/app/esquemas
+      - ${HOST_PROJECT_ROOT:-..}/colecciones:/app/colecciones
+      - ${HOST_PROJECT_ROOT:-..}/wordTemplate:/app/wordTemplate
     networks:
       - bookgen-network
     restart: unless-stopped
@@ -99,14 +99,14 @@ services:
       - REDIS_PORT=6379
       - REDIS_DB=0
     env_file:
-      - .env
+      - ${HOST_PROJECT_ROOT:-..}/.env
     volumes:
-      - ../data:/app/data
-      - ../bios:/app/bios
-      - ../docx:/app/docx
-      - ../esquemas:/app/esquemas
-      - ../colecciones:/app/colecciones
-      - ../wordTemplate:/app/wordTemplate
+      - ${HOST_PROJECT_ROOT:-..}/data:/app/data
+      - ${HOST_PROJECT_ROOT:-..}/bios:/app/bios
+      - ${HOST_PROJECT_ROOT:-..}/docx:/app/docx
+      - ${HOST_PROJECT_ROOT:-..}/esquemas:/app/esquemas
+      - ${HOST_PROJECT_ROOT:-..}/colecciones:/app/colecciones
+      - ${HOST_PROJECT_ROOT:-..}/wordTemplate:/app/wordTemplate
     networks:
       - bookgen-network
     restart: unless-stopped
